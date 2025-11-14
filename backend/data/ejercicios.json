@@ -1,0 +1,14 @@
+[
+  {
+    "id": "e1",
+    "nombre": "Sentadillas",
+    "descripcion": "Ejercicio de piernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": "e2",
+    "nombre": "Flexiones",
+    "descripcion": "Ejercicio de pecho",
+    "createdAt": "2025-01-01T00:00:00Z"
+  }
+]
