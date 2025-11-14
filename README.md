@@ -1,61 +1,16 @@
-## parcial-1-pd-acn4bv-queimalinos
-Proyecto de Plataformas de Desarrollo – Pablo Queimaliños – ACN4BV – Da Vinci
+# React + Vite
 
-## Plataforma de Entrenamiento
-Aplicación web para la gestión de usuarios, ejercicios y sesiones de entrenamiento.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
----
-## Funcionalidades
-Gestión de Usuarios
-- Alta, baja y modificación de clientes, entrenadores y administradores.
+Currently, two official plugins are available:
 
-Gestión de Ejercicios
-- CRUD completo.
-- Consumo de la API simulada con JSON Blob.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-Gestión de Sesiones de Entrenamiento
-- Crear sesiones para clientes seleccionando ejercicios.
-- Editar y eliminar sesiones.
-- Visualizar en tarjetas con detalle de cliente y ejercicios asignados.
+## React Compiler
 
-Filtros y búsqueda en usuarios, ejercicios y sesiones.
----
-## Diseño
-- Paleta de colores:
-  - Celeste: `#05A3CB`
-  - Lila: `#BB81B6`
-  - Azul oscuro: `#15114D`
-  - Azul intermedio: `#0C3264`
-  - Blanco: `#FFFFFF`
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- Diseño responsive, minimalista y moderno.
-- Secciones en tarjetas con sombras y bordes redondeados.
+## Expanding the ESLint configuration
 
----
-## Tecnologías
-HTML, CSS, JS
-- LocalStorage para persistencia.
-- JSON Blob para simular API para carga de ejercicios.
-
-Arquitectura modular:
-- /models → Clases Usuario, Ejercicio, Sesion.
-/services → StorageService.
-/ui → DOMUtils.
-/controllers → Lógica de negocio separada:
-usuarios.js
-ejercicios.js
-sesiones.js
-app.js → punto de entrada que inicializa todos los controladores.
-
----
-## Instalación
-1. Clonar el repositorio.
-2. Instalar dependencias si fuera necesario.
-3. Abrir `index.html` en el navegador.
-
----
-## Próximos pasos
-- Autenticación básica de usuarios.
-- Separar tableros según perfil del usuario (admin, entrenador, cliente)
-- Incorporar imágenes de los ejercicios.
----
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
