@@ -1,19 +1,27 @@
 import express from "express";
-import ejerciciosRoutes from "./routes/ejercicios.js";
+import cors from "cors";
+import morgan from "morgan";
+import ejerciciosRouter from "./routes/ejercicios.routes.js";
+import usuariosRouter from "./routes/usuarios.routes.js";
+import sesionesRouter from "./routes/sesiones.routes.js";
+import logger from "./middlewares/logger.js";
+import { ensureDataFiles } from "./utils/fileService.js";
 
+const PORT = process.env.PORT || 3000;
 const app = express();
-const PORT = 3000;
 
+await ensureDataFiles();
+
+app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
+app.use(logger);
 
-// middleware de logging
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.url}`);
-  next();
-});
+app.use("/api/ejercicios", ejerciciosRouter);
+app.use("/api/usuarios", usuariosRouter);
+app.use("/api/sesiones", sesionesRouter);
 
-// registrar rutas
-app.use("/ejercicios", ejerciciosRoutes);
+app.get("/health", (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
 app.listen(PORT, () => {
   console.log(`API corriendo en http://localhost:${PORT}`);
