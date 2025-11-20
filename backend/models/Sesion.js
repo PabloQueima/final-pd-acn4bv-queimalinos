@@ -1,77 +1,52 @@
 // models/Sesion.js
-// Representa una sesión de entrenamiento con varios ejercicios
 
 export default class Sesion {
   /**
-   * @param {number} id - Identificador único de la sesión
-   * @param {string} titulo - Título de la sesión
-   * @param {Array<{id:number, series:number, reps:number}>} ejercicios - Lista de ejercicios
-   * @param {number} clienteId - ID del cliente asignado
-   * @param {number|null} entrenadorId - (opcional) ID del entrenador
+   * @param {string|number} id
+   * @param {string} titulo
+   * @param {Array<{id:string, series:number, reps:number}>} ejerciciosAsignados
+   * @param {string|number} clienteId
+   * @param {string|number|null} entrenadorId
    */
-  constructor(id, titulo, ejercicios = [], clienteId, entrenadorId = null) {
-    this.id = id;
-    this.titulo = titulo;
-    this.ejercicios = Array.isArray(ejercicios) ? ejercicios : [];
+  constructor(id, titulo, ejerciciosAsignados = [], clienteId, entrenadorId = null) {
+    this.id = String(id);
+    this.titulo = String(titulo || "").trim();
+    this.ejerciciosAsignados = Array.isArray(ejerciciosAsignados) ? ejerciciosAsignados : [];
     this.clienteId = clienteId;
     this.entrenadorId = entrenadorId;
   }
 
-  /**
-   * Agrega un ejercicio a la sesión con sus series y repeticiones.
-   * Si el ejercicio ya existe, lo actualiza.
-   */
   agregarEjercicio(ejercicioId, series = 3, reps = 10) {
-    const existente = this.ejercicios.find(e => e.id === ejercicioId);
+    const existente = this.ejerciciosAsignados.find(e => e.id === ejercicioId);
     if (existente) {
       existente.series = series;
       existente.reps = reps;
     } else {
-      this.ejercicios.push({ id: ejercicioId, series, reps });
+      this.ejerciciosAsignados.push({ id: ejercicioId, series, reps });
     }
   }
 
-  /**
-   * Elimina un ejercicio de la sesión.
-   */
   eliminarEjercicio(ejercicioId) {
-    this.ejercicios = this.ejercicios.filter(e => e.id !== ejercicioId);
+    this.ejerciciosAsignados = this.ejerciciosAsignados.filter(e => e.id !== ejercicioId);
   }
 
-  /**
-   * Devuelve un listado legible de los ejercicios.
-   */
-  listarEjercicios(ejerciciosBase = []) {
-    return this.ejercicios.map(e => {
-      const ref = ejerciciosBase.find(ex => ex.id === e.id);
-      const nombre = ref ? ref.nombre : `Ejercicio ${e.id}`;
-      return `${nombre} - ${e.series}x${e.reps}`;
-    });
-  }
-
-  /**
-   * Devuelve un objeto plano listo para guardar en JSON/localStorage.
-   */
   toJSON() {
     return {
       id: this.id,
       titulo: this.titulo,
       clienteId: this.clienteId,
       entrenadorId: this.entrenadorId,
-      ejercicios: this.ejercicios.map(e => ({
+      ejerciciosAsignados: this.ejerciciosAsignados.map(e => ({
         id: e.id,
         series: e.series,
-        reps: e.reps
-      }))
+        reps: e.reps,
+      })),
     };
   }
 
-  /**
-   * Reconstruye una instancia Sesion desde un objeto JSON almacenado.
-   */
   static fromJSON(obj) {
     if (!obj) return null;
-    const { id, titulo, clienteId, entrenadorId, ejercicios = [] } = obj;
-    return new Sesion(id, titulo, ejercicios, clienteId, entrenadorId);
+    const { id, titulo, clienteId, entrenadorId, ejerciciosAsignados = [] } = obj;
+    return new Sesion(id, titulo, ejerciciosAsignados, clienteId, entrenadorId);
   }
 }
