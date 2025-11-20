@@ -10,7 +10,12 @@ import { ensureDataFiles } from "./utils/fileService.js";
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-await ensureDataFiles();
+try {
+  await ensureDataFiles();
+} catch (err) {
+  console.error("Error al inicializar archivos JSON:", err);
+  process.exit(1);
+}
 
 app.use(cors());
 app.use(express.json());

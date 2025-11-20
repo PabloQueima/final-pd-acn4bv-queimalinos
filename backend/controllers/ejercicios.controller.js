@@ -15,12 +15,23 @@ export async function listarEjercicios(req, res) {
 export async function crearEjercicio(req, res) {
   try {
     const { nombre, descripcion } = req.body;
-    if (!nombre) return res.status(400).json({ error: "Campo 'nombre' obligatorio" });
+
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: "Campo 'nombre' obligatorio" });
+    }
 
     const ejercicios = await readJSON(FILE);
-    const nuevo = { id: Date.now().toString(), nombre: nombre.trim(), descripcion: descripcion || "", createdAt: new Date().toISOString() };
+
+    const nuevo = {
+      id: Date.now().toString(),
+      nombre: nombre.trim(),
+      descripcion: descripcion || "",
+      createdAt: new Date().toISOString(),
+    };
+
     ejercicios.push(nuevo);
     await writeJSON(FILE, ejercicios);
+
     res.status(201).json(nuevo);
   } catch (err) {
     console.error(err);
@@ -32,11 +43,22 @@ export async function actualizarEjercicio(req, res) {
   try {
     const id = req.params.id;
     const { nombre, descripcion } = req.body;
+
+    if (nombre !== undefined && !nombre.trim()) {
+      return res.status(400).json({ error: "El nombre no puede estar vacío" });
+    }
+
     let ejercicios = await readJSON(FILE);
-    const idx = ejercicios.findIndex(e => e.id === id);
+    const idx = ejercicios.findIndex((e) => e.id === id);
     if (idx === -1) return res.status(404).json({ error: "Ejercicio no encontrado" });
 
-    ejercicios[idx] = { ...ejercicios[idx], nombre: nombre ?? ejercicios[idx].nombre, descripcion: descripcion ?? ejercicios[idx].descripcion, updatedAt: new Date().toISOString() };
+    ejercicios[idx] = {
+      ...ejercicios[idx],
+      nombre: nombre ?? ejercicios[idx].nombre,
+      descripcion: descripcion ?? ejercicios[idx].descripcion,
+      updatedAt: new Date().toISOString(),
+    };
+
     await writeJSON(FILE, ejercicios);
     res.json(ejercicios[idx]);
   } catch (err) {
@@ -49,12 +71,13 @@ export async function eliminarEjercicio(req, res) {
   try {
     const id = req.params.id;
     let ejercicios = await readJSON(FILE);
-    const exists = ejercicios.some(e => e.id === id);
+    const exists = ejercicios.some((e) => e.id === id);
     if (!exists) return res.status(404).json({ error: "Ejercicio no encontrado" });
 
-    ejercicios = ejercicios.filter(e => e.id !== id);
+    ejercicios = ejercicios.filter((e) => e.id !== id);
     await writeJSON(FILE, ejercicios);
-    res.status(204).end();
+
+    res.json({ message: "Ejercicio eliminado correctamente", id });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo eliminar ejercicio" });
