@@ -77,9 +77,11 @@ export async function deleteUsuario(id) {
 // ---------------------------
 // Sesiones
 // ---------------------------
-export async function getSesiones() {
-  return request(`${API_URL}/sesiones`);
+export async function getSesiones(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return request(`${API_URL}/sesiones${query ? `?${query}` : ""}`);
 }
+
 
 export async function createSesion(data) {
   return request(`${API_URL}/sesiones`, {

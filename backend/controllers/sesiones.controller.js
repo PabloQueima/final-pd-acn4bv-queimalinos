@@ -9,14 +9,18 @@ function buildSesiones(arr) {
 
 export async function listarSesiones(req, res) {
   try {
-    const data = await readJSON(FILE);
-    const sesiones = buildSesiones(data);
-    res.json(sesiones.map(s => s.toJSON()));
+    let sesiones = await getAll();
+
+    if (req.query.clienteId) {
+      sesiones = sesiones.filter(s => s.clienteId == req.query.clienteId);
+    }
+
+    res.json(sesiones);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "No se pudieron leer sesiones" });
   }
 }
+
 
 export async function crearSesion(req, res) {
   try {
