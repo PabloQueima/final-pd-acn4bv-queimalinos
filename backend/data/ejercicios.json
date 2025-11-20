@@ -1,19 +1,162 @@
 [
   {
-    "id": "e1",
+    "id": 1,
     "nombre": "Sentadillas",
-    "descripcion": "Ejercicio de piernas",
+    "descripcion": "Ejercicio de piernas básico",
+    "parteCuerpo": "piernas",
+    "elemento": "",
     "createdAt": "2025-01-01T00:00:00Z"
   },
   {
-    "id": "e2",
-    "nombre": "Flexiones",
-    "descripcion": "Ejercicio de pecho",
+    "id": 2,
+    "nombre": "Flexiones de pecho",
+    "descripcion": "Trabajo de pectorales, tríceps y core",
+    "parteCuerpo": "pecho",
+    "elemento": "",
     "createdAt": "2025-01-01T00:00:00Z"
   },
   {
-    "id": 1763139997275,
-    "nombre": "Flexiones",
-    "descripcion": "Ejercicio de pecho"
+    "id": 3,
+    "nombre": "Abdominales",
+    "descripcion": "Contracción del core",
+    "parteCuerpo": "abdomen",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 4,
+    "nombre": "Plancha",
+    "descripcion": "Fortalecimiento de core y estabilidad",
+    "parteCuerpo": "abdomen",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 5,
+    "nombre": "Zancadas",
+    "descripcion": "Trabajo unilateral de piernas",
+    "parteCuerpo": "piernas",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 6,
+    "nombre": "Press militar",
+    "descripcion": "Trabajo de hombros",
+    "parteCuerpo": "hombros",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 7,
+    "nombre": "Remo con mancuerna",
+    "descripcion": "Trabajo de dorsal y bíceps",
+    "parteCuerpo": "espalda",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 8,
+    "nombre": "Peso muerto",
+    "descripcion": "Trabajo de cadena posterior",
+    "parteCuerpo": "espalda baja",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 9,
+    "nombre": "Bíceps con mancuerna",
+    "descripcion": "Aislamiento del bíceps",
+    "parteCuerpo": "brazos",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 10,
+    "nombre": "Fondos en banco",
+    "descripcion": "Trabajo de tríceps",
+    "parteCuerpo": "brazos",
+    "elemento": "banco",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 11,
+    "nombre": "Elevaciones laterales",
+    "descripcion": "Aislamiento de hombros",
+    "parteCuerpo": "hombros",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 12,
+    "nombre": "Curl femoral",
+    "descripcion": "Trabajo de isquiosurales",
+    "parteCuerpo": "piernas",
+    "elemento": "máquina",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 13,
+    "nombre": "Extensión de cuádriceps",
+    "descripcion": "Aislamiento del cuádriceps",
+    "parteCuerpo": "piernas",
+    "elemento": "máquina",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 14,
+    "nombre": "Aperturas con mancuerna",
+    "descripcion": "Trabajo de pecho y estabilización",
+    "parteCuerpo": "pecho",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 15,
+    "nombre": "Remo en polea baja",
+    "descripcion": "Trabajo de espalda media",
+    "parteCuerpo": "espalda",
+    "elemento": "polea",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 16,
+    "nombre": "Face pulls",
+    "descripcion": "Trabajo de deltoides posteriores",
+    "parteCuerpo": "hombros",
+    "elemento": "polea",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 17,
+    "nombre": "Hip thrust",
+    "descripcion": "Trabajo de glúteos",
+    "parteCuerpo": "gluteos",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 18,
+    "nombre": "Burpees",
+    "descripcion": "Ejercicio cardiovascular completo",
+    "parteCuerpo": "general",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 19,
+    "nombre": "Mountain climbers",
+    "descripcion": "Cardio y core",
+    "parteCuerpo": "abdomen",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 20,
+    "nombre": "Jumping jacks",
+    "descripcion": "Trabajo cardiovascular ligero",
+    "parteCuerpo": "general",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
   }
 ]

@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": 1,
+    "titulo": "Piernas básico",
+    "clienteId": 101,
+    "entrenadorId": 201,
+    "ejerciciosAsignados": [
+      { "id": 1, "series": 3, "reps": 12 },
+      { "id": 5, "series": 3, "reps": 10 },
+      { "id": 13, "series": 4, "reps": 12 }
+    ],
+    "createdAt": "2025-01-02T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "titulo": "Pecho y hombros",
+    "clienteId": 102,
+    "entrenadorId": 202,
+    "ejerciciosAsignados": [
+      { "id": 2, "series": 4, "reps": 10 },
+      { "id": 6, "series": 3, "reps": 8 },
+      { "id": 11, "series": 3, "reps": 12 }
+    ],
+    "createdAt": "2025-01-02T12:00:00Z"
+  },
+  {
+    "id": 3,
+    "titulo": "Espalda completa",
+    "clienteId": 103,
+    "entrenadorId": 201,
+    "ejerciciosAsignados": [
+      { "id": 7, "series": 3, "reps": 10 },
+      { "id": 8, "series": 4, "reps": 8 },
+      { "id": 15, "series": 3, "reps": 12 }
+    ],
+    "createdAt": "2025-01-03T09:30:00Z"
+  },
+  {
+    "id": 4,
+    "titulo": "Full body",
+    "clienteId": 101,
+    "entrenadorId": 202,
+    "ejerciciosAsignados": [
+      { "id": 18, "series": 4, "reps": 20 },
+      { "id": 1, "series": 3, "reps": 15 },
+      { "id": 2, "series": 3, "reps": 12 }
+    ],
+    "createdAt": "2025-01-05T11:00:00Z"
+  },
+  {
+    "id": 5,
+    "titulo": "Core avanzado",
+    "clienteId": 104,
+    "entrenadorId": 201,
+    "ejerciciosAsignados": [
+      { "id": 3, "series": 4, "reps": 15 },
+      { "id": 4, "series": 3, "reps": 60 },
+      { "id": 19, "series": 4, "reps": 30 }
+    ],
+    "createdAt": "2025-01-06T14:20:00Z"
+  }
+]
