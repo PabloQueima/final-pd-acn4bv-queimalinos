@@ -1,33 +1,47 @@
-// models/Sesion.js
-
 export default class Sesion {
   /**
-   * @param {string|number} id
+   * @param {number} id
    * @param {string} titulo
-   * @param {Array<{id:string, series:number, reps:number}>} ejerciciosAsignados
-   * @param {string|number} clienteId
-   * @param {string|number|null} entrenadorId
+   * @param {Array<{id:number, series:number, reps:number}>} ejerciciosAsignados
+   * @param {number} clienteId
+   * @param {number|null} entrenadorId
+   * @param {string} createdAt
+   * @param {string|null} updatedAt
    */
-  constructor(id, titulo, ejerciciosAsignados = [], clienteId, entrenadorId = null) {
-    this.id = String(id);
+  constructor(
+    id,
+    titulo,
+    ejerciciosAsignados = [],
+    clienteId,
+    entrenadorId = null,
+    createdAt = null,
+    updatedAt = null
+  ) {
+    this.id = Number(id);
     this.titulo = String(titulo || "").trim();
     this.ejerciciosAsignados = Array.isArray(ejerciciosAsignados) ? ejerciciosAsignados : [];
-    this.clienteId = clienteId;
-    this.entrenadorId = entrenadorId;
+    this.clienteId = Number(clienteId);
+    this.entrenadorId = entrenadorId !== null ? Number(entrenadorId) : null;
+    this.createdAt = createdAt || new Date().toISOString();
+    this.updatedAt = updatedAt || null;
   }
 
-  agregarEjercicio(ejercicioId, series = 3, reps = 10) {
-    const existente = this.ejerciciosAsignados.find(e => e.id === ejercicioId);
+  agregarEjercicio(id, series = 3, reps = 10) {
+    const existente = this.ejerciciosAsignados.find(e => e.id === id);
+
     if (existente) {
       existente.series = series;
       existente.reps = reps;
     } else {
-      this.ejerciciosAsignados.push({ id: ejercicioId, series, reps });
+      this.ejerciciosAsignados.push({ id, series, reps });
     }
+
+    this.updatedAt = new Date().toISOString();
   }
 
-  eliminarEjercicio(ejercicioId) {
-    this.ejerciciosAsignados = this.ejerciciosAsignados.filter(e => e.id !== ejercicioId);
+  eliminarEjercicio(id) {
+    this.ejerciciosAsignados = this.ejerciciosAsignados.filter(e => e.id !== id);
+    this.updatedAt = new Date().toISOString();
   }
 
   toJSON() {
@@ -36,17 +50,23 @@ export default class Sesion {
       titulo: this.titulo,
       clienteId: this.clienteId,
       entrenadorId: this.entrenadorId,
-      ejerciciosAsignados: this.ejerciciosAsignados.map(e => ({
-        id: e.id,
-        series: e.series,
-        reps: e.reps,
-      })),
+      ejerciciosAsignados: this.ejerciciosAsignados,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     };
   }
 
   static fromJSON(obj) {
     if (!obj) return null;
-    const { id, titulo, clienteId, entrenadorId, ejerciciosAsignados = [] } = obj;
-    return new Sesion(id, titulo, ejerciciosAsignados, clienteId, entrenadorId);
+
+    return new Sesion(
+      obj.id,
+      obj.titulo,
+      obj.ejerciciosAsignados,
+      obj.clienteId,
+      obj.entrenadorId,
+      obj.createdAt,
+      obj.updatedAt
+    );
   }
 }

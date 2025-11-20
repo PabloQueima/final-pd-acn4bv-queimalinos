@@ -1,15 +1,17 @@
 import { readJSON, writeJSON } from "../utils/fileService.js";
+import Sesion from "../models/Sesion.js";
 
 const FILE = "sesiones.json";
 
-function getAll() {
-  return readJSON(FILE);
+function buildSesiones(arr) {
+  return arr.map(s => Sesion.fromJSON(s));
 }
 
 export async function listarSesiones(req, res) {
   try {
-    const sesiones = await getAll();
-    res.json(sesiones);
+    const data = await readJSON(FILE);
+    const sesiones = buildSesiones(data);
+    res.json(sesiones.map(s => s.toJSON()));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudieron leer sesiones" });
@@ -20,28 +22,20 @@ export async function crearSesion(req, res) {
   try {
     const { titulo, entrenadorId, clienteId, ejerciciosAsignados } = req.body;
 
-    if (!titulo || !titulo.trim()) {
-      return res.status(400).json({ error: "El campo 'titulo' es obligatorio" });
-    }
+    const data = await readJSON(FILE);
 
-    if (clienteId === undefined || clienteId === null || clienteId === "") {
-      return res.status(400).json({ error: "El campo 'clienteId' es obligatorio" });
-    }
-
-    const sesiones = await getAll();
-
-    const nuevo = {
-      id: Date.now().toString(),
-      titulo: titulo.trim(),
-      entrenadorId: entrenadorId ?? null,
+    const nueva = new Sesion(
+      Date.now(),
+      titulo,
+      ejerciciosAsignados || [],
       clienteId,
-      ejerciciosAsignados: Array.isArray(ejerciciosAsignados) ? ejerciciosAsignados : [],
-      createdAt: new Date().toISOString(),
-    };
+      entrenadorId
+    );
 
-    sesiones.push(nuevo);
-    await writeJSON(FILE, sesiones);
-    res.status(201).json(nuevo);
+    data.push(nueva.toJSON());
+    await writeJSON(FILE, data);
+
+    res.status(201).json(nueva.toJSON());
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo crear sesión" });
@@ -50,49 +44,50 @@ export async function crearSesion(req, res) {
 
 export async function actualizarSesion(req, res) {
   try {
-    const id = req.params.id;
+    const id = Number(req.params.id);
+
+    const data = await readJSON(FILE);
+    let sesiones = buildSesiones(data);
+
+    const idx = sesiones.findIndex(s => s.id === id);
+    if (idx === -1) return res.status(404).json({ error: "Sesión no encontrada" });
+
+    const sesion = sesiones[idx];
     const { titulo, entrenadorId, clienteId, ejerciciosAsignados } = req.body;
 
-    if (titulo !== undefined && !titulo.trim()) {
-      return res.status(400).json({ error: "El titulo no puede estar vacío" });
-    }
+    if (titulo !== undefined) sesion.titulo = titulo.trim();
+    if (clienteId !== undefined) sesion.clienteId = Number(clienteId);
+    if (entrenadorId !== undefined) sesion.entrenadorId = Number(entrenadorId);
+    if (Array.isArray(ejerciciosAsignados)) sesion.ejerciciosAsignados = ejerciciosAsignados;
 
-    let sesiones = await getAll();
-    const idx = sesiones.findIndex((s) => s.id === id);
-    if (idx === -1) return res.status(404).json({ error: "Sesion no encontrada" });
+    sesion.updatedAt = new Date().toISOString();
 
-    sesiones[idx] = {
-      ...sesiones[idx],
-      titulo: titulo ?? sesiones[idx].titulo,
-      entrenadorId: entrenadorId ?? sesiones[idx].entrenadorId,
-      clienteId: clienteId ?? sesiones[idx].clienteId,
-      ejerciciosAsignados: Array.isArray(ejerciciosAsignados)
-        ? ejerciciosAsignados
-        : sesiones[idx].ejerciciosAsignados,
-      updatedAt: new Date().toISOString(),
-    };
+    sesiones[idx] = sesion;
 
-    await writeJSON(FILE, sesiones);
-    res.json(sesiones[idx]);
+    await writeJSON(FILE, sesiones.map(s => s.toJSON()));
+
+    res.json(sesion.toJSON());
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "No se pudo actualizar sesion" });
+    res.status(500).json({ error: "No se pudo actualizar sesión" });
   }
 }
 
 export async function eliminarSesion(req, res) {
   try {
-    const id = req.params.id;
-    let sesiones = await getAll();
-    const exists = sesiones.some((s) => s.id === id);
-    if (!exists) return res.status(404).json({ error: "Sesion no encontrada" });
+    const id = Number(req.params.id);
+    let data = await readJSON(FILE);
 
-    sesiones = sesiones.filter((s) => s.id !== id);
-    await writeJSON(FILE, sesiones);
+    const exists = data.some(s => Number(s.id) === id);
+    if (!exists) return res.status(404).json({ error: "Sesión no encontrada" });
 
-    res.json({ message: "Sesión eliminada correctamente", id });
+    data = data.filter(s => Number(s.id) !== id);
+
+    await writeJSON(FILE, data);
+
+    res.status(204).end();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "No se pudo eliminar sesion" });
+    res.status(500).json({ error: "No se pudo eliminar sesión" });
   }
 }

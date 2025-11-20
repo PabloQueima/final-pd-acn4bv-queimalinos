@@ -1,11 +1,13 @@
 import { readJSON, writeJSON } from "../utils/fileService.js";
+import Ejercicio from "../models/Ejercicio.js";
 
 const FILE = "ejercicios.json";
 
 export async function listarEjercicios(req, res) {
   try {
-    const ejercicios = await readJSON(FILE);
-    res.json(ejercicios);
+    const data = await readJSON(FILE);
+    const ejercicios = data.map(e => Ejercicio.fromJSON(e));
+    res.json(ejercicios.map(e => e.toJSON()));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudieron leer ejercicios" });
@@ -14,25 +16,22 @@ export async function listarEjercicios(req, res) {
 
 export async function crearEjercicio(req, res) {
   try {
-    const { nombre, descripcion } = req.body;
+    const { nombre, descripcion, parteCuerpo, elemento } = req.body;
 
-    if (!nombre || !nombre.trim()) {
-      return res.status(400).json({ error: "Campo 'nombre' obligatorio" });
-    }
+    const data = await readJSON(FILE);
 
-    const ejercicios = await readJSON(FILE);
+    const nuevo = new Ejercicio(
+      Date.now(),
+      nombre,
+      descripcion,
+      parteCuerpo,
+      elemento
+    );
 
-    const nuevo = {
-      id: Date.now().toString(),
-      nombre: nombre.trim(),
-      descripcion: descripcion || "",
-      createdAt: new Date().toISOString(),
-    };
+    data.push(nuevo.toJSON());
+    await writeJSON(FILE, data);
 
-    ejercicios.push(nuevo);
-    await writeJSON(FILE, ejercicios);
-
-    res.status(201).json(nuevo);
+    res.status(201).json(nuevo.toJSON());
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo crear ejercicio" });
@@ -41,26 +40,26 @@ export async function crearEjercicio(req, res) {
 
 export async function actualizarEjercicio(req, res) {
   try {
-    const id = req.params.id;
-    const { nombre, descripcion } = req.body;
+    const id = Number(req.params.id);
+    const data = await readJSON(FILE);
+    let ejercicios = data.map(e => Ejercicio.fromJSON(e));
 
-    if (nombre !== undefined && !nombre.trim()) {
-      return res.status(400).json({ error: "El nombre no puede estar vacío" });
-    }
-
-    let ejercicios = await readJSON(FILE);
-    const idx = ejercicios.findIndex((e) => e.id === id);
+    const idx = ejercicios.findIndex(e => e.id === id);
     if (idx === -1) return res.status(404).json({ error: "Ejercicio no encontrado" });
 
-    ejercicios[idx] = {
-      ...ejercicios[idx],
-      nombre: nombre ?? ejercicios[idx].nombre,
-      descripcion: descripcion ?? ejercicios[idx].descripcion,
-      updatedAt: new Date().toISOString(),
-    };
+    const { nombre, descripcion, parteCuerpo, elemento } = req.body;
+    const ejercicio = ejercicios[idx];
 
-    await writeJSON(FILE, ejercicios);
-    res.json(ejercicios[idx]);
+    if (nombre !== undefined) ejercicio.nombre = nombre.trim();
+    if (descripcion !== undefined) ejercicio.descripcion = descripcion.trim();
+    if (parteCuerpo !== undefined) ejercicio.parteCuerpo = parteCuerpo.trim().toLowerCase();
+    if (elemento !== undefined) ejercicio.elemento = elemento.trim().toLowerCase();
+
+    ejercicios[idx] = ejercicio;
+
+    await writeJSON(FILE, ejercicios.map(e => e.toJSON()));
+
+    res.json(ejercicio.toJSON());
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo actualizar ejercicio" });
@@ -69,15 +68,16 @@ export async function actualizarEjercicio(req, res) {
 
 export async function eliminarEjercicio(req, res) {
   try {
-    const id = req.params.id;
-    let ejercicios = await readJSON(FILE);
-    const exists = ejercicios.some((e) => e.id === id);
+    const id = Number(req.params.id);
+    let data = await readJSON(FILE);
+    const exists = data.some(e => Number(e.id) === id);
+
     if (!exists) return res.status(404).json({ error: "Ejercicio no encontrado" });
 
-    ejercicios = ejercicios.filter((e) => e.id !== id);
-    await writeJSON(FILE, ejercicios);
+    data = data.filter(e => Number(e.id) !== id);
+    await writeJSON(FILE, data);
 
-    res.json({ message: "Ejercicio eliminado correctamente", id });
+    res.status(204).end();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo eliminar ejercicio" });

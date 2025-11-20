@@ -1,27 +1,22 @@
-// models/Ejercicio.js
-
 export default class Ejercicio {
   /**
-   * @param {string|number} id 
-   * @param {string} nombre 
-   * @param {string} descripcion 
-   * @param {string} parteCuerpo 
-   * @param {string} elemento 
+   * @param {number} id
+   * @param {string} nombre
+   * @param {string} descripcion
+   * @param {string} parteCuerpo
+   * @param {string} elemento
+   * @param {string} createdAt
    */
-  constructor(id, nombre, descripcion, parteCuerpo = "", elemento = "") {
-    this.id = String(id); // <- corrección clave
+  constructor(id, nombre, descripcion = "", parteCuerpo = "", elemento = "", createdAt = null) {
+    this.id = Number(id);
     this.nombre = String(nombre || "").trim();
     this.descripcion = String(descripcion || "").trim();
-    this.parteCuerpo = parteCuerpo?.toLowerCase() || "";
-    this.elemento = elemento?.toLowerCase() || "";
+    this.parteCuerpo = String(parteCuerpo || "").toLowerCase();
+    this.elemento = String(elemento || "").toLowerCase();
+    this.createdAt = createdAt || new Date().toISOString();
   }
 
-  resumen() {
-    return `${this.nombre} (${this.parteCuerpo || "general"}) - ${
-      this.elemento || "sin equipo"
-    }`;
-  }
-
+  /** Serializa a objeto plano */
   toJSON() {
     return {
       id: this.id,
@@ -29,17 +24,21 @@ export default class Ejercicio {
       descripcion: this.descripcion,
       parteCuerpo: this.parteCuerpo,
       elemento: this.elemento,
+      createdAt: this.createdAt
     };
   }
 
+  /** Reconstruye desde JSON */
   static fromJSON(obj) {
     if (!obj) return null;
+
     return new Ejercicio(
       obj.id,
       obj.nombre,
       obj.descripcion,
       obj.parteCuerpo,
-      obj.elemento
+      obj.elemento,
+      obj.createdAt
     );
   }
 }

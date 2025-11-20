@@ -1,15 +1,17 @@
 import { readJSON, writeJSON } from "../utils/fileService.js";
+import Usuario from "../models/Usuario.js";
 
 const FILE = "usuarios.json";
 
-function getAll() {
-  return readJSON(FILE);
+function buildUsuarios(arr) {
+  return arr.map(u => Usuario.fromJSON(u));
 }
 
 export async function listarUsuarios(req, res) {
   try {
-    const usuarios = await getAll();
-    res.json(usuarios);
+    const data = await readJSON(FILE);
+    const usuarios = buildUsuarios(data);
+    res.json(usuarios.map(u => u.toJSON()));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudieron leer usuarios" });
@@ -20,26 +22,13 @@ export async function crearUsuario(req, res) {
   try {
     const { nombre, rol } = req.body;
 
-    if (!nombre || !nombre.trim()) {
-      return res.status(400).json({ error: "El campo 'nombre' es obligatorio" });
-    }
+    const data = await readJSON(FILE);
+    const nuevo = new Usuario(Date.now(), nombre, rol);
 
-    if (!rol || !rol.trim()) {
-      return res.status(400).json({ error: "El campo 'rol' es obligatorio" });
-    }
+    data.push(nuevo.toJSON());
+    await writeJSON(FILE, data);
 
-    const usuarios = await getAll();
-    const nuevo = {
-      id: Date.now().toString(),
-      nombre: nombre.trim(),
-      rol: rol.trim(),
-      createdAt: new Date().toISOString(),
-    };
-
-    usuarios.push(nuevo);
-    await writeJSON(FILE, usuarios);
-
-    res.status(201).json(nuevo);
+    res.status(201).json(nuevo.toJSON());
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo crear usuario" });
@@ -48,30 +37,25 @@ export async function crearUsuario(req, res) {
 
 export async function actualizarUsuario(req, res) {
   try {
-    const id = req.params.id;
-    const { nombre, rol } = req.body;
+    const id = Number(req.params.id);
 
-    if (nombre !== undefined && !nombre.trim()) {
-      return res.status(400).json({ error: "El nombre no puede estar vacío" });
-    }
+    const data = await readJSON(FILE);
+    let usuarios = buildUsuarios(data);
 
-    if (rol !== undefined && !rol.trim()) {
-      return res.status(400).json({ error: "El rol no puede estar vacío" });
-    }
-
-    let usuarios = await getAll();
-    const idx = usuarios.findIndex((u) => u.id === id);
+    const idx = usuarios.findIndex(u => u.id === id);
     if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado" });
 
-    usuarios[idx] = {
-      ...usuarios[idx],
-      nombre: nombre ?? usuarios[idx].nombre,
-      rol: rol ?? usuarios[idx].rol,
-      updatedAt: new Date().toISOString(),
-    };
+    const usuario = usuarios[idx];
+    const { nombre, rol } = req.body;
 
-    await writeJSON(FILE, usuarios);
-    res.json(usuarios[idx]);
+    if (nombre !== undefined) usuario.nombre = nombre.trim();
+    if (rol !== undefined) usuario.rol = rol.trim().toLowerCase();
+
+    usuarios[idx] = usuario;
+
+    await writeJSON(FILE, usuarios.map(u => u.toJSON()));
+
+    res.json(usuario.toJSON());
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo actualizar usuario" });
@@ -80,15 +64,16 @@ export async function actualizarUsuario(req, res) {
 
 export async function eliminarUsuario(req, res) {
   try {
-    const id = req.params.id;
-    let usuarios = await getAll();
-    const exists = usuarios.some((u) => u.id === id);
+    const id = Number(req.params.id);
+
+    let data = await readJSON(FILE);
+    const exists = data.some(u => Number(u.id) === id);
     if (!exists) return res.status(404).json({ error: "Usuario no encontrado" });
 
-    usuarios = usuarios.filter((u) => u.id !== id);
-    await writeJSON(FILE, usuarios);
+    data = data.filter(u => Number(u.id) !== id);
+    await writeJSON(FILE, data);
 
-    res.json({ message: "Usuario eliminado correctamente", id });
+    res.status(204).end();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo eliminar usuario" });
