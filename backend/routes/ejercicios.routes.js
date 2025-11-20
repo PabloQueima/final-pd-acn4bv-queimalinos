@@ -8,5 +8,7 @@ router.get("/", controller.listarEjercicios);
 router.post("/", validateEjercicio, controller.crearEjercicio);
 router.put("/:id", validateEjercicio, controller.actualizarEjercicio);
 router.delete("/:id", controller.eliminarEjercicio);
+router.get("/buscar", controller.buscarEjercicios);
+
 
 export default router;

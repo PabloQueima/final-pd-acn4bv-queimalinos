@@ -83,3 +83,33 @@ export async function eliminarEjercicio(req, res) {
     res.status(500).json({ error: "No se pudo eliminar ejercicio" });
   }
 }
+
+export async function buscarEjercicios(req, res) {
+  try {
+    const { parte, search } = req.query;
+
+    const data = await readJSON(FILE);
+    let ejercicios = data.map(e => Ejercicio.fromJSON(e));
+
+    // Filtro por parte del cuerpo
+    if (parte) {
+      const parteLower = parte.toLowerCase();
+      ejercicios = ejercicios.filter(e => e.parteCuerpo.includes(parteLower));
+    }
+
+    // Búsqueda por texto
+    if (search) {
+      const term = search.toLowerCase();
+      ejercicios = ejercicios.filter(e =>
+        e.nombre.toLowerCase().includes(term) ||
+        e.descripcion.toLowerCase().includes(term)
+      );
+    }
+
+    res.json(ejercicios.map(e => e.toJSON()));
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al filtrar/buscar ejercicios" });
+  }
+}

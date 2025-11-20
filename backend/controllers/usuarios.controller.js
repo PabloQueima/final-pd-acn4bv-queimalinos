@@ -9,14 +9,23 @@ function buildUsuarios(arr) {
 
 export async function listarUsuarios(req, res) {
   try {
+    const { rol } = req.query;
+
     const data = await readJSON(FILE);
-    const usuarios = buildUsuarios(data);
+    let usuarios = buildUsuarios(data);
+
+    if (rol) {
+      const rolLower = rol.toLowerCase();
+      usuarios = usuarios.filter(u => u.rol === rolLower);
+    }
+
     res.json(usuarios.map(u => u.toJSON()));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudieron leer usuarios" });
   }
 }
+
 
 export async function crearUsuario(req, res) {
   try {

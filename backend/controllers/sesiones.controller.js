@@ -91,3 +91,85 @@ export async function eliminarSesion(req, res) {
     res.status(500).json({ error: "No se pudo eliminar sesión" });
   }
 }
+
+export async function sesionesPorCliente(req, res) {
+  try {
+    const id = Number(req.params.id);
+
+    const data = await readJSON(FILE);
+    const sesiones = buildSesiones(data);
+
+    const result = sesiones
+      .filter(s => s.clienteId === id)
+      .map(s => s.toJSON());
+
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo sesiones del cliente" });
+  }
+}
+
+export async function sesionesPorEntrenador(req, res) {
+  try {
+    const id = Number(req.params.id);
+
+    const data = await readJSON(FILE);
+    const sesiones = buildSesiones(data);
+
+    const result = sesiones
+      .filter(s => s.entrenadorId === id)
+      .map(s => s.toJSON());
+
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo sesiones del entrenador" });
+  }
+}
+
+export async function agregarEjercicioASesion(req, res) {
+  try {
+    const id = Number(req.params.id);
+    const { ejercicioId, series, reps } = req.body;
+
+    const data = await readJSON(FILE);
+    let sesiones = buildSesiones(data);
+
+    const sesion = sesiones.find(s => s.id === id);
+    if (!sesion) return res.status(404).json({ error: "Sesión no encontrada" });
+
+    sesion.agregarEjercicio(Number(ejercicioId), Number(series), Number(reps));
+
+    await writeJSON(FILE, sesiones.map(s => s.toJSON()));
+    res.json(sesion.toJSON());
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error agregando ejercicio a la sesión" });
+  }
+}
+
+export async function eliminarEjercicioDeSesion(req, res) {
+  try {
+    const id = Number(req.params.id);
+    const ejercicioId = Number(req.params.ejercicioId);
+
+    const data = await readJSON(FILE);
+    let sesiones = buildSesiones(data);
+
+    const sesion = sesiones.find(s => s.id === id);
+    if (!sesion) return res.status(404).json({ error: "Sesión no encontrada" });
+
+    sesion.eliminarEjercicio(ejercicioId);
+
+    await writeJSON(FILE, sesiones.map(s => s.toJSON()));
+    res.json(sesion.toJSON());
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error eliminando ejercicio de la sesión" });
+  }
+}
