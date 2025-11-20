@@ -7,6 +7,7 @@ function buildUsuarios(arr) {
   return arr.map(u => Usuario.fromJSON(u));
 }
 
+
 export async function listarUsuarios(req, res) {
   try {
     const { rol } = req.query;
@@ -26,50 +27,45 @@ export async function listarUsuarios(req, res) {
   }
 }
 
-
 export async function crearUsuario(req, res) {
-  try {
-    const { nombre, rol } = req.body;
+  const { nombre, rol, password } = req.body;
 
-    const data = await readJSON(FILE);
-    const nuevo = new Usuario(Date.now(), nombre, rol);
-
-    data.push(nuevo.toJSON());
-    await writeJSON(FILE, data);
-
-    res.status(201).json(nuevo.toJSON());
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "No se pudo crear usuario" });
+  if (!nombre || !rol || !password) {
+    return res.status(400).json({ error: "nombre, rol y password son obligatorios" });
   }
+
+  const data = await readJSON(FILE);
+
+  const nuevo = new Usuario(Date.now(), nombre, rol, password);
+  data.push(nuevo);
+
+  await writeJSON(FILE, data);
+  res.status(201).json(nuevo);
 }
 
 export async function actualizarUsuario(req, res) {
-  try {
-    const id = Number(req.params.id);
+  const { id } = req.params;
+  const { nombre, rol, password } = req.body;
 
-    const data = await readJSON(FILE);
-    let usuarios = buildUsuarios(data);
+  const data = await readJSON(FILE);
+  const index = data.findIndex(u => String(u.id) === String(id));
 
-    const idx = usuarios.findIndex(u => u.id === id);
-    if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado" });
-
-    const usuario = usuarios[idx];
-    const { nombre, rol } = req.body;
-
-    if (nombre !== undefined) usuario.nombre = nombre.trim();
-    if (rol !== undefined) usuario.rol = rol.trim().toLowerCase();
-
-    usuarios[idx] = usuario;
-
-    await writeJSON(FILE, usuarios.map(u => u.toJSON()));
-
-    res.json(usuario.toJSON());
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "No se pudo actualizar usuario" });
+  if (index === -1) {
+    return res.status(404).json({ error: "Usuario no encontrado" });
   }
+
+  data[index] = {
+    ...data[index],
+    nombre: nombre ?? data[index].nombre,
+    rol: rol ?? data[index].rol,
+    password: password ?? data[index].password
+  };
+
+  await writeJSON(FILE, data);
+
+  res.json(data[index]);
 }
+
 
 export async function eliminarUsuario(req, res) {
   try {

@@ -1,9 +1,26 @@
+// models/Usuario.js
 export default class Usuario {
-  constructor(id, nombre, rol, createdAt = null) {
+  constructor(id, nombre, rol, password) {
     this.id = Number(id);
     this.nombre = String(nombre || "").trim();
-    this.rol = String(rol || "cliente").toLowerCase();
-    this.createdAt = createdAt || new Date().toISOString();
+    this.rol = rol?.toLowerCase() || "cliente";
+    this.password = String(password || "").trim();
+  }
+
+  descripcion() {
+    return `${this.nombre} (${this.rol})`;
+  }
+
+  esCliente() {
+    return this.rol === "cliente";
+  }
+
+  esEntrenador() {
+    return this.rol === "entrenador";
+  }
+
+  esAdmin() {
+    return this.rol === "admin";
   }
 
   toJSON() {
@@ -11,18 +28,12 @@ export default class Usuario {
       id: this.id,
       nombre: this.nombre,
       rol: this.rol,
-      createdAt: this.createdAt
+      password: this.password
     };
   }
 
   static fromJSON(obj) {
     if (!obj) return null;
-
-    return new Usuario(
-      obj.id,
-      obj.nombre,
-      obj.rol,
-      obj.createdAt
-    );
+    return new Usuario(obj.id, obj.nombre, obj.rol, obj.password);
   }
 }
