@@ -6,6 +6,7 @@ import usuariosRouter from "./routes/usuarios.routes.js";
 import sesionesRouter from "./routes/sesiones.routes.js";
 import logger from "./middlewares/logger.js";
 import { ensureDataFiles } from "./utils/fileService.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -31,3 +32,5 @@ app.get("/health", (req, res) => res.json({ ok: true, time: new Date().toISOStri
 app.listen(PORT, () => {
   console.log(`API corriendo en http://localhost:${PORT}`);
 });
+
+app.use(errorHandler);
