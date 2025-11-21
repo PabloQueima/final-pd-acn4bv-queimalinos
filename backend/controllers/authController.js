@@ -17,7 +17,7 @@ export async function login(req, res) {
     return res.status(401).json({ error: "Usuario no encontrado" });
   }
 
-  if (found.password !== password) {
+  if (found.passwordHash !== password) {
     return res.status(401).json({ error: "Contraseña incorrecta" });
   }
 

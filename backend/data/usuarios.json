@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "nombre": "Administrador General",
+    "nombre": "Admin",
     "rol": "admin",
     "passwordHash": "admin123",
     "createdAt": "2025-01-01T00:00:00Z"

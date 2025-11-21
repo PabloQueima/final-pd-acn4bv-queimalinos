@@ -14,10 +14,25 @@ export default function LoginPage() {
 
     try {
       const user = await login(nombre, password);
+      console.log("Login response:", user);
 
-      if (user.rol === "admin") navigate("/admin");
-      else if (user.rol === "entrenador") navigate("/entrenador");
-      else navigate("/cliente");
+      setNombre("");
+      setPassword("");
+
+      // Redireccionar según rol
+      switch (user.rol) {
+        case "admin":
+          navigate("/admin");
+          break;
+        case "entrenador":
+          navigate("/entrenador");
+          break;
+        case "cliente":
+          navigate("/cliente");
+          break;
+        default:
+          setError("Rol desconocido");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Error de login");
     }
@@ -38,7 +53,8 @@ export default function LoginPage() {
           background: "rgba(255,255,255,0.9)",
           padding: "2rem 3rem",
           borderRadius: "12px",
-          textAlign: "center"
+          textAlign: "center",
+          width: "300px"
         }}
       >
         <h2 style={{ color: "#0C3264", marginBottom: "1.5rem" }}>Login</h2>
@@ -51,12 +67,11 @@ export default function LoginPage() {
             style={{
               width: "100%",
               padding: "0.6rem",
-              marginBottom: "1rem",
+              marginBottom: "0.5rem",
               borderRadius: "6px",
               border: "1px solid #ccc"
             }}
           />
-
           <input
             type="password"
             placeholder="Contraseña"
@@ -65,16 +80,14 @@ export default function LoginPage() {
             style={{
               width: "100%",
               padding: "0.6rem",
-              marginBottom: "1rem",
+              marginBottom: "0.5rem",
               borderRadius: "6px",
               border: "1px solid #ccc"
             }}
           />
-
           {error && (
-            <p style={{ color: "red", marginBottom: "1rem" }}>{error}</p>
+            <p style={{ color: "red", marginBottom: "0.5rem" }}>{error}</p>
           )}
-
           <button
             type="submit"
             style={{

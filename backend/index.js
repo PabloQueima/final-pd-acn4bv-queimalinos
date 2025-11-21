@@ -9,8 +9,6 @@ import { ensureDataFiles } from "./utils/fileService.js";
 import errorHandler from "./middleware/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
 
-
-
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -21,20 +19,24 @@ try {
   process.exit(1);
 }
 
-app.use("/api", authRoutes);
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(logger);
 
+app.use("/api", authRoutes);
 app.use("/api/ejercicios", ejerciciosRouter);
 app.use("/api/usuarios", usuariosRouter);
 app.use("/api/sesiones", sesionesRouter);
 
 app.get("/health", (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`API corriendo en http://localhost:${PORT}`);
 });
-
-app.use(errorHandler);
