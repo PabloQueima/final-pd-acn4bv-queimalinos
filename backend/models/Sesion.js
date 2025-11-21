@@ -2,7 +2,7 @@ export default class Sesion {
   /**
    * @param {number} id
    * @param {string} titulo
-   * @param {Array<{id:number, series:number, reps:number}>} ejerciciosAsignados
+   * @param {Array<{id:number, series:number, reps:number}>} ejercicios
    * @param {number} clienteId
    * @param {number|null} entrenadorId
    * @param {string} createdAt
@@ -11,7 +11,7 @@ export default class Sesion {
   constructor(
     id,
     titulo,
-    ejerciciosAsignados = [],
+    ejercicios = [],
     clienteId,
     entrenadorId = null,
     createdAt = null,
@@ -19,7 +19,7 @@ export default class Sesion {
   ) {
     this.id = Number(id);
     this.titulo = String(titulo || "").trim();
-    this.ejerciciosAsignados = Array.isArray(ejerciciosAsignados) ? ejerciciosAsignados : [];
+    this.ejercicios = Array.isArray(ejercicios) ? ejercicios : [];
     this.clienteId = Number(clienteId);
     this.entrenadorId = entrenadorId !== null ? Number(entrenadorId) : null;
     this.createdAt = createdAt || new Date().toISOString();
@@ -27,20 +27,20 @@ export default class Sesion {
   }
 
   agregarEjercicio(id, series = 3, reps = 10) {
-    const existente = this.ejerciciosAsignados.find(e => e.id === id);
+    const existente = this.ejercicios.find(e => e.id === id);
 
     if (existente) {
       existente.series = series;
       existente.reps = reps;
     } else {
-      this.ejerciciosAsignados.push({ id, series, reps });
+      this.ejercicios.push({ id, series, reps });
     }
 
     this.updatedAt = new Date().toISOString();
   }
 
   eliminarEjercicio(id) {
-    this.ejerciciosAsignados = this.ejerciciosAsignados.filter(e => e.id !== id);
+    this.ejercicios = this.ejercicios.filter(e => e.id !== id);
     this.updatedAt = new Date().toISOString();
   }
 
@@ -50,7 +50,7 @@ export default class Sesion {
       titulo: this.titulo,
       clienteId: this.clienteId,
       entrenadorId: this.entrenadorId,
-      ejerciciosAsignados: this.ejerciciosAsignados,
+      ejercicios: this.ejercicios,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };
@@ -62,7 +62,7 @@ export default class Sesion {
     return new Sesion(
       obj.id,
       obj.titulo,
-      obj.ejerciciosAsignados,
+      obj.ejercicios,
       obj.clienteId,
       obj.entrenadorId,
       obj.createdAt,

@@ -21,7 +21,7 @@ export default function SesionForm({ onSubmit, initialData = null }) {
       setTitulo(initialData.titulo || "");
       setClienteId(initialData.clienteId || "");
       setEntrenadorId(initialData.entrenadorId || "");
-      setEjercicios(initialData.ejerciciosAsignados || []);
+      setEjercicios(initialData.ejercicios || []);
     }
   }, [initialData]);
 
@@ -63,7 +63,7 @@ export default function SesionForm({ onSubmit, initialData = null }) {
       titulo,
       clienteId,
       entrenadorId: entrenadorId || null,
-      ejerciciosAsignados: ejercicios
+      ejercicios: ejercicios
     };
 
     try {

@@ -31,12 +31,12 @@ export default function SesionesList({
             </small>
 
             {showAssignInfo &&
-              s.ejerciciosAsignados &&
-              s.ejerciciosAsignados.length > 0 && (
+              s.ejercicios &&
+              s.ejercicios.length > 0 && (
                 <div style={{ marginTop: 8 }}>
                   <em>Ejercicios:</em>
                   <ul style={{ marginTop: 6 }}>
-                    {s.ejerciciosAsignados.map((ej) => (
+                    {s.ejercicios.map((ej) => (
                       <li key={ej.id}>
                         Ejercicio {ej.id} — {ej.series}×{ej.reps}
                       </li>

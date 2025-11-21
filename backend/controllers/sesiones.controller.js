@@ -24,14 +24,14 @@ export async function listarSesiones(req, res) {
 
 export async function crearSesion(req, res) {
   try {
-    const { titulo, entrenadorId, clienteId, ejerciciosAsignados } = req.body;
+    const { titulo, entrenadorId, clienteId, ejercicios } = req.body;
 
     const data = await readJSON(FILE);
 
     const nueva = new Sesion(
       Date.now(),
       titulo,
-      ejerciciosAsignados || [],
+      ejercicios || [],
       clienteId,
       entrenadorId
     );
@@ -57,12 +57,12 @@ export async function actualizarSesion(req, res) {
     if (idx === -1) return res.status(404).json({ error: "Sesión no encontrada" });
 
     const sesion = sesiones[idx];
-    const { titulo, entrenadorId, clienteId, ejerciciosAsignados } = req.body;
+    const { titulo, entrenadorId, clienteId, ejercicios } = req.body;
 
     if (titulo !== undefined) sesion.titulo = titulo.trim();
     if (clienteId !== undefined) sesion.clienteId = Number(clienteId);
     if (entrenadorId !== undefined) sesion.entrenadorId = Number(entrenadorId);
-    if (Array.isArray(ejerciciosAsignados)) sesion.ejerciciosAsignados = ejerciciosAsignados;
+    if (Array.isArray(ejercicios)) sesion.ejercicios = ejercicios;
 
     sesion.updatedAt = new Date().toISOString();
 

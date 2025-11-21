@@ -2,7 +2,7 @@ import { readJSON } from "../utils/fileService.js";
 
 export async function validateSesion(req, res, next) {
   try {
-    const { titulo, clienteId, entrenadorId, ejerciciosAsignados } = req.body;
+    const { titulo, clienteId, entrenadorId, ejercicios } = req.body;
 
     // Validación básica
     if (!titulo || typeof titulo !== "string" || !titulo.trim()) {
@@ -14,7 +14,7 @@ export async function validateSesion(req, res, next) {
     }
 
     const usuarios = await readJSON("usuarios.json");
-    const ejercicios = await readJSON("ejercicios.json");
+    const ejerciciosDB = await readJSON("ejercicios.json");
 
     // Cliente debe existir y ser cliente
     const cliente = usuarios.find(u => u.id == clienteId && u.rol === "cliente");
@@ -30,27 +30,32 @@ export async function validateSesion(req, res, next) {
       }
     }
 
-    // Validar ejerciciosAsignados
-    if (ejerciciosAsignados !== undefined) {
-      if (!Array.isArray(ejerciciosAsignados)) {
-        return res.status(400).json({ error: "El campo 'ejerciciosAsignados' debe ser un array." });
+    // Validación de ejercicios (opcional)
+    if (ejercicios !== undefined) {
+
+      if (!Array.isArray(ejercicios)) {
+        return res.status(400).json({ error: "El campo 'ejercicios' debe ser un array." });
       }
 
-      for (const ej of ejerciciosAsignados) {
-        if (!ej.id || typeof ej.id !== "number") {
-          return res.status(400).json({ error: "Cada ejercicio debe contener 'id' numérico." });
+      for (const ej of ejercicios) {
+
+        if (!ej.id) {
+          return res.status(400).json({ error: "Cada ejercicio debe contener un 'id' válido." });
         }
 
-        if (!ejercicios.find(e => e.id === ej.id)) {
+        // En tu sistema los IDs son strings, no números
+        const exists = ejerciciosDB.find(e => e.id === ej.id);
+        if (!exists) {
           return res.status(400).json({ error: `El ejercicio con id ${ej.id} no existe.` });
         }
 
-        if (typeof ej.series !== "number" || ej.series <= 0) {
-          return res.status(400).json({ error: "El campo 'series' debe ser un número mayor a 0." });
+        // series y reps opcionales, permiten 0
+        if (ej.series !== undefined && typeof ej.series !== "number") {
+          return res.status(400).json({ error: "El campo 'series' debe ser número." });
         }
 
-        if (typeof ej.reps !== "number" || ej.reps <= 0) {
-          return res.status(400).json({ error: "El campo 'reps' debe ser un número mayor a 0." });
+        if (ej.reps !== undefined && typeof ej.reps !== "number") {
+          return res.status(400).json({ error: "El campo 'reps' debe ser número." });
         }
       }
     }
