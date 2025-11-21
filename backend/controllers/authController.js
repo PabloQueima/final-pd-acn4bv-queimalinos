@@ -1,13 +1,13 @@
-import fs from "fs";
+import { readJSON } from "../utils/fileService.js";
 
-export function login(req, res) {
+export async function login(req, res) {
   const { nombre, password } = req.body;
 
   if (!nombre || !password) {
     return res.status(400).json({ error: "Faltan credenciales" });
   }
 
-  const usuarios = JSON.parse(fs.readFileSync("./data/usuarios.json", "utf8"));
+  const usuarios = await readJSON("usuarios.json");
 
   const found = usuarios.find(
     u => u.nombre.toLowerCase() === nombre.toLowerCase()
@@ -17,7 +17,7 @@ export function login(req, res) {
     return res.status(401).json({ error: "Usuario no encontrado" });
   }
 
-  if (found.passwordHash !== password) {
+  if (found.password !== password) {
     return res.status(401).json({ error: "Contraseña incorrecta" });
   }
 
