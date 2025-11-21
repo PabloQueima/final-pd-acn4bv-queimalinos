@@ -7,6 +7,9 @@ import sesionesRouter from "./routes/sesiones.routes.js";
 import logger from "./middlewares/logger.js";
 import { ensureDataFiles } from "./utils/fileService.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import authRoutes from "./routes/authRoutes.js";
+
+
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -18,6 +21,7 @@ try {
   process.exit(1);
 }
 
+app.use("/api", authRoutes);
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
