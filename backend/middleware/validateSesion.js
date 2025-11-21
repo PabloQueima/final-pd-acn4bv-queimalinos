@@ -4,7 +4,6 @@ export async function validateSesion(req, res, next) {
   try {
     const { titulo, clienteId, entrenadorId, ejercicios } = req.body;
 
-    // Validación básica
     if (!titulo || typeof titulo !== "string" || !titulo.trim()) {
       return res.status(400).json({ error: "El campo 'titulo' es obligatorio y debe ser texto." });
     }
@@ -16,21 +15,20 @@ export async function validateSesion(req, res, next) {
     const usuarios = await readJSON("usuarios.json");
     const ejerciciosDB = await readJSON("ejercicios.json");
 
-    // Cliente debe existir y ser cliente
-    const cliente = usuarios.find(u => u.id == clienteId && u.rol === "cliente");
+    const cliente = usuarios.find(u => Number(u.id) === Number(clienteId) && u.rol === "cliente");
     if (!cliente) {
-      return res.status(400).json({ error: "El clienteId no es válido o no corresponde a un usuario con rol 'cliente'." });
+      return res.status(400).json({
+        error: "El clienteId no es válido o no corresponde a un usuario con rol 'cliente'."
+      });
     }
 
-    // Entrenador opcional, pero si viene debe existir
     if (entrenadorId !== undefined && entrenadorId !== null) {
-      const entrenador = usuarios.find(u => u.id == entrenadorId && u.rol === "entrenador");
+      const entrenador = usuarios.find(u => Number(u.id) === Number(entrenadorId) && u.rol === "entrenador");
       if (!entrenador) {
         return res.status(400).json({ error: "El entrenadorId no corresponde a un entrenador válido." });
       }
     }
 
-    // Validación de ejercicios (opcional)
     if (ejercicios !== undefined) {
 
       if (!Array.isArray(ejercicios)) {
@@ -38,24 +36,21 @@ export async function validateSesion(req, res, next) {
       }
 
       for (const ej of ejercicios) {
-
         if (!ej.id) {
           return res.status(400).json({ error: "Cada ejercicio debe contener un 'id' válido." });
         }
 
-        // En tu sistema los IDs son strings, no números
-        const exists = ejerciciosDB.find(e => e.id === ej.id);
+        const exists = ejerciciosDB.find(e => Number(e.id) === Number(ej.id));
         if (!exists) {
           return res.status(400).json({ error: `El ejercicio con id ${ej.id} no existe.` });
         }
 
-        // series y reps opcionales, permiten 0
         if (ej.series !== undefined && typeof ej.series !== "number") {
-          return res.status(400).json({ error: "El campo 'series' debe ser número." });
+          return res.status(400).json({ error: "El campo 'series' debe ser un número." });
         }
 
         if (ej.reps !== undefined && typeof ej.reps !== "number") {
-          return res.status(400).json({ error: "El campo 'reps' debe ser número." });
+          return res.status(400).json({ error: "El campo 'reps' debe ser un número." });
         }
       }
     }
