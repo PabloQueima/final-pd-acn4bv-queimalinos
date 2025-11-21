@@ -9,17 +9,11 @@ export default function EjerciciosList({ ejercicios, onEdit, onDelete }) {
         <li key={e.id} style={{ marginBottom: 8 }}>
           {e.nombre} — {e.descripcion}
 
-          <button
-            style={{ marginLeft: 10 }}
-            onClick={() => onEdit(e)}
-          >
+          <button style={{ marginLeft: 10 }} onClick={() => onEdit(e)}>
             Editar
           </button>
 
-          <button
-            style={{ marginLeft: 6 }}
-            onClick={() => onDelete(e.id)}
-          >
+          <button style={{ marginLeft: 6 }} onClick={() => onDelete(e.id)}>
             Eliminar
           </button>
         </li>

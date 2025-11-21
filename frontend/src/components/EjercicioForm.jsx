@@ -21,6 +21,11 @@ export default function EjercicioForm({ onSubmit, initialData = null }) {
       return;
     }
 
+    if (descripcion.trim().length < 3) {
+      setError("La descripción debe tener al menos 3 caracteres.");
+      return;
+    }
+
     try {
       await onSubmit({ nombre, descripcion });
       if (!initialData) {
