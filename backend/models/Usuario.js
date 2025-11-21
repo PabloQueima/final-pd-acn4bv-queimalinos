@@ -1,4 +1,3 @@
-// models/Usuario.js
 export default class Usuario {
   constructor(id, nombre, rol, password) {
     this.id = Number(id);

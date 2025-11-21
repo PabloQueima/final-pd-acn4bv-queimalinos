@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login } from "../services/auth";
+import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
@@ -13,42 +13,40 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    const user = await login(nombre, password);
-    if (!user) {
-      setError("Credenciales inválidas");
-      return;
-    }
+    try {
+      const user = await login(nombre, password);
 
-    if (user.rol === "admin") navigate("/admin/usuarios");
-    if (user.rol === "entrenador") navigate("/entrenador/sesiones");
-    if (user.rol === "cliente") navigate("/cliente/sesiones");
+      if (user.rol === "admin") navigate("/admin");
+      else if (user.rol === "entrenador") navigate("/entrenador");
+      else navigate("/cliente");
+    } catch (err) {
+      setError(err.response?.data?.error || "Error de login");
+    }
   }
 
   return (
-    <div style={{ padding: 30, maxWidth: 400, margin: "0 auto" }}>
-      <h2>Iniciar Sesión</h2>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div>
+      <h2>Login</h2>
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Nombre</label>
           <input
+            placeholder="Nombre"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            required
           />
         </div>
 
         <div>
-          <label>Contraseña</label>
           <input
             type="password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
         </div>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
         <button type="submit">Ingresar</button>
       </form>
