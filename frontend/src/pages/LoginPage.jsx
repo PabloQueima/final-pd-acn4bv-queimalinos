@@ -19,17 +19,9 @@ export default function LoginPage() {
       setNombre("");
       setPassword("");
 
-      // Redireccionar según rol
-      switch (user.rol) {
-        case "admin":
-          return navigate("/admin");
-        case "entrenador":
-          return navigate("/entrenador");
-        case "cliente":
-          return navigate("/cliente");
-        default:
-          return setError("Rol desconocido");
-      }
+      // Redirección + refresh PROLIJA y SIN romper nada del proyecto
+      window.location.href = `/${user.rol}`;
+      return;
 
     } catch (err) {
       setError(err.response?.data?.error || "Error de login");
@@ -70,6 +62,7 @@ export default function LoginPage() {
               border: "1px solid #ccc"
             }}
           />
+
           <input
             type="password"
             placeholder="Contraseña"
@@ -83,9 +76,11 @@ export default function LoginPage() {
               border: "1px solid #ccc"
             }}
           />
+
           {error && (
             <p style={{ color: "red", marginBottom: "0.5rem" }}>{error}</p>
           )}
+
           <button
             type="submit"
             style={{

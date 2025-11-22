@@ -5,9 +5,21 @@
     "clienteId": 101,
     "entrenadorId": 201,
     "ejercicios": [
-      { "id": 1, "series": 3, "reps": 12 },
-      { "id": 5, "series": 3, "reps": 10 },
-      { "id": 13, "series": 4, "reps": 12 }
+      {
+        "id": 1,
+        "series": 3,
+        "reps": 12
+      },
+      {
+        "id": 5,
+        "series": 3,
+        "reps": 10
+      },
+      {
+        "id": 13,
+        "series": 4,
+        "reps": 12
+      }
     ],
     "createdAt": "2025-01-02T10:00:00Z"
   },
@@ -17,9 +29,21 @@
     "clienteId": 102,
     "entrenadorId": 202,
     "ejercicios": [
-      { "id": 2, "series": 4, "reps": 10 },
-      { "id": 6, "series": 3, "reps": 8 },
-      { "id": 11, "series": 3, "reps": 12 }
+      {
+        "id": 2,
+        "series": 4,
+        "reps": 10
+      },
+      {
+        "id": 6,
+        "series": 3,
+        "reps": 8
+      },
+      {
+        "id": 11,
+        "series": 3,
+        "reps": 12
+      }
     ],
     "createdAt": "2025-01-02T12:00:00Z"
   },
@@ -29,9 +53,21 @@
     "clienteId": 103,
     "entrenadorId": 201,
     "ejercicios": [
-      { "id": 7, "series": 3, "reps": 10 },
-      { "id": 8, "series": 4, "reps": 8 },
-      { "id": 15, "series": 3, "reps": 12 }
+      {
+        "id": 7,
+        "series": 3,
+        "reps": 10
+      },
+      {
+        "id": 8,
+        "series": 4,
+        "reps": 8
+      },
+      {
+        "id": 15,
+        "series": 3,
+        "reps": 12
+      }
     ],
     "createdAt": "2025-01-03T09:30:00Z"
   },
@@ -41,9 +77,21 @@
     "clienteId": 101,
     "entrenadorId": 202,
     "ejercicios": [
-      { "id": 18, "series": 4, "reps": 20 },
-      { "id": 1, "series": 3, "reps": 15 },
-      { "id": 2, "series": 3, "reps": 12 }
+      {
+        "id": 18,
+        "series": 4,
+        "reps": 20
+      },
+      {
+        "id": 1,
+        "series": 3,
+        "reps": 15
+      },
+      {
+        "id": 2,
+        "series": 3,
+        "reps": 12
+      }
     ],
     "createdAt": "2025-01-05T11:00:00Z"
   },
@@ -53,10 +101,31 @@
     "clienteId": 104,
     "entrenadorId": 201,
     "ejercicios": [
-      { "id": 3, "series": 4, "reps": 15 },
-      { "id": 4, "series": 3, "reps": 60 },
-      { "id": 19, "series": 4, "reps": 30 }
+      {
+        "id": 3,
+        "series": 4,
+        "reps": 15
+      },
+      {
+        "id": 4,
+        "series": 3,
+        "reps": 60
+      },
+      {
+        "id": 19,
+        "series": 4,
+        "reps": 30
+      }
     ],
     "createdAt": "2025-01-06T14:20:00Z"
+  },
+  {
+    "id": 1763770746988,
+    "titulo": "Para JUAN",
+    "clienteId": 101,
+    "entrenadorId": 202,
+    "ejercicios": [],
+    "createdAt": "2025-11-22T00:19:06.988Z",
+    "updatedAt": null
   }
 ]
