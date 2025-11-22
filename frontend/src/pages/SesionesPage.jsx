@@ -200,7 +200,7 @@ export default function SesionesPage() {
 
       <hr />
 
-      <h3>Sesiones existentes</h3>
+      <h3>Sesiones existentes para este Entrenador</h3>
 
       {loading ? (
         <p>Cargando...</p>

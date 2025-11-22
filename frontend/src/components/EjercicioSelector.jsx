@@ -9,7 +9,6 @@ export default function EjercicioSelector({ onAdd }) {
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  const [selectedId, setSelectedId] = useState("");
   const [series, setSeries] = useState(3);
   const [reps, setReps] = useState(10);
 
@@ -19,8 +18,19 @@ export default function EjercicioSelector({ onAdd }) {
 
   async function cargarEjercicios() {
     setLoading(true);
-    const data = await getEjercicios({ search });
-    setEjercicios(data);
+    const data = await getEjercicios();
+    const filtro = search.trim().toLowerCase();
+
+    const filtrado = filtro
+      ? data.filter(
+          (e) =>
+            e.nombre.toLowerCase().includes(filtro) ||
+            e.descripcion.toLowerCase().includes(filtro) ||
+            e.parteCuerpo.toLowerCase().includes(filtro)
+        )
+      : data;
+
+    setEjercicios(filtrado);
     setPage(1);
     setLoading(false);
   }
@@ -28,47 +38,64 @@ export default function EjercicioSelector({ onAdd }) {
   const totalPages = Math.ceil(ejercicios.length / pageSize) || 1;
   const pageData = ejercicios.slice((page - 1) * pageSize, page * pageSize);
 
-  function handleAdd() {
-    if (!selectedId) return;
-
+  function handleAdd(ejercicio) {
     onAdd({
-      id: Number(selectedId),
+      id: ejercicio.id,
       series: Number(series),
       reps: Number(reps),
     });
-
-    setSelectedId("");
   }
 
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div style={{ marginBottom: 20, padding: 10, border: "1px solid #ccc" }}>
       <h4>Agregar Ejercicio</h4>
 
+      {/* BUSCADOR */}
       <input
         placeholder="Buscar ejercicio..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{ marginBottom: 10 }}
+        style={{ marginBottom: 10, width: "100%" }}
       />
 
       {loading ? (
         <p>Cargando...</p>
       ) : (
         <>
-          <select
-            value={selectedId}
-            onChange={(e) => setSelectedId(e.target.value)}
-            style={{ display: "block", marginBottom: 10 }}
-          >
-            <option value="">Seleccionar...</option>
+          {/* LISTA PAGINADA */}
+          <ul style={{ padding: 0, listStyle: "none" }}>
             {pageData.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.nombre}
-              </option>
-            ))}
-          </select>
+              <li
+                key={e.id}
+                style={{
+                  padding: "8px 0",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
+                <strong>{e.nombre}</strong>
+                <br />
+                <small>{e.descripcion}</small>
+                <br />
+                <small>
+                  Parte: {e.parteCuerpo} | Elemento: {e.elemento || "ninguno"}
+                </small>
+                <br />
 
-          <div style={{ marginBottom: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => handleAdd(e)}
+                  style={{ marginTop: 5 }}
+                >
+                  Agregar
+                </button>
+              </li>
+            ))}
+
+            {pageData.length === 0 && <p>No se encontraron ejercicios.</p>}
+          </ul>
+
+          {/* PAGINACIÓN */}
+          <div style={{ margin: "10px 0" }}>
             <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
               ◀
             </button>
@@ -85,28 +112,30 @@ export default function EjercicioSelector({ onAdd }) {
             </button>
           </div>
 
-          <div style={{ marginBottom: 10 }}>
-            <input
-              type="number"
-              min="1"
-              value={series}
-              onChange={(e) => setSeries(e.target.value)}
-              placeholder="Series"
-            />
+          {/* SERIES Y REPS */}
+          <div style={{ marginTop: 10 }}>
+            <label>
+              Series:
+              <input
+                type="number"
+                min="1"
+                value={series}
+                onChange={(e) => setSeries(e.target.value)}
+                style={{ width: 60, marginLeft: 5 }}
+              />
+            </label>
 
-            <input
-              type="number"
-              min="1"
-              value={reps}
-              onChange={(e) => setReps(e.target.value)}
-              placeholder="Reps"
-              style={{ marginLeft: 10 }}
-            />
+            <label style={{ marginLeft: 10 }}>
+              Reps:
+              <input
+                type="number"
+                min="1"
+                value={reps}
+                onChange={(e) => setReps(e.target.value)}
+                style={{ width: 60, marginLeft: 5 }}
+              />
+            </label>
           </div>
-
-          <button type="button" onClick={handleAdd}>
-            Agregar ejercicio a la sesión
-          </button>
         </>
       )}
     </div>
