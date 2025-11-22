@@ -158,5 +158,13 @@
     "parteCuerpo": "general",
     "elemento": "",
     "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 1763772180231,
+    "nombre": "Press plano",
+    "descripcion": "Ejercicio de Pecho",
+    "parteCuerpo": "",
+    "elemento": "",
+    "createdAt": "2025-11-22T00:43:00.231Z"
   }
 ]

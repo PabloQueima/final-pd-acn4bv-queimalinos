@@ -19,7 +19,7 @@ export default function SesionesPage() {
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  // FILTRO POR ROL
+  // ROL ACTUAL
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentRol = storedUser?.rol || "cliente";
   const currentId = storedUser?.id || null;
@@ -32,18 +32,20 @@ export default function SesionesPage() {
     setLoading(true);
 
     try {
-      const data = await getSesiones();
+      let data;
+
+      if (currentRol === "entrenador") {
+        data = await getSesiones({ entrenadorId: currentId });
+      } else if (currentRol === "cliente") {
+        data = await getSesiones({ clienteId: currentId });
+      } else {
+        data = await getSesiones();
+      }
 
       let result = data || [];
 
-      // FILTRO POR ROL (entrenador ve solo las suyas)
-      if (currentRol === "entrenador") {
-        result = result.filter(s => Number(s.entrenadorId) === Number(currentId));
-      }
-
-      // BUSQUEDA POR TITULO
       if (search.trim() !== "") {
-        result = result.filter(s =>
+        result = result.filter((s) =>
           s.titulo.toLowerCase().includes(search.toLowerCase())
         );
       }
@@ -81,7 +83,6 @@ export default function SesionesPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // PAGINADO REAL (EN EL FRONT)
   const totalPages = Math.ceil(sesiones.length / pageSize) || 1;
   const pageData = sesiones.slice((page - 1) * pageSize, page * pageSize);
 
@@ -89,7 +90,6 @@ export default function SesionesPage() {
     <div>
       <h2>Gestión de Sesiones</h2>
 
-      {/* BUSCADOR */}
       <input
         placeholder="Buscar sesión por título..."
         value={search}
@@ -97,7 +97,6 @@ export default function SesionesPage() {
         style={{ marginBottom: 20 }}
       />
 
-      {/* FORM SOLO PARA ADMIN Y ENTRENADOR */}
       {currentRol !== "cliente" && (
         <SesionForm
           onSubmit={editando ? handleEditar : handleCrear}
@@ -120,7 +119,6 @@ export default function SesionesPage() {
             showAssignInfo={true}
           />
 
-          {/* PAGINADOR */}
           <div style={{ marginTop: 10 }}>
             <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
               ◀
@@ -130,7 +128,10 @@ export default function SesionesPage() {
               Página {page} / {totalPages}
             </span>
 
-            <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+            >
               ▶
             </button>
           </div>

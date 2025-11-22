@@ -118,14 +118,5 @@
       }
     ],
     "createdAt": "2025-01-06T14:20:00Z"
-  },
-  {
-    "id": 1763770746988,
-    "titulo": "Para JUAN",
-    "clienteId": 101,
-    "entrenadorId": 202,
-    "ejercicios": [],
-    "createdAt": "2025-11-22T00:19:06.988Z",
-    "updatedAt": null
   }
 ]

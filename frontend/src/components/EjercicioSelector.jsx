@@ -6,11 +6,9 @@ export default function EjercicioSelector({ onAdd }) {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // PAGINADO REAL
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  // CAMPOS DEL EJERCICIO A AGREGAR
   const [selectedId, setSelectedId] = useState("");
   const [series, setSeries] = useState(3);
   const [reps, setReps] = useState(10);
@@ -36,7 +34,7 @@ export default function EjercicioSelector({ onAdd }) {
     onAdd({
       id: Number(selectedId),
       series: Number(series),
-      reps: Number(reps)
+      reps: Number(reps),
     });
 
     setSelectedId("");
@@ -46,7 +44,6 @@ export default function EjercicioSelector({ onAdd }) {
     <div style={{ marginBottom: 20 }}>
       <h4>Agregar Ejercicio</h4>
 
-      {/* BUSCADOR */}
       <input
         placeholder="Buscar ejercicio..."
         value={search}
@@ -58,7 +55,6 @@ export default function EjercicioSelector({ onAdd }) {
         <p>Cargando...</p>
       ) : (
         <>
-          {/* SELECT PAGINADO */}
           <select
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
@@ -72,7 +68,6 @@ export default function EjercicioSelector({ onAdd }) {
             ))}
           </select>
 
-          {/* PAGINACION */}
           <div style={{ marginBottom: 10 }}>
             <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
               ◀
@@ -82,12 +77,14 @@ export default function EjercicioSelector({ onAdd }) {
               Página {page} / {totalPages}
             </span>
 
-            <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+            >
               ▶
             </button>
           </div>
 
-          {/* SERIES Y REPS */}
           <div style={{ marginBottom: 10 }}>
             <input
               type="number"
@@ -107,7 +104,9 @@ export default function EjercicioSelector({ onAdd }) {
             />
           </div>
 
-          <button onClick={handleAdd}>Agregar ejercicio a la sesión</button>
+          <button type="button" onClick={handleAdd}>
+            Agregar ejercicio a la sesión
+          </button>
         </>
       )}
     </div>

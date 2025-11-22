@@ -43,11 +43,24 @@ export async function deleteEjercicio(id) {
 }
 
 // ----------------
-// SESIONES
+// SESIONES (CORREGIDO)
 // ----------------
 export async function getSesiones(params = {}) {
-  const query = buildQuery(params);
-  const res = await fetch(`${API_URL}/sesiones${query}`);
+
+  // Cliente → usa ruta correcta
+  if (params.clienteId) {
+    const res = await fetch(`${API_URL}/sesiones/cliente/${params.clienteId}`);
+    return res.json();
+  }
+
+  // Entrenador → usa ruta correcta
+  if (params.entrenadorId) {
+    const res = await fetch(`${API_URL}/sesiones/entrenador/${params.entrenadorId}`);
+    return res.json();
+  }
+
+  // Admin → obtiene todas
+  const res = await fetch(`${API_URL}/sesiones`);
   return res.json();
 }
 

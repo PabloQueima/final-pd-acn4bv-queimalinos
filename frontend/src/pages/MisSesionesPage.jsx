@@ -5,12 +5,11 @@ import { getCurrentUser } from "../services/authService";
 
 export default function MisSesionesPage() {
   const user = getCurrentUser();
-  const clienteId = user?.id;
-
   const [sesiones, setSesiones] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!user) return;
     cargarMisSesiones();
   }, []);
 
@@ -18,9 +17,8 @@ export default function MisSesionesPage() {
     setLoading(true);
 
     try {
-      const data = await getSesiones();
-      const mine = (data || []).filter(s => Number(s.clienteId) === clienteId);
-      setSesiones(mine);
+      const data = await getSesiones({ clienteId: user.id });
+      setSesiones(data || []);
     } catch (err) {
       console.error("Error cargando sesiones:", err);
       setSesiones([]);
@@ -30,13 +28,13 @@ export default function MisSesionesPage() {
   }
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <h2>Mis Sesiones</h2>
 
       {loading ? (
         <p>Cargando...</p>
       ) : (
-        <SesionesList sesiones={sesiones} showAssignInfo={true} />
+        <SesionesList sesiones={sesiones} />
       )}
     </div>
   );
