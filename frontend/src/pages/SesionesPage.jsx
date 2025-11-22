@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   getSesiones,
   createSesion,
@@ -18,6 +18,9 @@ export default function SesionesPage() {
   const [saving, setSaving] = useState(false);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debounceRef = useRef(null);
+
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
@@ -27,6 +30,13 @@ export default function SesionesPage() {
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentRol = storedUser?.rol || "cliente";
   const currentId = storedUser?.id || null;
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+  }, [search]);
 
   useEffect(() => {
     cargarReferencias();
@@ -47,8 +57,7 @@ export default function SesionesPage() {
 
       setUsuariosMap(uMap);
       setEjerciciosMap(eMap);
-    } catch (err) {
-      console.error("Error cargando referencias:", err);
+    } catch {
       setUsuariosMap({});
       setEjerciciosMap({});
     }
@@ -56,8 +65,7 @@ export default function SesionesPage() {
 
   useEffect(() => {
     cargarSesiones();
-    setPage(1);
-  }, [search]);
+  }, [debouncedSearch]);
 
   async function cargarSesiones() {
     setLoading(true);
@@ -73,22 +81,20 @@ export default function SesionesPage() {
 
       let result = data || [];
 
-      if (search.trim() !== "") {
+      if (debouncedSearch.trim() !== "") {
         result = result.filter((s) =>
-          s.titulo.toLowerCase().includes(search.toLowerCase())
+          s.titulo.toLowerCase().includes(debouncedSearch.toLowerCase())
         );
       }
 
       setSesiones(result);
-    } catch (err) {
-      console.error("Error cargando sesiones:", err);
+    } catch {
       setSesiones([]);
     } finally {
       setLoading(false);
     }
   }
 
-  // Crear sesión
   async function handleCrear(payload) {
     setSaving(true);
     try {
@@ -99,15 +105,11 @@ export default function SesionesPage() {
       await cargarSesiones();
       setEditando(null);
       setPage(1);
-    } catch (err) {
-      console.error("Error creando sesión:", err);
-      throw err;
     } finally {
       setSaving(false);
     }
   }
 
-  // Editar sesión
   async function handleEditar(payload) {
     if (!editando) return;
     setSaving(true);
@@ -115,9 +117,6 @@ export default function SesionesPage() {
       await updateSesion(editando.id, payload);
       setEditando(null);
       await cargarSesiones();
-    } catch (err) {
-      console.error("Error editando sesión:", err);
-      throw err;
     } finally {
       setSaving(false);
     }
@@ -131,9 +130,7 @@ export default function SesionesPage() {
       const totalPagesAfter = Math.max(1, Math.ceil(remaining / pageSize));
       if (page > totalPagesAfter) setPage(totalPagesAfter);
       await cargarSesiones();
-    } catch (err) {
-      console.error("Error eliminando sesión:", err);
-    }
+    } catch {}
   }
 
   function iniciarEdicion(sesion) {
@@ -157,7 +154,6 @@ export default function SesionesPage() {
     <div style={{ padding: 20 }}>
       <h2>Crear/Editar Sesiones</h2>
 
-      {/* FORM: crea/edita */}
       <div style={{
         background: "#fff",
         padding: 16,
@@ -181,13 +177,18 @@ export default function SesionesPage() {
         {saving && <p style={{ marginTop: 8 }}>Guardando...</p>}
       </div>
 
-      {/* Buscador */}
       <div style={{ marginBottom: 12, display: "flex", gap: 8, alignItems: "center" }}>
         <input
           placeholder="Buscar sesión por título..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
+          style={{
+            padding: 8,
+            borderRadius: 6,
+            border: "1px solid #ccc",
+            width: "300px",
+            maxWidth: "100%"
+          }}
         />
         <button
           onClick={() => { setSearch(""); setPage(1); }}
@@ -206,17 +207,25 @@ export default function SesionesPage() {
         <p>Cargando...</p>
       ) : (
         <>
-          <SesionesList
-            sesiones={pageData}
-            onEdit={currentRol !== "cliente" ? iniciarEdicion : null}
-            onDelete={currentRol !== "cliente" ? handleEliminar : null}
-            showAssignInfo={true}
-            showButtons={currentRol !== "cliente"}
-            ejerciciosMap={ejerciciosMap}
-            usuariosMap={usuariosMap}
-          />
+          <div
+            style={{
+              minHeight: "420px",
+              transition: "min-height 0.2s ease",
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            <SesionesList
+              sesiones={pageData}
+              onEdit={currentRol !== "cliente" ? iniciarEdicion : null}
+              onDelete={currentRol !== "cliente" ? handleEliminar : null}
+              showAssignInfo={true}
+              showButtons={currentRol !== "cliente"}
+              ejerciciosMap={ejerciciosMap}
+              usuariosMap={usuariosMap}
+            />
+          </div>
 
-          {/* PAGINADOR */}
           <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
             <button disabled={page <= 1} onClick={() => setPage(1)} type="button">Primera</button>
             <button disabled={page <= 1} onClick={() => setPage(page - 1)} type="button">◀</button>
