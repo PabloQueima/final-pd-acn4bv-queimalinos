@@ -43,15 +43,16 @@ export default function SesionesList({
                     <ul style={{ marginTop: 6 }}>
                       {s.ejercicios.map((ej) => {
                         const data = ejerciciosMap[ej.id];
-                        const nombre = data?.nombre || `Ejercicio ${ej.id}`;
-                        const descripcion = data?.descripcion || "";
-
                         return (
                           <li key={ej.id}>
-                            <b>{nombre}</b>
-                            {descripcion ? ` — ${descripcion}` : ""}
-                            {" — "}
-                            {ej.series}×{ej.reps}
+                            <b>{data?.nombre || `Ejercicio ${ej.id}`}</b>
+                            {data?.descripcion ? ` — ${data.descripcion}` : ""}
+                            <br />
+                            <small>Parte: {data?.parteCuerpo}</small>
+                            <br />
+                            <small>Elemento: {data?.elemento || "Ninguno"}</small>
+                            <br />
+                            <strong>{ej.series}×{ej.reps}</strong>
                           </li>
                         );
                       })}

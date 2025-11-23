@@ -85,9 +85,9 @@ export default function EjercicioSelector({ onAdd }) {
                 <br />
                 <small>{e.descripcion}</small>
                 <br />
-                <small>
-                  Parte: {e.parteCuerpo} | Elemento: {e.elemento || "ninguno"}
-                </small>
+                <small>Parte: {e.parteCuerpo}</small>
+                <br />
+                <small>Elemento: {e.elemento || "Ninguno"}</small>
                 <br />
                 <button
                   type="button"

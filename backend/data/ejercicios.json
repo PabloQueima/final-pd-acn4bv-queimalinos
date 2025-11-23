@@ -403,8 +403,8 @@
     "id": 1763858338953,
     "nombre": "Estocadas",
     "descripcion": "Trabajo de piernas",
-    "parteCuerpo": "",
-    "elemento": "",
+    "parteCuerpo": "piernas",
+    "elemento": "mancuernas",
     "createdAt": "2025-11-23T00:38:58.953Z"
   }
 ]

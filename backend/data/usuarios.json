@@ -32,7 +32,8 @@
     "nombre": "Ana Cliente",
     "rol": "cliente",
     "passwordHash": "cliente123",
-    "createdAt": "2025-01-01T01:10:00Z"
+    "createdAt": "2025-01-01T01:10:00Z",
+    "password": "prueba1"
   },
   {
     "id": 103,
