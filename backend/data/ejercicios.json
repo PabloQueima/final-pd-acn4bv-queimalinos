@@ -160,11 +160,251 @@
     "createdAt": "2025-01-01T00:00:00Z"
   },
   {
-    "id": 1763772180231,
-    "nombre": "Press plano",
-    "descripcion": "Ejercicio de Pecho",
+    "id": 21,
+    "nombre": "Dominadas",
+    "descripcion": "Trabajo completo de espalda y brazos",
+    "parteCuerpo": "espalda",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 22,
+    "nombre": "Press banca inclinado",
+    "descripcion": "Trabajo de la parte superior del pecho",
+    "parteCuerpo": "pecho",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 23,
+    "nombre": "Remo con barra",
+    "descripcion": "Trabajo de dorsal, romboides y bíceps",
+    "parteCuerpo": "espalda",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 24,
+    "nombre": "Press francés",
+    "descripcion": "Aislamiento de tríceps",
+    "parteCuerpo": "brazos",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 25,
+    "nombre": "Curl de bíceps en banco inclinado",
+    "descripcion": "Aislamiento del bíceps, cabeza larga",
+    "parteCuerpo": "brazos",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 26,
+    "nombre": "Remo al mentón",
+    "descripcion": "Trabajo de trapecio y deltoides",
+    "parteCuerpo": "hombros",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 27,
+    "nombre": "Face down hip raise",
+    "descripcion": "Trabajo de glúteos e isquios",
+    "parteCuerpo": "gluteos",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 28,
+    "nombre": "Giros rusos",
+    "descripcion": "Trabajo de oblicuos y core",
+    "parteCuerpo": "abdomen",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 29,
+    "nombre": "Elevación de talones",
+    "descripcion": "Trabajo de gemelos",
+    "parteCuerpo": "piernas",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 30,
+    "nombre": "Curl de martillo",
+    "descripcion": "Trabajo de braquiorradial y bíceps",
+    "parteCuerpo": "brazos",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 31,
+    "nombre": "Press cerrado",
+    "descripcion": "Pecho y tríceps con mayor énfasis en triceps",
+    "parteCuerpo": "pecho",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 32,
+    "nombre": "Pase de balón por encima de la cabeza",
+    "descripcion": "Trabajo de hombros y core",
+    "parteCuerpo": "hombros",
+    "elemento": "balón medicinal",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 33,
+    "nombre": "Caminata lateral con banda",
+    "descripcion": "Trabajo de abductores y glúteos",
+    "parteCuerpo": "gluteos",
+    "elemento": "banda elástica",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 34,
+    "nombre": "Extensión lumbar en banco",
+    "descripcion": "Trabajo de zona lumbar",
+    "parteCuerpo": "espalda baja",
+    "elemento": "banco romano",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 35,
+    "nombre": "Jump squats",
+    "descripcion": "Trabajo explosivo de piernas",
+    "parteCuerpo": "piernas",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 36,
+    "nombre": "Press Arnold",
+    "descripcion": "Trabajo completo de hombros",
+    "parteCuerpo": "hombros",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 37,
+    "nombre": "Jalón al pecho",
+    "descripcion": "Trabajo de dorsal y bíceps",
+    "parteCuerpo": "espalda",
+    "elemento": "polea",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 38,
+    "nombre": "Press pecho en máquina",
+    "descripcion": "Trabajo guiado de pectorales",
+    "parteCuerpo": "pecho",
+    "elemento": "máquina",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 39,
+    "nombre": "Puente de glúteo",
+    "descripcion": "Trabajo de glúteos y femorales",
+    "parteCuerpo": "gluteos",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 40,
+    "nombre": "Patada de tríceps",
+    "descripcion": "Aislamiento del tríceps",
+    "parteCuerpo": "brazos",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 41,
+    "nombre": "Remo invertido",
+    "descripcion": "Trabajo con peso corporal para espalda",
+    "parteCuerpo": "espalda",
+    "elemento": "barra",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 42,
+    "nombre": "Isométrico de sentadilla",
+    "descripcion": "Trabajo de piernas en estático",
+    "parteCuerpo": "piernas",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 43,
+    "nombre": "Plancha lateral",
+    "descripcion": "Trabajo de oblicuos y core",
+    "parteCuerpo": "abdomen",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 44,
+    "nombre": "Marcha en el lugar con elevación de rodillas",
+    "descripcion": "Cardio ligero y movilidad",
+    "parteCuerpo": "general",
+    "elemento": "",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 45,
+    "nombre": "Copa con mancuerna",
+    "descripcion": "Trabajo de tríceps en posición vertical",
+    "parteCuerpo": "brazos",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 46,
+    "nombre": "Aductores en máquina",
+    "descripcion": "Trabajo de aductores",
+    "parteCuerpo": "piernas",
+    "elemento": "máquina",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 47,
+    "nombre": "Abductores en máquina",
+    "descripcion": "Trabajo de glúteo medio",
+    "parteCuerpo": "gluteos",
+    "elemento": "máquina",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 48,
+    "nombre": "Encogimientos de hombros",
+    "descripcion": "Trabajo de trapecio",
+    "parteCuerpo": "hombros",
+    "elemento": "mancuernas",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 49,
+    "nombre": "Step-ups",
+    "descripcion": "Trabajo de cuádriceps y glúteos",
+    "parteCuerpo": "piernas",
+    "elemento": "banco",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 50,
+    "nombre": "Remo con banda elástica",
+    "descripcion": "Trabajo de espalda ligera",
+    "parteCuerpo": "espalda",
+    "elemento": "banda elástica",
+    "createdAt": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 1763858338953,
+    "nombre": "Estocadas",
+    "descripcion": "Trabajo de piernas",
     "parteCuerpo": "",
     "elemento": "",
-    "createdAt": "2025-11-22T00:43:00.231Z"
+    "createdAt": "2025-11-23T00:38:58.953Z"
   }
 ]
