@@ -3,12 +3,13 @@ Alumno: Pablo Queimaliños - pablo.queimalinos@davinci.edu.ar
 Comisión ACN2CV. 2do cuatrimestre 2025. Escuela Da Vinci.
 Docente: Sergio Medina - sergiod.medina@davinci.edu.ar
 
+Proyecto Plataforma de Entrenamiento
 
 1. Descripción general
 Este proyecto implementa un sistema completo para gestionar usuarios, ejercicios y sesiones de entrenamiento, incluyendo:
 - Administración de usuarios (admin)
-- Gestión de ejercicios (entrenador)
-- Asignación de ejercicios a sesiones
+- Gestión de ejercicios (admin)
+- Asignación de ejercicios a sesiones (entrenadores)
 - Sesiones creadas por entrenadores para clientes
 - Visualización de sesiones por parte del cliente
 
@@ -65,7 +66,9 @@ backend/
  ├── images/
  ├── pages/
  ├── services/
- └── styles/
+ ├── styles/
+ ├── main.jsx
+ └── App.jsx
 
 5. Endpoints principales
 Autenticación
@@ -97,17 +100,17 @@ DELETE /api/sesiones/:id/ejercicios/:ejercicioId
 6. Roles y permisos
 Admin
 Gestiona usuarios (crear, editar, eliminar)
-Puede ver todos los módulos
+Gestiona ejercicios (crear, editar, eliminar)
+Ve un totalizador de usuarios, sesiones y ejercicios
 
 Entrenador
-Gestiona ejercicios
+Gestiona Sesiones de entrenamiento
 Crea y edita sesiones para sus clientes
 Puede asignar cualquier ejercicio a una sesión
 
 Cliente
-Ve únicamente sus sesiones
+Ve el detalle de las sesiones que le fueron asignadas
 No puede modificar nada
-Solo accede a “Mis sesiones”
 
 7. Funcionalidad del sistema
 7.1 Login
@@ -128,9 +131,9 @@ Eliminar usuarios.
 Listado con paginado y búsqueda.
 
 7.4 Gestión de ejercicios
-Crear ejercicios con nombre, parte del cuerpo y descripción.
+Crear ejercicios con nombre, parte del cuerpo, elemento y descripción.
 Editar y eliminar.
-Búsqueda por texto y filtro por parte del cuerpo.
+Listado con paginado y búsqueda.
 
 7.5 Gestión de sesiones
 Crear sesión con:
