@@ -70,10 +70,10 @@ export default function MisSesionesPage() {
                 gap: 8
               }}
             >
-              <div style={{ fontWeight: "bold", fontSize: 18 }}>
+              <div style={{ fontWeight: "bold", fontSize: 16 }}>
                 {s.nombre}
               </div>
-              <SesionesList
+              <SesionesList                
                 sesiones={[s]}
                 usuariosMap={usuariosMap}
                 ejerciciosMap={ejerciciosMap}

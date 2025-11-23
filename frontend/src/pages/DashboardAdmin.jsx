@@ -31,7 +31,7 @@ export default function DashboardAdmin() {
   return (
     <div
       style={{
-        maxWidth: "1200px",
+        maxWidth: "2400px",
         margin: "0 auto",
         padding: "20px"
       }}
@@ -64,7 +64,7 @@ export default function DashboardAdmin() {
         <div
           style={{
             background: "#fff",
-            padding: 20,
+            padding: 10,
             borderRadius: 8,
             boxShadow: "0 2px 6px rgba(0,0,0,0.06)"
           }}

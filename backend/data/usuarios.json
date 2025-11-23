@@ -48,5 +48,17 @@
     "rol": "cliente",
     "passwordHash": "cliente123",
     "createdAt": "2025-01-01T01:30:00Z"
+  },
+  {
+    "id": 1763912118319,
+    "nombre": "Pepe Coach",
+    "rol": "entrenador",
+    "password": "pepe123"
+  },
+  {
+    "id": 1763912140228,
+    "nombre": "Pedro Cliente",
+    "rol": "cliente",
+    "password": "pedro123"
   }
 ]

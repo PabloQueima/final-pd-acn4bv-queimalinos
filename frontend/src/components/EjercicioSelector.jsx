@@ -81,21 +81,28 @@ export default function EjercicioSelector({ onAdd }) {
                   borderBottom: "1px solid #eee"
                 }}
               >
-                <strong>{e.nombre}</strong>
-                <br />
-                <small>{e.descripcion}</small>
-                <br />
-                <small>Parte: {e.parteCuerpo}</small>
-                <br />
-                <small>Elemento: {e.elemento || "Ninguno"}</small>
-                <br />
-                <button
-                  type="button"
-                  onClick={() => handleAdd(e)}
-                  style={{ marginTop: 5 }}
-                >
-                  Agregar
-                </button>
+                <div style={{ display: "block" }}>
+                  <strong>{e.nombre}</strong>
+                </div>
+                <div style={{ display: "block" }}>
+                  <small>{e.descripcion}</small>
+                </div>
+                <div style={{ display: "block" }}>
+                  <small>Parte del cuerpo: {e.parteCuerpo}</small>
+                </div>
+                <div style={{ display: "block" }}>
+                  <small>Elemento: {e.elemento || "Ninguno"}</small>
+                </div>
+
+                <div style={{ marginTop: 5 }}>
+                  <button
+                    type="button"
+                    onClick={() => handleAdd(e)}
+                    style={{ marginTop: 5 }}
+                  >
+                    Agregar
+                  </button>
+                </div>
               </li>
             ))}
             {pageData.length === 0 && <p>No se encontraron ejercicios.</p>}

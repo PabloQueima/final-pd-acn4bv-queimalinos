@@ -150,20 +150,35 @@ export default function SesionForm({ onSubmit, initialData = null }) {
         {ejercicios.length === 0 && <p>No hay ejercicios agregados.</p>}
 
         <ul style={{ paddingLeft: 15 }}>
-          {ejercicios.map((e) => (
-            <li key={e.id} style={{ marginBottom: 5 }}>
-              <strong>{getNombreEjercicio(e.id)}</strong> — {e.series}×{e.reps}
-              <button
-                style={{ marginLeft: 10 }}
-                onClick={() => removeEjercicio(e.id)}
-                type="button"
-              >
-                Quitar
-              </button>
-            </li>
-          ))}
+          {ejercicios.map((e) => {
+            const ejData = todosEjercicios.find((x) => x.id === e.id);
+            return (
+              <li key={e.id} style={{ marginBottom: 8 }}>
+                <div style={{ display: "block" }}>
+                  <strong>{ejData?.nombre || `Ejercicio ${e.id}`}</strong>
+                </div>
+                <div style={{ display: "block" }}>
+                  <small>Parte del cuerpo: {ejData?.parteCuerpo || "Ninguna"}</small>
+                </div>
+                <div style={{ display: "block" }}>
+                  <small>Elemento: {ejData?.elemento || "Ninguno"}</small>
+                </div>
+                <div style={{ display: "block" }}>
+                  <small>Series × Reps: {e.series}×{e.reps}</small>
+                </div>
+                <button
+                  style={{ marginTop: 4 }}
+                  onClick={() => removeEjercicio(e.id)}
+                  type="button"
+                >
+                  Quitar
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </div>
+
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 

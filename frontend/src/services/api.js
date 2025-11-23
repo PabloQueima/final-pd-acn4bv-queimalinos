@@ -43,7 +43,7 @@ export async function deleteEjercicio(id) {
 }
 
 // --------------------------------------------------------
-// SESIONES – versión original (NO TOCADA)
+// SESIONES
 // --------------------------------------------------------
 export async function getSesiones(params = {}) {
   if (params.clienteId) {
@@ -61,8 +61,7 @@ export async function getSesiones(params = {}) {
 }
 
 // --------------------------------------------------------
-// SESIONES – versión segura que siempre devuelve todas
-// (Usar esta para DashboardAdmin)
+// SESIONES alternativa para obtener todas las sesiones
 // --------------------------------------------------------
 export async function getSesionesAll() {
   const res = await fetch(`${API_URL}/sesiones`);

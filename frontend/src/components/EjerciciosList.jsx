@@ -13,13 +13,18 @@ export default function EjerciciosList({ ejercicios, onEdit, onDelete }) {
             borderBottom: "1px solid #ddd"
           }}
         >
-          <strong>{e.nombre}</strong>
-          <br />
-          <small>{e.descripcion}</small>
-          <br />
-          <small>Parte del cuerpo: {e.parteCuerpo}</small>
-          <br />
-          <small>Elemento: {e.elemento || "Ninguno"}</small>
+          <div style={{ display: "block" }}>
+            <strong>{e.nombre}</strong>
+          </div>
+          <div style={{ display: "block" }}>
+            <small>{e.descripcion}</small>
+          </div>
+          <div style={{ display: "block" }}>
+            <small>Parte del cuerpo: {e.parteCuerpo}</small>
+          </div>
+          <div style={{ display: "block" }}>
+            <small>Elemento: {e.elemento || "Ninguno"}</small>
+          </div>
 
           <div style={{ marginTop: 5 }}>
             {onEdit && (

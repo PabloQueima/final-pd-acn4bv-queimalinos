@@ -46,35 +46,41 @@ export default function UsuarioForm({ onSubmit, initialData = null }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-      <div>
+    <form onSubmit={handleSubmit} style={{ marginBottom: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "block" }}>
         <input
           placeholder="Nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{ width: "250px", padding: 6 }}
         />
       </div>
 
-      <div>
-        <select value={rol} onChange={(e) => setRol(e.target.value)}>
+      <div style={{ display: "block" }}>
+        <select
+          value={rol}
+          onChange={(e) => setRol(e.target.value)}
+          style={{ width: "250px", padding: 6 }}
+        >
           <option value="admin">admin</option>
           <option value="entrenador">entrenador</option>
           <option value="cliente">cliente</option>
         </select>
       </div>
 
-      <div>
+      <div style={{ display: "block" }}>
         <input
           placeholder={initialData ? "Nueva contraseña (opcional)" : "Contraseña"}
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "250px", padding: 6 }}
         />
       </div>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <button type="submit">
+      <button type="submit" style={{ width: "150px", padding: 8 }}>
         {initialData ? "Guardar Cambios" : "Crear Usuario"}
       </button>
     </form>
