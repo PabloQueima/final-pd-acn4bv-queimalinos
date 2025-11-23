@@ -1,23 +1,31 @@
 export default function UsuariosList({ usuarios, onEdit, onDelete }) {
-  if (!usuarios || usuarios.length === 0) {
-    return <p>No hay usuarios cargados.</p>;
-  }
-
   return (
-    <ul>
+    <ul style={{ padding: 0, listStyle: "none" }}>
       {usuarios.map((u) => (
-        <li key={u.id} style={{ marginBottom: 8 }}>
-          {u.nombre} — {u.rol}
+        <li
+          key={u.id}
+          style={{
+            padding: "10px",
+            borderBottom: "1px solid #ddd",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}
+        >
+          <div>
+            <strong>{u.nombre}</strong>
+            <br />
+            <small>Rol: {u.rol}</small>
+          </div>
 
-          <button style={{ marginLeft: 10 }} onClick={() => onEdit(u)}>
-            Editar
-          </button>
-
-          <button style={{ marginLeft: 6 }} onClick={() => onDelete(u.id)}>
-            Eliminar
-          </button>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button onClick={() => onEdit(u)}>Editar</button>
+            <button onClick={() => onDelete(u.id)}>Eliminar</button>
+          </div>
         </li>
       ))}
+
+      {usuarios.length === 0 && <p>No hay usuarios.</p>}
     </ul>
   );
 }

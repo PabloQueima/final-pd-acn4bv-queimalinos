@@ -1,6 +1,6 @@
 import UsuariosPage from "./UsuariosPage";
 import { useEffect, useState } from "react";
-import { getUsuarios, getSesiones, getEjercicios, getSesionesAll } from "../services/api";
+import { getUsuarios, getSesionesAll, getEjercicios } from "../services/api";
 import EjerciciosPage from "./EjerciciosPage";
 
 export default function DashboardAdmin() {
@@ -29,19 +29,25 @@ export default function DashboardAdmin() {
   }
 
   return (
-    <div style={{ padding: 20, maxWidth: 1400, margin: "0 auto" }}>
-      <h1>Panel Administrador</h1>
+    <div
+      style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "20px"
+      }}
+    >
+      <h1 style={{ marginBottom: 10 }}>Panel Administrador</h1>
 
       <div
         style={{
-          marginBottom: 20,
-          padding: 16,
+          marginBottom: 30,
+          background: "#fff",
+          padding: "15px 20px",
           borderRadius: 8,
-          border: "1px solid #ddd",
-          background: "#fafafa",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
         }}
       >
-        <h3>Métricas generales</h3>
+        <h3 style={{ marginBottom: 10 }}>Métricas generales</h3>
         <p>Total usuarios: {totales.usuarios}</p>
         <p>Total sesiones: {totales.sesiones}</p>
         <p>Total ejercicios: {totales.ejercicios}</p>
@@ -49,38 +55,33 @@ export default function DashboardAdmin() {
 
       <div
         style={{
-          display: "flex",
-          gap: 20,
-          alignItems: "flex-start",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "25px",
+          alignItems: "flex-start"
         }}
       >
-        {/* COLUMNA IZQUIERDA - EJERCICIOS */}
         <div
           style={{
-            flex: 1,
-            minWidth: 0,
-            padding: 16,
-            borderRadius: 8,
-            border: "1px solid #ddd",
             background: "#fff",
+            padding: 20,
+            borderRadius: 8,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.06)"
           }}
         >
-          <h2>Gestión de Ejercicios</h2>
+          <h2 style={{ marginBottom: 15 }}>Gestión de Ejercicios</h2>
           <EjerciciosPage />
         </div>
 
-        {/* COLUMNA DERECHA - USUARIOS */}
         <div
           style={{
-            flex: 1,
-            minWidth: 0,
-            padding: 16,
-            borderRadius: 8,
-            border: "1px solid #ddd",
             background: "#fff",
+            padding: 20,
+            borderRadius: 8,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.06)"
           }}
         >
-          <h2>Gestión de Usuarios</h2>
+          <h2 style={{ marginBottom: 15 }}>Gestión de Usuarios</h2>
           <UsuariosPage />
         </div>
       </div>
