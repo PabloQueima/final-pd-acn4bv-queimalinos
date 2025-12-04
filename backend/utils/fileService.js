@@ -1,75 +1,78 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { db } from "../firebase.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataDir = path.join(__dirname, "../data");
+/**
+ * Mapea los nombres de archivos a colecciones de Firestore
+ */
+const COLLECTION_MAP = {
+  "usuarios.json": "usuarios",
+  "ejercicios.json": "ejercicios",
+  "sesiones.json": "sesiones"
+};
 
-const DATA_FILES = [
-  { name: "ejercicios.json", initial: [] },
-  { name: "usuarios.json", initial: [] },
-  { name: "sesiones.json", initial: [] }
-];
-
+/**
+ * Ya no se necesitan archivos físicos.
+ */
 export const ensureDataFiles = async () => {
-  try {
-    await fs.mkdir(dataDir, { recursive: true });
-
-    for (const file of DATA_FILES) {
-      const filePath = path.join(dataDir, file.name);
-
-      try {
-        await fs.access(filePath);
-      } catch {
-        await fs.writeFile(
-          filePath,
-          JSON.stringify(file.initial, null, 2),
-          "utf-8"
-        );
-      }
-    }
-  } catch (err) {
-    console.error("[fileService] Error asegurando archivos:", err);
-    throw err;
-  }
+  console.log("[fileService] Firebase mode: no local files needed.");
 };
 
+/**
+ * Lee desde Firestore en vez de JSON local
+ */
 export const readJSON = async (filename) => {
-  const filePath = path.join(dataDir, filename);
+  const collectionName = COLLECTION_MAP[filename];
+
+  if (!collectionName) {
+    throw new Error(`No se encuentra la colección para: ${filename}`);
+  }
 
   try {
-    const raw = await fs.readFile(filePath, "utf-8");
-
-    if (!raw.trim()) {
-      await writeJSON(filename, []);
-      return [];
-    }
-
-    return JSON.parse(raw);
+    const snap = await db.collection(collectionName).get();
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
   } catch (err) {
-    console.error(`[fileService] Error leyendo ${filename}:`, err);
-
-    if (err instanceof SyntaxError) {
-      await writeJSON(filename, []);
-      return [];
-    }
-
+    console.error(`[fileService] Error leyendo Firestore (${collectionName}):`, err);
     throw err;
   }
 };
 
+/**
+ * Escribe un array completo en Firestore (sobrescribe la colección)
+ */
 export const writeJSON = async (filename, data) => {
-  const filePath = path.join(dataDir, filename);
+  const collectionName = COLLECTION_MAP[filename];
+
+  if (!collectionName) {
+    throw new Error(`No se encuentra la colección para: ${filename}`);
+  }
+
+  if (!Array.isArray(data)) {
+    throw new Error(`writeJSON requiere un array. Recibido: ${typeof data}`);
+  }
 
   try {
-    await fs.writeFile(
-      filePath,
-      JSON.stringify(data, null, 2),
-      "utf-8"
-    );
+    // 1. Borrar colección actual
+    const snap = await db.collection(collectionName).get();
+    const batchDelete = db.batch();
+
+    snap.forEach((doc) => batchDelete.delete(doc.ref));
+
+    await batchDelete.commit();
+
+    // 2. Escribir nueva data
+    const batchWrite = db.batch();
+
+    data.forEach((item) => {
+      const ref = db.collection(collectionName).doc(item.id || undefined);
+      batchWrite.set(ref, item);
+    });
+
+    await batchWrite.commit();
+
+    console.log(`[fileService] Firestore actualizado: ${collectionName}`);
+
   } catch (err) {
-    console.error(`[fileService] Error escribiendo ${filename}:`, err);
+    console.error(`[fileService] Error escribiendo Firestore (${collectionName}):`, err);
     throw err;
   }
 };
