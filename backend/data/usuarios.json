@@ -3,62 +3,63 @@
     "id": 1,
     "nombre": "Admin",
     "rol": "admin",
-    "passwordHash": "admin123",
+    "passwordHash": "$2b$10$cmz7qz0iUohTO4uQFRZZ/eTg9fSzV8l0lMK8abc2iBnMnmnlLVEv.",
     "createdAt": "2025-01-01T00:00:00Z"
   },
   {
     "id": 201,
     "nombre": "Lucas Trainer",
     "rol": "entrenador",
-    "passwordHash": "trainer123",
+    "passwordHash": "$2b$10$Zom17eCDsJUXNvf05y4mquz.ufAgzStLSIcwDdXU/zIkcjqawtw/u",
     "createdAt": "2025-01-01T00:10:00Z"
   },
   {
     "id": 202,
     "nombre": "Mariana Coach",
     "rol": "entrenador",
-    "passwordHash": "trainer123",
+    "passwordHash": "$2b$10$Zom17eCDsJUXNvf05y4mquz.ufAgzStLSIcwDdXU/zIkcjqawtw/u",
     "createdAt": "2025-01-01T00:20:00Z"
   },
   {
     "id": 101,
     "nombre": "Juan Cliente",
     "rol": "cliente",
-    "passwordHash": "cliente123",
+    "passwordHash": "$2b$10$e.az5sMWxE5ganq8YpOgkeAHmK7dvCsBJFDsc8GtOSrInOj30gCue",
     "createdAt": "2025-01-01T01:00:00Z"
   },
   {
     "id": 102,
     "nombre": "Ana Cliente",
     "rol": "cliente",
-    "passwordHash": "cliente123",
-    "createdAt": "2025-01-01T01:10:00Z",
-    "password": "prueba1"
+    "passwordHash": "$2b$10$e.az5sMWxE5ganq8YpOgkeAHmK7dvCsBJFDsc8GtOSrInOj30gCue",
+    "createdAt": "2025-01-01T01:10:00Z"
   },
   {
     "id": 103,
     "nombre": "Pedro Cliente",
     "rol": "cliente",
-    "passwordHash": "cliente123",
+    "passwordHash": "$2b$10$e.az5sMWxE5ganq8YpOgkeAHmK7dvCsBJFDsc8GtOSrInOj30gCue",
     "createdAt": "2025-01-01T01:20:00Z"
   },
   {
     "id": 104,
     "nombre": "Lucía Cliente",
     "rol": "cliente",
-    "passwordHash": "cliente123",
+    "passwordHash": "$2b$10$e.az5sMWxE5ganq8YpOgkeAHmK7dvCsBJFDsc8GtOSrInOj30gCue",
     "createdAt": "2025-01-01T01:30:00Z"
   },
   {
-    "id": 1763912118319,
+    "id": 203,
     "nombre": "Pepe Coach",
     "rol": "entrenador",
-    "password": "pepe123"
+    "passwordHash": "$2b$10$6CVYBFAtTiJ/H3DU6GbojOCveC6UIcGiCvTWUyy6cQqzjz.DlaTrq",
+    "createdAt": "2025-01-01T02:00:00Z"
   },
   {
-    "id": 1763912140228,
+    "id": 105,
     "nombre": "Pedro Cliente",
     "rol": "cliente",
-    "password": "pedro123"
+    "passwordHash": "$2b$10$QBjJ1gObLD4m6DpClSkNHel0adWZf.p1u.rvA.okFSkFxrWxMJwsm",
+    "createdAt": "2025-01-01T02:10:00Z"
   }
 ]

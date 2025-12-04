@@ -1,12 +1,12 @@
 import { readJSON, writeJSON } from "../utils/fileService.js";
 import Usuario from "../models/Usuario.js";
+import bcrypt from "bcrypt";
 
 const FILE = "usuarios.json";
 
 function buildUsuarios(arr) {
   return arr.map(u => Usuario.fromJSON(u));
 }
-
 
 export async function listarUsuarios(req, res) {
   try {
@@ -28,44 +28,69 @@ export async function listarUsuarios(req, res) {
 }
 
 export async function crearUsuario(req, res) {
-  const { nombre, rol, password } = req.body;
+  try {
+    const { nombre, rol, password } = req.body;
 
-  if (!nombre || !rol || !password) {
-    return res.status(400).json({ error: "nombre, rol y password son obligatorios" });
+    if (!nombre || !rol || !password) {
+      return res.status(400).json({
+        error: "nombre, rol y password son obligatorios"
+      });
+    }
+
+    const data = await readJSON(FILE);
+
+    // HASH DE CONTRASEÑA
+    const hash = await bcrypt.hash(password, 10);
+
+    const nuevo = new Usuario(Date.now(), nombre, rol, hash);
+
+    data.push(nuevo.toJSON());
+    await writeJSON(FILE, data);
+
+    return res.status(201).json(nuevo.toJSON());
+
+  } catch (err) {
+    console.error("Error creando usuario:", err);
+    res.status(500).json({ error: "No se pudo crear usuario" });
   }
-
-  const data = await readJSON(FILE);
-
-  const nuevo = new Usuario(Date.now(), nombre, rol, password);
-  data.push(nuevo);
-
-  await writeJSON(FILE, data);
-  res.status(201).json(nuevo);
 }
 
 export async function actualizarUsuario(req, res) {
-  const { id } = req.params;
-  const { nombre, rol, password } = req.body;
+  try {
+    const { id } = req.params;
+    const { nombre, rol, password } = req.body;
 
-  const data = await readJSON(FILE);
-  const index = data.findIndex(u => String(u.id) === String(id));
+    const data = await readJSON(FILE);
+    const index = data.findIndex(u => String(u.id) === String(id));
 
-  if (index === -1) {
-    return res.status(404).json({ error: "Usuario no encontrado" });
+    if (index === -1) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Clon del usuario existente
+    const usuarioActual = Usuario.fromJSON(data[index]);
+
+    // Actualizaciones de campos básicos
+    if (nombre !== undefined) usuarioActual.nombre = nombre.trim();
+    if (rol !== undefined) usuarioActual.rol = rol.toLowerCase();
+
+    // Si se envía una nueva contraseña, la re-hasheamos
+    if (password !== undefined) {
+      const hash = await bcrypt.hash(password, 10);
+      usuarioActual.passwordHash = hash;
+    }
+
+    // Guardamos el usuario actualizado
+    data[index] = usuarioActual.toJSON();
+    await writeJSON(FILE, data);
+
+    res.json(usuarioActual.toJSON());
+
+  } catch (err) {
+    console.error("Error actualizando usuario:", err);
+    res.status(500).json({ error: "No se pudo actualizar usuario" });
   }
-
-  data[index] = {
-    ...data[index],
-    nombre: nombre ?? data[index].nombre,
-    rol: rol ?? data[index].rol,
-    password: password ?? data[index].password
-  };
-
-  await writeJSON(FILE, data);
-
-  res.json(data[index]);
 }
-
 
 export async function eliminarUsuario(req, res) {
   try {
@@ -79,6 +104,7 @@ export async function eliminarUsuario(req, res) {
     await writeJSON(FILE, data);
 
     res.status(204).end();
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No se pudo eliminar usuario" });
