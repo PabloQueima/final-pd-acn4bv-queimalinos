@@ -26,6 +26,29 @@ export async function listarSesiones(req, res) {
   }
 }
 
+export async function obtenerSesion(req, res) {
+  try {
+    const id = Number(req.params.id);
+
+    const snap = await db
+      .collection("sesiones")
+      .where("id", "==", id)
+      .limit(1)
+      .get();
+
+    if (snap.empty) {
+      return res.status(404).json({ error: "Sesión no encontrada" });
+    }
+
+    const data = snap.docs[0].data();
+    res.json(Sesion.fromJSON(data).toJSON());
+  } catch (err) {
+    console.error("obtenerSesion:", err);
+    res.status(500).json({ error: "No se pudo obtener sesión" });
+  }
+}
+
+
 export async function crearSesion(req, res) {
   try {
     const { titulo, entrenadorId, clienteId, ejercicios } = req.body;

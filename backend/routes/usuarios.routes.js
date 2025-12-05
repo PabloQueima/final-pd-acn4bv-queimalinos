@@ -10,6 +10,7 @@ import { validateUsuario } from "../middleware/validateUsuario.js";
 const router = Router();
 
 router.get("/", listarUsuarios);
+router.get("/:id", obtenerUsuario);
 router.post("/", validateUsuario, crearUsuario);
 router.put("/:id", actualizarUsuario);
 router.delete("/:id", eliminarUsuario);

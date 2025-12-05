@@ -82,6 +82,29 @@ export async function eliminarEjercicio(req, res) {
   }
 }
 
+export async function obtenerEjercicio(req, res) {
+  try {
+    const id = Number(req.params.id);
+
+    const snap = await db
+      .collection("ejercicios")
+      .where("id", "==", id)
+      .limit(1)
+      .get();
+
+    if (snap.empty) {
+      return res.status(404).json({ error: "Ejercicio no encontrado" });
+    }
+
+    const data = snap.docs[0].data();
+    res.json(Ejercicio.fromJSON(data).toJSON());
+  } catch (err) {
+    console.error("obtenerEjercicio:", err);
+    res.status(500).json({ error: "No se pudo obtener ejercicio" });
+  }
+}
+
+
 export async function buscarEjercicios(req, res) {
   try {
     const { parte, search } = req.query;

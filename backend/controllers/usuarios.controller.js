@@ -31,6 +31,29 @@ export async function listarUsuarios(req, res) {
   }
 }
 
+export async function obtenerUsuario(req, res) {
+  try {
+    const id = Number(req.params.id);
+
+    const snap = await db
+      .collection("usuarios")
+      .where("id", "==", id)
+      .limit(1)
+      .get();
+
+    if (snap.empty) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const data = snap.docs[0].data();
+    res.json(Usuario.fromJSON(data).toJSON());
+  } catch (err) {
+    console.error("obtenerUsuario:", err);
+    res.status(500).json({ error: "No se pudo obtener usuario" });
+  }
+}
+
+
 export async function crearUsuario(req, res) {
   try {
     const { nombre, rol, password } = req.body;
