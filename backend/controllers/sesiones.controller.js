@@ -1,26 +1,27 @@
 import { db } from "../firebase.js";
 import Sesion from "../models/Sesion.js";
 
-const COL = "sesiones";
+async function fetchSesiones() {
+  const snap = await db.collection("sesiones").get();
+  return snap.docs.map(d => Sesion.fromJSON(d.data()));
+}
 
-function buildSesiones(docs) {
-  return docs.map(d => Sesion.fromJSON(d.data()));
+async function findSesionById(id) {
+  const snap = await db.collection("sesiones").where("id", "==", id).limit(1).get();
+  return snap.empty ? null : { ref: snap.docs[0].ref, data: Sesion.fromJSON(snap.docs[0].data()) };
 }
 
 export async function listarSesiones(req, res) {
   try {
-    const snap = await db.collection(COL).get();
-    let sesiones = buildSesiones(snap.docs);
+    let sesiones = await fetchSesiones();
 
     if (req.query.clienteId) {
-      sesiones = sesiones.filter(
-        s => s.clienteId == req.query.clienteId
-      );
+      sesiones = sesiones.filter(s => s.clienteId == req.query.clienteId);
     }
 
-    return res.json(sesiones.map(s => s.toJSON()));
+    res.json(sesiones.map(s => s.toJSON()));
   } catch (err) {
-    console.error("Error en listarSesiones:", err);
+    console.error("listarSesiones:", err);
     res.status(500).json({ error: "No se pudieron leer sesiones" });
   }
 }
@@ -37,29 +38,23 @@ export async function crearSesion(req, res) {
       entrenadorId
     );
 
-    nueva.createdAt = new Date().toISOString();
-    nueva.updatedAt = nueva.createdAt;
+    await db.collection("sesiones").add(nueva.toJSON());
 
-    await db.collection(COL).doc(String(nueva.id)).set(nueva.toJSON());
-
-    return res.status(201).json(nueva.toJSON());
+    res.status(201).json(nueva.toJSON());
   } catch (err) {
-    console.error("Error creando sesión:", err);
+    console.error("crearSesion:", err);
     res.status(500).json({ error: "No se pudo crear sesión" });
   }
 }
 
 export async function actualizarSesion(req, res) {
   try {
-    const id = String(req.params.id);
-    const ref = db.collection(COL).doc(id);
-    const snap = await ref.get();
+    const id = Number(req.params.id);
 
-    if (!snap.exists) {
-      return res.status(404).json({ error: "Sesión no encontrada" });
-    }
+    const result = await findSesionById(id);
+    if (!result) return res.status(404).json({ error: "Sesión no encontrada" });
 
-    const sesion = Sesion.fromJSON(snap.data());
+    const { ref, data: sesion } = result;
     const { titulo, entrenadorId, clienteId, ejercicios } = req.body;
 
     if (titulo !== undefined) sesion.titulo = titulo.trim();
@@ -69,113 +64,103 @@ export async function actualizarSesion(req, res) {
 
     sesion.updatedAt = new Date().toISOString();
 
-    await ref.set(sesion.toJSON());
+    await ref.update(sesion.toJSON());
 
     res.json(sesion.toJSON());
   } catch (err) {
-    console.error("Error actualizando sesión:", err);
+    console.error("actualizarSesion:", err);
     res.status(500).json({ error: "No se pudo actualizar sesión" });
   }
 }
 
 export async function eliminarSesion(req, res) {
   try {
-    const id = String(req.params.id);
+    const id = Number(req.params.id);
 
-    const ref = db.collection(COL).doc(id);
-    const snap = await ref.get();
+    const result = await findSesionById(id);
+    if (!result) return res.status(404).json({ error: "Sesión no encontrada" });
 
-    if (!snap.exists) {
-      return res.status(404).json({ error: "Sesión no encontrada" });
-    }
+    await result.ref.delete();
 
-    await ref.delete();
-
-    return res.status(204).end();
+    res.status(204).end();
   } catch (err) {
-    console.error("Error eliminando sesión:", err);
+    console.error("eliminarSesion:", err);
     res.status(500).json({ error: "No se pudo eliminar sesión" });
   }
 }
 
 export async function sesionesPorCliente(req, res) {
   try {
-    const clienteId = Number(req.params.id);
+    const id = Number(req.params.id);
 
-    const snap = await db.collection(COL).get();
-    const sesiones = buildSesiones(snap.docs)
-      .filter(s => s.clienteId === clienteId)
+    const sesiones = await fetchSesiones();
+
+    const result = sesiones
+      .filter(s => s.clienteId === id)
       .map(s => s.toJSON());
 
-    return res.json(sesiones);
+    res.json(result);
   } catch (err) {
-    console.error(err);
+    console.error("sesionesPorCliente:", err);
     res.status(500).json({ error: "Error obteniendo sesiones del cliente" });
   }
 }
 
 export async function sesionesPorEntrenador(req, res) {
   try {
-    const entrenadorId = Number(req.params.id);
+    const id = Number(req.params.id);
 
-    const snap = await db.collection(COL).get();
-    const sesiones = buildSesiones(snap.docs)
-      .filter(s => s.entrenadorId === entrenadorId)
+    const sesiones = await fetchSesiones();
+
+    const result = sesiones
+      .filter(s => s.entrenadorId === id)
       .map(s => s.toJSON());
 
-    return res.json(sesiones);
+    res.json(result);
   } catch (err) {
-    console.error(err);
+    console.error("sesionesPorEntrenador:", err);
     res.status(500).json({ error: "Error obteniendo sesiones del entrenador" });
   }
 }
 
 export async function agregarEjercicioASesion(req, res) {
   try {
-    const id = String(req.params.id);
+    const id = Number(req.params.id);
     const { ejercicioId, series, reps } = req.body;
 
-    const ref = db.collection(COL).doc(id);
-    const snap = await ref.get();
+    const result = await findSesionById(id);
+    if (!result) return res.status(404).json({ error: "Sesión no encontrada" });
 
-    if (!snap.exists) {
-      return res.status(404).json({ error: "Sesión no encontrada" });
-    }
+    const { ref, data: sesion } = result;
 
-    const sesion = Sesion.fromJSON(snap.data());
     sesion.agregarEjercicio(Number(ejercicioId), Number(series), Number(reps));
-    sesion.updatedAt = new Date().toISOString();
 
-    await ref.set(sesion.toJSON());
+    await ref.update(sesion.toJSON());
 
-    return res.json(sesion.toJSON());
+    res.json(sesion.toJSON());
   } catch (err) {
-    console.error(err);
+    console.error("agregarEjercicioASesion:", err);
     res.status(500).json({ error: "Error agregando ejercicio a la sesión" });
   }
 }
 
 export async function eliminarEjercicioDeSesion(req, res) {
   try {
-    const id = String(req.params.id);
+    const id = Number(req.params.id);
     const ejercicioId = Number(req.params.ejercicioId);
 
-    const ref = db.collection(COL).doc(id);
-    const snap = await ref.get();
+    const result = await findSesionById(id);
+    if (!result) return res.status(404).json({ error: "Sesión no encontrada" });
 
-    if (!snap.exists) {
-      return res.status(404).json({ error: "Sesión no encontrada" });
-    }
+    const { ref, data: sesion } = result;
 
-    const sesion = Sesion.fromJSON(snap.data());
     sesion.eliminarEjercicio(ejercicioId);
-    sesion.updatedAt = new Date().toISOString();
 
-    await ref.set(sesion.toJSON());
+    await ref.update(sesion.toJSON());
 
-    return res.json(sesion.toJSON());
+    res.json(sesion.toJSON());
   } catch (err) {
-    console.error(err);
+    console.error("eliminarEjercicioDeSesion:", err);
     res.status(500).json({ error: "Error eliminando ejercicio de la sesión" });
   }
 }

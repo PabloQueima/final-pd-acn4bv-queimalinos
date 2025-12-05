@@ -1,4 +1,4 @@
-import { readJSON } from "../utils/fileService.js";
+import { db } from "../firebase.js";
 
 export async function validateSesion(req, res, next) {
   try {
@@ -12,25 +12,36 @@ export async function validateSesion(req, res, next) {
       return res.status(400).json({ error: "El campo 'clienteId' es obligatorio." });
     }
 
-    const usuarios = await readJSON("usuarios.json");
-    const ejerciciosDB = await readJSON("ejercicios.json");
+    // ===== VALIDAR CLIENTE =====
+    const clienteSnap = await db
+      .collection("usuarios")
+      .where("id", "==", Number(clienteId))
+      .limit(1)
+      .get();
 
-    const cliente = usuarios.find(u => Number(u.id) === Number(clienteId) && u.rol === "cliente");
-    if (!cliente) {
+    if (clienteSnap.empty || clienteSnap.docs[0].data().rol !== "cliente") {
       return res.status(400).json({
         error: "El clienteId no es válido o no corresponde a un usuario con rol 'cliente'."
       });
     }
 
+    // ===== VALIDAR ENTRENADOR (opcional) =====
     if (entrenadorId !== undefined && entrenadorId !== null) {
-      const entrenador = usuarios.find(u => Number(u.id) === Number(entrenadorId) && u.rol === "entrenador");
-      if (!entrenador) {
-        return res.status(400).json({ error: "El entrenadorId no corresponde a un entrenador válido." });
+      const entrenadorSnap = await db
+        .collection("usuarios")
+        .where("id", "==", Number(entrenadorId))
+        .limit(1)
+        .get();
+
+      if (entrenadorSnap.empty || entrenadorSnap.docs[0].data().rol !== "entrenador") {
+        return res.status(400).json({
+          error: "El entrenadorId no corresponde a un entrenador válido."
+        });
       }
     }
 
+    // ===== VALIDAR EJERCICIOS =====
     if (ejercicios !== undefined) {
-
       if (!Array.isArray(ejercicios)) {
         return res.status(400).json({ error: "El campo 'ejercicios' debe ser un array." });
       }
@@ -40,8 +51,13 @@ export async function validateSesion(req, res, next) {
           return res.status(400).json({ error: "Cada ejercicio debe contener un 'id' válido." });
         }
 
-        const exists = ejerciciosDB.find(e => Number(e.id) === Number(ej.id));
-        if (!exists) {
+        const ejercicioSnap = await db
+          .collection("ejercicios")
+          .where("id", "==", Number(ej.id))
+          .limit(1)
+          .get();
+
+        if (ejercicioSnap.empty) {
           return res.status(400).json({ error: `El ejercicio con id ${ej.id} no existe.` });
         }
 

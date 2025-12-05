@@ -2,28 +2,31 @@ import { db } from "../firebase.js";
 import Usuario from "../models/Usuario.js";
 import bcrypt from "bcrypt";
 
-const COL = "usuarios";
+/** Convierte docs Firestore → array de Usuario */
+async function fetchUsuarios() {
+  const snap = await db.collection("usuarios").get();
+  return snap.docs.map(d => Usuario.fromJSON(d.data()));
+}
 
-function buildUsuarios(docs) {
-  return docs.map(doc => Usuario.fromJSON(doc.data()));
+/** Busca un usuario por ID */
+async function findUsuarioById(id) {
+  const snap = await db.collection("usuarios").where("id", "==", id).limit(1).get();
+  return snap.empty ? null : { ref: snap.docs[0].ref, data: Usuario.fromJSON(snap.docs[0].data()) };
 }
 
 export async function listarUsuarios(req, res) {
   try {
     const { rol } = req.query;
 
-    const snap = await db.collection(COL).get();
-    let usuarios = buildUsuarios(snap.docs);
+    let usuarios = await fetchUsuarios();
 
     if (rol) {
-      usuarios = usuarios.filter(
-        u => u.rol.toLowerCase() === rol.toLowerCase()
-      );
+      usuarios = usuarios.filter(u => u.rol === rol.toLowerCase());
     }
 
-    return res.json(usuarios.map(u => u.toJSON()));
+    res.json(usuarios.map(u => u.toJSON()));
   } catch (err) {
-    console.error("Error listando usuarios:", err);
+    console.error("listarUsuarios:", err);
     res.status(500).json({ error: "No se pudieron leer usuarios" });
   }
 }
@@ -33,73 +36,62 @@ export async function crearUsuario(req, res) {
     const { nombre, rol, password } = req.body;
 
     if (!nombre || !rol || !password) {
-      return res.status(400).json({
-        error: "nombre, rol y password son obligatorios"
-      });
+      return res.status(400).json({ error: "nombre, rol y password son obligatorios" });
     }
 
-    // Hash de contraseña
     const hash = await bcrypt.hash(password, 10);
-
     const nuevo = new Usuario(Date.now(), nombre, rol, hash);
 
-    await db.collection(COL).doc(String(nuevo.id)).set(nuevo.toJSON());
+    await db.collection("usuarios").add(nuevo.toJSON());
 
-    return res.status(201).json(nuevo.toJSON());
+    res.status(201).json(nuevo.toJSON());
   } catch (err) {
-    console.error("Error creando usuario:", err);
+    console.error("crearUsuario:", err);
     res.status(500).json({ error: "No se pudo crear usuario" });
   }
 }
 
 export async function actualizarUsuario(req, res) {
   try {
-    const { id } = req.params;
-    const { nombre, rol, password } = req.body;
+    const id = Number(req.params.id);
 
-    const ref = db.collection(COL).doc(String(id));
-    const snap = await ref.get();
-
-    if (!snap.exists) {
+    const result = await findUsuarioById(id);
+    if (!result) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    const usuarioActual = Usuario.fromJSON(snap.data());
+    const { ref, data: usuario } = result;
+    const { nombre, rol, password } = req.body;
 
-    // Actualizaciones
-    if (nombre !== undefined) usuarioActual.nombre = nombre.trim();
-    if (rol !== undefined) usuarioActual.rol = rol.toLowerCase();
-
-    // Rehash si viene nueva contraseña
+    if (nombre !== undefined) usuario.nombre = nombre.trim();
+    if (rol !== undefined) usuario.rol = rol.trim().toLowerCase();
     if (password !== undefined) {
-      usuarioActual.passwordHash = await bcrypt.hash(password, 10);
+      usuario.passwordHash = await bcrypt.hash(password, 10);
     }
 
-    await ref.set(usuarioActual.toJSON());
+    await ref.update(usuario.toJSON());
 
-    return res.json(usuarioActual.toJSON());
+    res.json(usuario.toJSON());
   } catch (err) {
-    console.error("Error actualizando usuario:", err);
+    console.error("actualizarUsuario:", err);
     res.status(500).json({ error: "No se pudo actualizar usuario" });
   }
 }
 
 export async function eliminarUsuario(req, res) {
   try {
-    const id = String(req.params.id);
+    const id = Number(req.params.id);
 
-    const ref = db.collection(COL).doc(id);
-    const snap = await ref.get();
-
-    if (!snap.exists) {
+    const result = await findUsuarioById(id);
+    if (!result) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    await ref.delete();
+    await result.ref.delete();
 
-    return res.status(204).end();
+    res.status(204).end();
   } catch (err) {
-    console.error("Error eliminando usuario:", err);
+    console.error("eliminarUsuario:", err);
     res.status(500).json({ error: "No se pudo eliminar usuario" });
   }
 }
