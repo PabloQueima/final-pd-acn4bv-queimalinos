@@ -18,8 +18,6 @@ export default function LoginPage() {
 
       setNombre("");
       setPassword("");
-
-      // Redirección + refresh PROLIJA y SIN romper nada del proyecto
       window.location.href = `/${user.rol}`;
       return;
 
@@ -31,7 +29,7 @@ export default function LoginPage() {
   return (
     <div
       style={{
-        height: "100vh",
+        height: "90vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

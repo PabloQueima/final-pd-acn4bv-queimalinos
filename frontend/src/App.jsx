@@ -10,6 +10,7 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer"; // <- agregado
 import { getCurrentUser } from "./services/authService";
 
 export default function App() {
@@ -23,7 +24,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
 
-        {/* Redirección si el usuario ya está logueado */}
         <Route
           path="/login"
           element={
@@ -60,6 +60,7 @@ export default function App() {
           }
         />
       </Routes>
+      <Footer />
     </>
   );
 }
