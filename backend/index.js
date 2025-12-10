@@ -23,7 +23,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(logger);
 
+// rutas públicas
 app.use("/api", authRoutes);
+
+// rutas protegidas
 app.use("/api/ejercicios", ejerciciosRouter);
 app.use("/api/usuarios", usuariosRouter);
 app.use("/api/sesiones", sesionesRouter);

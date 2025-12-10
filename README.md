@@ -1,44 +1,45 @@
 README — Plataformas de Desarrollo (Final)
-
 Alumno: Pablo Queimaliños — pablo.queimalinos@davinci.edu.ar
 
-Comisión ACN2CV. 2do cuatrimestre 2025. Escuela Da Vinci.
+Comisión: ACN2CV — 2º cuatrimestre 2025 — Escuela Da Vinci
 Docente: Sergio Medina — sergiod.medina@davinci.edu.ar
+Proyecto: Plataforma de Entrenamiento
 
-Proyecto Plataforma de Entrenamiento
 1. Descripción general
-El proyecto implementa una plataforma completa para gestionar usuarios, ejercicios y sesiones de entrenamiento. Incluye autenticación, paneles según rol y validación en backend.
-
-Funciones principales:
-Administración de usuarios (admin)
-Gestión de ejercicios (admin)
-Gestión de sesiones (entrenador)
+El proyecto implementa una plataforma completa para gestionar:
+Usuarios (admin)
+Ejercicios (admin)
+Sesiones de entrenamiento (entrenador)
 Asignación de ejercicios a sesiones
-Visualización de sesiones por parte del cliente
-Sistema de login con roles
+Visualización de sesiones asignadas (cliente)
+Autenticación con login + JWT
+Validaciones en backend
+Paneles dinámicos según rol
 
-Backend Express persistiendo en Firestore
-Frontend React separado, con paneles dinámicos según el rol
-
-El objetivo es simular un entorno de trabajo real con backend REST y frontend desacoplado.
+Arquitectura:
+Backend Express con persistencia en Firestore
+Frontend React desacoplado, con dashboards por rol
+Roles soportados: admin, entrenador, cliente
+El objetivo es simular un entorno real con un backend REST moderno y un frontend independiente.
 
 2. Tecnologías utilizadas
 Backend
 Node.js + Express
-Firestore (Firebase Admin SDK)
-bcrypt para hashing de contraseñas
+Firebase Admin SDK (Firestore)
+bcrypt (hashing de contraseñas)
+JSON Web Tokens (JWT)
 Middlewares custom
 Validadores basados en Firestore
 Rutas RESTful
 CORS + Morgan
-Arquitectura por capas (controllers, models, routes, middleware)
+Arquitectura por capas
 
 Frontend
 React
 React Router DOM
-Fetch API
-Componentes reutilizables
+Fetch API / Axios
 Paneles por rol
+Componentes reutilizables
 CSS personalizado
 
 3. Instalación
@@ -47,7 +48,7 @@ cd backend
 npm install
 npm start
 
-Backend disponible en:
+El backend inicia en:
 http://localhost:3000
 
 Frontend
@@ -55,27 +56,29 @@ cd frontend
 npm install
 npm run dev
 
-Frontend disponible en:
+El frontend inicia en:
 http://localhost:5173
 
-4. Estructura del backend y frontend
+4. Estructura del proyecto
+Backend
 backend/
-controllers/
-middleware/
-models/
-routes/
-utils/
-firebase.js
-index.js
+  controllers/
+  middleware/
+  models/
+  routes/
+  utils/
+  firebase.js
+  index.js
 
+Frontend
 frontend/src/
-components/
-images/
-pages/
-services/
-styles/
-main.jsx
-App.jsx
+  components/
+  images/
+  pages/
+  services/
+  styles/
+  main.jsx
+  App.jsx
 
 5. Endpoints principales
 Autenticación
@@ -83,12 +86,14 @@ POST /api/login
 
 Usuarios
 GET /api/usuarios
+GET /api/usuarios/:id
 POST /api/usuarios
 PUT /api/usuarios/:id
 DELETE /api/usuarios/:id
 
 Ejercicios
 GET /api/ejercicios
+GET /api/ejercicios/:id
 POST /api/ejercicios
 PUT /api/ejercicios/:id
 DELETE /api/ejercicios/:id
@@ -96,13 +101,16 @@ GET /api/ejercicios/buscar
 
 Sesiones
 GET /api/sesiones
+GET /api/sesiones/:id
 POST /api/sesiones
 PUT /api/sesiones/:id
 DELETE /api/sesiones/:id
 
+Filtros:
 GET /api/sesiones/cliente/:id
 GET /api/sesiones/entrenador/:id
 
+Ejercicios dentro de la sesión:
 POST /api/sesiones/:id/ejercicios
 DELETE /api/sesiones/:id/ejercicios/:ejercicioId
 
@@ -114,72 +122,75 @@ Ve totalizadores
 
 Entrenador
 Crea, edita y elimina sesiones
-Asigna ejercicios a sesiones
-Puede trabajar con cualquier cliente
+Asigna ejercicios
+Acceso a todos los clientes
 
 Cliente
-Visualiza las sesiones asignadas
-Sin permisos de edición
+Visualiza sesiones asignadas
+No puede modificar datos
 
 7. Funcionalidad del sistema
-7.1 Login con Firestore + bcrypt
-Valida usuario por nombre
-Compara contraseña con hash almacenado
-Devuelve id, nombre y rol
-El frontend guarda los datos en localStorage
+7.1 Autenticación con Firestore + bcrypt + JWT
+Búsqueda de usuario por nombre en Firestore
+Comparación con contraseña hasheada
+Generación de token JWT
+Frontend almacena token + user en localStorage
+Rutas protegidas en backend mediante middleware
 
 7.2 Navegación según rol
-Cada rol ve su propio dashboard:
+Dashboards independientes:
 /admin
 /entrenador
 /cliente
 
 7.3 Gestión de usuarios
 Crear usuarios con rol
-Hashear contraseñas con bcrypt
-Editar datos del usuario
-Eliminar usuarios
+Contraseñas hasheadas al guardar
+Edición y eliminación
+Validación desde backend
 Listado filtrado por rol
 
 7.4 Gestión de ejercicios
-Crear ejercicios
-Editar y eliminar
-Filtros por parte del cuerpo y búsqueda
-Validación completa desde backend
+Crear, editar, eliminar
+Validación de campos
+Filtros y búsqueda
 
 7.5 Gestión de sesiones
-Crear sesiones con título, cliente, entrenador y ejercicios
-Editar y eliminar sesiones
-Agregar o quitar ejercicios dentro de una sesión
-Ver sesiones por cliente o entrenador
+Crear sesiones con estructura completa:
+título
+cliente
+entrenador
+ejercicios
+Edición total
+Agregar o quitar ejercicios
+Listado por cliente o entrenador
 
 8. Persistencia en Firestore
-Toda la persistencia se realiza en Firestore, reemplazando los antiguos JSON.
-
-Colecciones utilizadas:
+Todas las colecciones se manejan desde Firebase Admin:
 usuarios
 ejercicios
 sesiones
-
-fileService.js fue adaptado para operar exclusivamente sobre Firestore.
-Los archivos JSON locales ya no se utilizan.
+Los antiguos .json ya no se usan.
+fileService.js fue adaptado para Firestore.
 
 9. Validaciones backend
-Middlewares:
-
 validateUsuario
-Verifica nombre, contraseña y rol válido
-Aplica roles permitidos: admin, entrenador, cliente
+nombre obligatorio
+password obligatorio
+rol válido: admin / entrenador / cliente
 
 validateEjercicio
-Valida tipos y campos obligatorios
-Verifica estructura correcta
+nombre obligatorio
+descripción opcional
+parteCuerpo y elemento como strings
+validación segura
 
-validateSesion (actualizado a Firestore)
-Verifica título
-Valida clienteId y entrenadorId contra Firestore
-Verifica cada ejercicio en Firestore
-Valida series y reps
+validateSesion (actualizado)
+título obligatorio
+clienteId válido en Firestore
+entrenadorId válido
+ejercicios existentes en Firestore
+series y reps como número
 
 10. Ejecutar el proyecto
 Backend
@@ -190,5 +201,5 @@ Frontend
 cd frontend
 npm run dev
 
-Luego abrir:
+Acceso general:
 http://localhost:5173

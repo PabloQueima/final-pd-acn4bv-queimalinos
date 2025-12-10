@@ -7,8 +7,11 @@ import {
   eliminarUsuario
 } from "../controllers/usuarios.controller.js";
 import { validateUsuario } from "../middleware/validateUsuario.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.get("/", listarUsuarios);
 router.get("/:id", obtenerUsuario);

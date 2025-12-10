@@ -1,8 +1,11 @@
 import express from "express";
 import * as controller from "../controllers/ejercicios.controller.js";
 import { validateEjercicio } from "../middleware/validateEjercicio.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.get("/", controller.listarEjercicios);
 router.post("/", validateEjercicio, controller.crearEjercicio);
