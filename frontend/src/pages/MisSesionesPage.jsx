@@ -48,6 +48,10 @@ export default function MisSesionesPage() {
 
       {loading ? (
         <p>Cargando...</p>
+      ) : sesiones.length === 0 ? (
+        <p style={{ marginTop: 20, fontSize: 16, color: "#333" }}>
+          Para obtener tus sesiones de entrenamiento ponete en contacto con un entrenador.
+        </p>
       ) : (
         <div
           style={{
@@ -73,7 +77,8 @@ export default function MisSesionesPage() {
               <div style={{ fontWeight: "bold", fontSize: 16 }}>
                 {s.nombre}
               </div>
-              <SesionesList                
+
+              <SesionesList
                 sesiones={[s]}
                 usuariosMap={usuariosMap}
                 ejerciciosMap={ejerciciosMap}
