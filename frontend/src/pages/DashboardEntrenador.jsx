@@ -8,7 +8,6 @@ export default function DashboardEntrenador() {
 
       <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
         <div style={{ flex: 1 }}>
-          <h2>Gestión de Sesiones</h2>
           <SesionesPage />
         </div>
       </div>

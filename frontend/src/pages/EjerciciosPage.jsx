@@ -71,8 +71,6 @@ export default function EjerciciosPage() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Gestión de Ejercicios</h2>
-
       <input
         placeholder="Buscar ejercicio..."
         value={search}

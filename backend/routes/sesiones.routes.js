@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarSesiones,
+  obtenerSesion,
   crearSesion,
   actualizarSesion,
   eliminarSesion,

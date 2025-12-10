@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarUsuarios,
+  obtenerUsuario,
   crearUsuario,
   actualizarUsuario,
   eliminarUsuario
