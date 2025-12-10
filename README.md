@@ -1,26 +1,25 @@
 README — Plataformas de Desarrollo (Final)
 Alumno: Pablo Queimaliños — pablo.queimalinos@davinci.edu.ar
-
 Comisión: ACN2CV — 2º cuatrimestre 2025 — Escuela Da Vinci
 Docente: Sergio Medina — sergiod.medina@davinci.edu.ar
 Proyecto: Plataforma de Entrenamiento
 
 1. Descripción general
 El proyecto implementa una plataforma completa para gestionar:
-Usuarios (admin)
-Ejercicios (admin)
-Sesiones de entrenamiento (entrenador)
+Usuarios (rol admin)
+Ejercicios (rol admin)
+Sesiones de entrenamiento (rol entrenador)
 Asignación de ejercicios a sesiones
-Visualización de sesiones asignadas (cliente)
-Autenticación con login + JWT
+Visualización de sesiones asignadas (rol cliente)
+Registro de nuevos usuarios (rol automático cliente)
+Autenticación con JWT
 Validaciones en backend
 Paneles dinámicos según rol
-
-Arquitectura:
+Arquitectura general
 Backend Express con persistencia en Firestore
-Frontend React desacoplado, con dashboards por rol
-Roles soportados: admin, entrenador, cliente
-El objetivo es simular un entorno real con un backend REST moderno y un frontend independiente.
+Frontend React desacoplado con dashboards según rol
+Roles: admin, entrenador, cliente
+El objetivo es simular un entorno real de trabajo con un backend REST moderno y un frontend separado.
 
 2. Tecnologías utilizadas
 Backend
@@ -29,18 +28,19 @@ Firebase Admin SDK (Firestore)
 bcrypt (hashing de contraseñas)
 JSON Web Tokens (JWT)
 Middlewares custom
-Validadores basados en Firestore
+Validadores contra Firestore
 Rutas RESTful
 CORS + Morgan
-Arquitectura por capas
+Arquitectura por capas (controllers, routes, middleware, models, utils)
 
 Frontend
 React
 React Router DOM
 Fetch API / Axios
-Paneles por rol
 Componentes reutilizables
-CSS personalizado
+CSS propio
+Dashboards por rol
+Manejo de token con localStorage
 
 3. Instalación
 Backend
@@ -48,7 +48,7 @@ cd backend
 npm install
 npm start
 
-El backend inicia en:
+Backend disponible en:
 http://localhost:3000
 
 Frontend
@@ -56,7 +56,7 @@ cd frontend
 npm install
 npm run dev
 
-El frontend inicia en:
+Frontend disponible en:
 http://localhost:5173
 
 4. Estructura del proyecto
@@ -83,94 +83,98 @@ frontend/src/
 5. Endpoints principales
 Autenticación
 POST /api/login
+POST /api/register
 
 Usuarios
-GET /api/usuarios
-GET /api/usuarios/:id
-POST /api/usuarios
-PUT /api/usuarios/:id
+GET    /api/usuarios
+GET    /api/usuarios/:id
+POST   /api/usuarios
+PUT    /api/usuarios/:id
 DELETE /api/usuarios/:id
 
 Ejercicios
-GET /api/ejercicios
-GET /api/ejercicios/:id
-POST /api/ejercicios
-PUT /api/ejercicios/:id
+GET    /api/ejercicios
+GET    /api/ejercicios/:id
+POST   /api/ejercicios
+PUT    /api/ejercicios/:id
 DELETE /api/ejercicios/:id
-GET /api/ejercicios/buscar
+GET    /api/ejercicios/buscar
 
 Sesiones
-GET /api/sesiones
-GET /api/sesiones/:id
-POST /api/sesiones
-PUT /api/sesiones/:id
+GET    /api/sesiones
+GET    /api/sesiones/:id
+POST   /api/sesiones
+PUT    /api/sesiones/:id
 DELETE /api/sesiones/:id
 
-Filtros:
+Filtros por rol
 GET /api/sesiones/cliente/:id
 GET /api/sesiones/entrenador/:id
 
-Ejercicios dentro de la sesión:
-POST /api/sesiones/:id/ejercicios
+Ejercicios dentro de la sesión
+POST   /api/sesiones/:id/ejercicios
 DELETE /api/sesiones/:id/ejercicios/:ejercicioId
 
 6. Roles y permisos
 Admin
-Gestiona usuarios (crear, editar, eliminar)
-Gestiona ejercicios
-Ve totalizadores
+CRUD de usuarios
+CRUD de ejercicios
+Ve totalizadores globales
 
 Entrenador
 Crea, edita y elimina sesiones
 Asigna ejercicios
-Acceso a todos los clientes
+Trabaja con cualquier cliente
 
 Cliente
-Visualiza sesiones asignadas
-No puede modificar datos
+Ve únicamente sus sesiones asignadas
+No puede editar nada
 
 7. Funcionalidad del sistema
-7.1 Autenticación con Firestore + bcrypt + JWT
+7.1 Autenticación (Firestore + bcrypt + JWT)
 Búsqueda de usuario por nombre en Firestore
-Comparación con contraseña hasheada
-Generación de token JWT
-Frontend almacena token + user en localStorage
-Rutas protegidas en backend mediante middleware
+Contraseña validada con hash bcrypt
+Generación de token JWT de 4 horas
+Token + user guardados en localStorage
+Rutas protegidas mediante middleware en el backend
 
 7.2 Navegación según rol
-Dashboards independientes:
+Dashboards separados:
 /admin
 /entrenador
 /cliente
 
 7.3 Gestión de usuarios
-Crear usuarios con rol
-Contraseñas hasheadas al guardar
+Creación con rol asignado
+Password encriptado
 Edición y eliminación
-Validación desde backend
-Listado filtrado por rol
+Validaciones del backend
 
 7.4 Gestión de ejercicios
-Crear, editar, eliminar
-Validación de campos
-Filtros y búsqueda
+Crear / editar / eliminar
+Filtros y búsquedas
+Validación completa de campos
 
 7.5 Gestión de sesiones
-Crear sesiones con estructura completa:
+Crear sesiones con:
 título
 cliente
 entrenador
-ejercicios
-Edición total
-Agregar o quitar ejercicios
-Listado por cliente o entrenador
+ejercicios detallados
+Editar y eliminar sesiones
+Asignar/quitar ejercicios
+Listados por cliente o entrenador
+
+Mensaje especial cuando el cliente no tiene sesiones:
+“Para obtener tus sesiones de entrenamiento ponete en contacto con un entrenador.”
 
 8. Persistencia en Firestore
-Todas las colecciones se manejan desde Firebase Admin:
+Colecciones utilizadas:
 usuarios
 ejercicios
 sesiones
-Los antiguos .json ya no se usan.
+
+Los antiguos archivos .json fueron reemplazados.
 fileService.js fue adaptado para Firestore.
 
 9. Validaciones backend
@@ -181,16 +185,14 @@ rol válido: admin / entrenador / cliente
 
 validateEjercicio
 nombre obligatorio
-descripción opcional
-parteCuerpo y elemento como strings
-validación segura
+parteCuerpo y elemento como strings válidos
 
-validateSesion (actualizado)
+validateSesion
 título obligatorio
-clienteId válido en Firestore
-entrenadorId válido
-ejercicios existentes en Firestore
-series y reps como número
+clienteId existente en Firestore
+entrenadorId existente
+ejercicios válidos
+series/reps numéricos
 
 10. Ejecutar el proyecto
 Backend
@@ -201,5 +203,5 @@ Frontend
 cd frontend
 npm run dev
 
-Acceso general:
+Abrir en navegador:
 http://localhost:5173
