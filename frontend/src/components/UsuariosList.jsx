@@ -1,4 +1,8 @@
-export default function UsuariosList({ usuarios, onEdit, onDelete }) {
+export default function UsuariosList({ usuarios = [], onEdit, onDelete }) {
+  if (!Array.isArray(usuarios) || usuarios.length === 0) {
+    return <p>No hay usuarios.</p>;
+  }
+
   return (
     <ul style={{ padding: 0, listStyle: "none" }}>
       {usuarios.map((u) => (
@@ -15,19 +19,17 @@ export default function UsuariosList({ usuarios, onEdit, onDelete }) {
           <div>
             <strong>{u.nombre}</strong>
             <br />
-            <small>{u.email}</small>
+            {u.email && <small>{u.email}</small>}
             <br />
             <small>Rol: {u.rol}</small>
           </div>
 
           <div style={{ display: "flex", gap: "8px" }}>
-            <button onClick={() => onEdit(u)}>Editar</button>
-            <button onClick={() => onDelete(u.id)}>Eliminar</button>
+            {onEdit && <button onClick={() => onEdit(u)}>Editar</button>}
+            {onDelete && <button onClick={() => onDelete(u.id)}>Eliminar</button>}
           </div>
         </li>
       ))}
-
-      {usuarios.length === 0 && <p>No hay usuarios.</p>}
     </ul>
   );
 }

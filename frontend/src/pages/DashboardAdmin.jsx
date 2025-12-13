@@ -15,17 +15,26 @@ export default function DashboardAdmin() {
   }, []);
 
   async function cargarTotales() {
-    const [u, s, e] = await Promise.all([
-      getUsuarios(),
-      getSesionesAll(),
-      getEjercicios(),
-    ]);
+    try {
+      const [u, s, e] = await Promise.all([
+        getUsuarios(),
+        getSesionesAll(),
+        getEjercicios(),
+      ]);
 
-    setTotales({
-      usuarios: u.length,
-      sesiones: s.length,
-      ejercicios: e.length,
-    });
+      const usuarios = Array.isArray(u) ? u : [];
+      const sesiones = Array.isArray(s) ? s : [];
+      const ejercicios = Array.isArray(e) ? e : [];
+
+      setTotales({
+        usuarios: usuarios.length,
+        sesiones: sesiones.length,
+        ejercicios: ejercicios.length,
+      });
+    } catch (err) {
+      console.error("Error cargando totales:", err);
+      setTotales({ usuarios: 0, sesiones: 0, ejercicios: 0 });
+    }
   }
 
   return (
