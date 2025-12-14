@@ -1,37 +1,49 @@
-import axios from "axios";
-
-const API = "http://localhost:3000/api";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 export async function login(email, password) {
-  const res = await axios.post(`${API}/login`, { email, password });
+  const auth = getAuth();
+  const db = getFirestore();
 
-  const { user, token } = res.data;
+  const cred = await signInWithEmailAndPassword(auth, email, password);
+  const uid = cred.user.uid;
 
-  localStorage.setItem("user", JSON.stringify(user));
-  localStorage.setItem("token", token);
+  const snap = await getDoc(doc(db, "usuarios", uid));
+  const userData = snap.exists() ? snap.data() : null;
 
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
 
-  return user;
+  return { uid, ...userData };
 }
 
 export async function register(nombre, email, password) {
-  const res = await axios.post(`${API}/register`, { nombre, email, password });
-  return res.data;
+  const auth = getAuth();
+  const db = getFirestore();
+
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
+  const uid = cred.user.uid;
+
+  const userData = {
+    nombre,
+    email,
+    rol: "cliente",
+    createdAt: new Date().toISOString()
+  };
+
+  await setDoc(doc(db, "usuarios", uid), userData);
+
+  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
+
+  return { uid, ...userData };
 }
 
-export function logout() {
+export async function logout() {
+  const auth = getAuth();
+  await signOut(auth);
   localStorage.removeItem("user");
-  localStorage.removeItem("token");
-  delete axios.defaults.headers.common["Authorization"];
 }
 
 export function getCurrentUser() {
   const raw = localStorage.getItem("user");
   return raw ? JSON.parse(raw) : null;
-}
-
-const savedToken = localStorage.getItem("token");
-if (savedToken) {
-  axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
 }

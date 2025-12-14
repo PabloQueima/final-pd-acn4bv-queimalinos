@@ -11,16 +11,17 @@ export default function RegisterPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setMsg("");
 
     try {
       await register(nombre, email, password);
-      setMsg("Usuario registrado correctamente. Ahora podés iniciar sesión.");
+      setMsg("Usuario registrado correctamente");
 
       setTimeout(() => {
         navigate("/login");
-      }, 2000);
+      }, 1500);
     } catch (err) {
-      setMsg(err.response?.data?.error || "Error al registrarse");
+      setMsg("Error al registrarse");
     }
   }
 
@@ -30,13 +31,19 @@ export default function RegisterPage() {
 
       <form
         onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", width: 300, gap: 15 }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: 300,
+          gap: 15
+        }}
       >
         <input
           type="text"
           placeholder="Nombre"
           value={nombre}
           onChange={e => setNombre(e.target.value)}
+          required
         />
 
         <input
@@ -44,6 +51,7 @@ export default function RegisterPage() {
           placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
+          required
         />
 
         <input
@@ -51,6 +59,7 @@ export default function RegisterPage() {
           placeholder="Contraseña"
           value={password}
           onChange={e => setPassword(e.target.value)}
+          required
         />
 
         <button type="submit">Crear cuenta</button>

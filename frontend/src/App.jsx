@@ -1,4 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 import "./styles/styles.css";
 
@@ -13,10 +16,41 @@ import RegisterPage from "./pages/RegisterPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-import { getCurrentUser } from "./services/authService";
-
 export default function App() {
-  const user = getCurrentUser();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const unsub = onAuthStateChanged(auth, async firebaseUser => {
+      if (!firebaseUser) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      const snap = await getDoc(doc(db, "usuarios", firebaseUser.uid));
+
+      if (!snap.exists()) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      setUser({
+        uid: firebaseUser.uid,
+        ...snap.data()
+      });
+
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, []);
+
+  if (loading) return null;
 
   return (
     <>

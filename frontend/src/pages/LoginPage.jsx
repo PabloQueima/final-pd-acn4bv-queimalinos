@@ -11,10 +11,9 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const user = await login(email, password);
-      window.location.href = `/${user.rol}`;
-    } catch (err) {
-      setError(err.response?.data?.error || "Error de login");
+      await login(email, password);
+    } catch {
+      setError("Credenciales inválidas");
     }
   }
 
@@ -43,7 +42,9 @@ export default function LoginPage() {
           style={{ width: "120px", marginBottom: "1rem" }}
         />
 
-        <h2 style={{ color: "#0C3264", marginBottom: "1.5rem" }}>Login</h2>
+        <h2 style={{ color: "#0C3264", marginBottom: "1.5rem" }}>
+          Login
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <input
@@ -51,6 +52,7 @@ export default function LoginPage() {
             placeholder="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
+            required
             style={{
               width: "100%",
               padding: "0.6rem",
@@ -65,6 +67,7 @@ export default function LoginPage() {
             placeholder="Contraseña"
             value={password}
             onChange={e => setPassword(e.target.value)}
+            required
             style={{
               width: "100%",
               padding: "0.6rem",

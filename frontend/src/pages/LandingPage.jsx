@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
+
 export default function LandingPage() {
+  const navigate = useNavigate();
+
   return (
     <div style={{ fontFamily: "sans-serif" }}>
-      {/* Hero Section */}
       <div
         style={{
           background: "url('/src/images/fondo.png') center/cover fixed",
@@ -25,16 +28,17 @@ export default function LandingPage() {
             alt="Logo"
             style={{ width: "120px", marginBottom: "1rem" }}
           />
+
           <h1 style={{ marginBottom: "1.5rem", color: "#0C3264" }}>
             Plataforma de Entrenamiento
           </h1>
+
           <p style={{ marginBottom: "1.5rem", color: "#15114D" }}>
             Gestiona tus entrenamientos, clases y ejercicios de manera simple y eficiente.
           </p>
 
-          {/* Botón Login */}
           <button
-            onClick={() => (window.location.href = "/login")}
+            onClick={() => navigate("/login")}
             style={{
               padding: "0.8rem 1.5rem",
               backgroundColor: "#05A3CB",
@@ -48,9 +52,8 @@ export default function LandingPage() {
             Ingresar
           </button>
 
-          {/* Botón Register */}
           <button
-            onClick={() => (window.location.href = "/register")}
+            onClick={() => navigate("/register")}
             style={{
               padding: "0.8rem 1.5rem",
               backgroundColor: "#15114D",
@@ -65,18 +68,36 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Sección contenido */}
-      <div style={{ padding: "4rem 2rem", textAlign: "center", backgroundColor: "#f5f5f5" }}>
-        <h2 style={{ marginBottom: "2rem", color: "#0C3264" }}>¿Qué puedes hacer?</h2>
-        <div style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
-          
+      <div
+        style={{
+          padding: "4rem 2rem",
+          textAlign: "center",
+          backgroundColor: "#f5f5f5"
+        }}
+      >
+        <h2 style={{ marginBottom: "2rem", color: "#0C3264" }}>
+          ¿Qué puedes hacer?
+        </h2>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "2rem",
+            flexWrap: "wrap"
+          }}
+        >
           <div style={{ maxWidth: "440px" }}>
             <img
               src="/src/images/ejercicios.png"
               alt="Ejercicios"
-              style={{ width: "100%", borderRadius: "8px", marginBottom: "1rem" }}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                marginBottom: "1rem"
+              }}
             />
-            <h3 style={{ color: "#15114D", marginBottom: "0.5rem" }}>Ejercicios</h3>
+            <h3 style={{ color: "#15114D" }}>Ejercicios</h3>
             <p style={{ fontSize: "0.9rem", color: "#333" }}>
               Explora y gestiona todos los ejercicios disponibles para tus clases.
             </p>
@@ -86,9 +107,13 @@ export default function LandingPage() {
             <img
               src="/src/images/sesiones.png"
               alt="Sesiones"
-              style={{ width: "100%", borderRadius: "8px", marginBottom: "1rem" }}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                marginBottom: "1rem"
+              }}
             />
-            <h3 style={{ color: "#15114D", marginBottom: "0.5rem" }}>Sesiones</h3>
+            <h3 style={{ color: "#15114D" }}>Sesiones</h3>
             <p style={{ fontSize: "0.9rem", color: "#333" }}>
               Crea y organiza tus sesiones de entrenamiento de manera rápida.
             </p>
@@ -98,27 +123,35 @@ export default function LandingPage() {
             <img
               src="/src/images/usuarios.jpg"
               alt="Usuarios"
-              style={{ width: "100%", borderRadius: "8px", marginBottom: "1rem" }}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                marginBottom: "1rem"
+              }}
             />
-            <h3 style={{ color: "#15114D", marginBottom: "0.5rem" }}>Usuarios</h3>
+            <h3 style={{ color: "#15114D" }}>Usuarios</h3>
             <p style={{ fontSize: "0.9rem", color: "#333" }}>
               Administra clientes, entrenadores y todo tu equipo en un solo lugar.
             </p>
           </div>
-
         </div>
       </div>
 
-      {/* CTA Final */}
-      <div style={{ textAlign: "center", padding: "3rem 1rem", backgroundColor: "#0C3264", color: "white" }}>
-        <h2 style={{ marginBottom: "1rem" }}>Comienza hoy</h2>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "3rem 1rem",
+          backgroundColor: "#0C3264",
+          color: "white"
+        }}
+      >
+        <h2>Comienza hoy</h2>
         <p style={{ marginBottom: "1.5rem" }}>
           Regístrate y lleva tu entrenamiento al siguiente nivel.
         </p>
 
-        {/* Botón Register final */}
         <button
-          onClick={() => (window.location.href = "/register")}
+          onClick={() => navigate("/register")}
           style={{
             padding: "0.8rem 1.5rem",
             backgroundColor: "#05A3CB",
