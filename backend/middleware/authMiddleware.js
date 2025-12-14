@@ -1,8 +1,6 @@
-import jwt from "jsonwebtoken";
+import admin from "firebase-admin";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecreto123";
-
-export function authMiddleware(req, res, next) {
+export async function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
 
   if (!header) {
@@ -16,10 +14,13 @@ export function authMiddleware(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    const decoded = await admin.auth().verifyIdToken(token);
+    req.user = {
+      uid: decoded.uid,
+      email: decoded.email
+    };
     next();
-  } catch {
-    return res.status(401).json({ error: "Token inválido o expirado" });
+  } catch (err) {
+    return res.status(401).json({ error: "Token Firebase inválido" });
   }
 }

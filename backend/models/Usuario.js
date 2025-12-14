@@ -1,14 +1,10 @@
 export default class Usuario {
-  constructor(id, nombre, email, rol, passwordHash) {
-    this.id = Number(id);
+  constructor(uid, nombre, email, rol = "cliente", createdAt = null) {
+    this.uid = String(uid);
     this.nombre = String(nombre || "").trim();
     this.email = String(email || "").trim();
-    this.rol = rol?.toLowerCase() || "cliente";
-    this.passwordHash = String(passwordHash || "").trim();
-  }
-
-  descripcion() {
-    return `${this.nombre} (${this.rol})`;
+    this.rol = rol.toLowerCase();
+    this.createdAt = createdAt || new Date().toISOString();
   }
 
   esCliente() {
@@ -25,22 +21,22 @@ export default class Usuario {
 
   toJSON() {
     return {
-      id: this.id,
+      uid: this.uid,
       nombre: this.nombre,
       email: this.email,
       rol: this.rol,
-      passwordHash: this.passwordHash
+      createdAt: this.createdAt
     };
   }
 
   static fromJSON(obj) {
     if (!obj) return null;
     return new Usuario(
-      obj.id,
+      obj.uid,
       obj.nombre,
       obj.email,
       obj.rol,
-      obj.passwordHash
+      obj.createdAt
     );
   }
 }

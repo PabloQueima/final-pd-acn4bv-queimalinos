@@ -14,9 +14,9 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get("/", listarUsuarios);
-router.get("/:id", obtenerUsuario);
+router.get("/:uid", obtenerUsuario);
 router.post("/", validateUsuario, crearUsuario);
-router.put("/:id", actualizarUsuario);
-router.delete("/:id", eliminarUsuario);
+router.put("/:uid", actualizarUsuario);
+router.delete("/:uid", eliminarUsuario);
 
 export default router;

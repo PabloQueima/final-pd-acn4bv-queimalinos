@@ -3,19 +3,16 @@ export default class Sesion {
     id,
     titulo,
     ejercicios = [],
-    clienteId,
-    entrenadorId = null,
+    clienteUid,
+    entrenadorUid = null,
     createdAt = null,
     updatedAt = null
   ) {
     this.id = Number(id);
     this.titulo = String(titulo || "").trim();
-
     this.ejercicios = Array.isArray(ejercicios) ? ejercicios : [];
-
-    this.clienteId = Number(clienteId);
-    this.entrenadorId = entrenadorId !== null ? Number(entrenadorId) : null;
-
+    this.clienteUid = String(clienteUid);
+    this.entrenadorUid = entrenadorUid ? String(entrenadorUid) : null;
     this.createdAt = createdAt || new Date().toISOString();
     this.updatedAt = updatedAt || null;
   }
@@ -42,8 +39,8 @@ export default class Sesion {
     return {
       id: this.id,
       titulo: this.titulo,
-      clienteId: this.clienteId,
-      entrenadorId: this.entrenadorId,
+      clienteUid: this.clienteUid,
+      entrenadorUid: this.entrenadorUid,
       ejercicios: this.ejercicios,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
@@ -57,8 +54,8 @@ export default class Sesion {
       obj.id,
       obj.titulo,
       Array.isArray(obj.ejercicios) ? obj.ejercicios : [],
-      obj.clienteId,
-      obj.entrenadorId,
+      obj.clienteUid,
+      obj.entrenadorUid,
       obj.createdAt,
       obj.updatedAt
     );

@@ -1,21 +1,14 @@
 import { db } from "../firebase.js";
 import Usuario from "../models/Usuario.js";
-import bcrypt from "bcrypt";
 
 async function fetchUsuarios() {
   const snap = await db.collection("usuarios").get();
   return snap.docs.map(d => Usuario.fromJSON(d.data()));
 }
 
-async function findUsuarioById(id) {
-  const snap = await db.collection("usuarios").where("id", "==", id).limit(1).get();
-  return snap.empty ? null : { ref: snap.docs[0].ref, data: Usuario.fromJSON(snap.docs[0].data()) };
-}
-
 export async function listarUsuarios(req, res) {
   try {
     const { rol } = req.query;
-
     let usuarios = await fetchUsuarios();
 
     if (rol) {
@@ -24,105 +17,58 @@ export async function listarUsuarios(req, res) {
 
     res.json(usuarios.map(u => u.toJSON()));
   } catch (err) {
-    console.error("listarUsuarios:", err);
     res.status(500).json({ error: "No se pudieron leer usuarios" });
   }
 }
 
 export async function obtenerUsuario(req, res) {
   try {
-    const id = Number(req.params.id);
+    const { uid } = req.params;
 
-    const snap = await db
-      .collection("usuarios")
-      .where("id", "==", id)
-      .limit(1)
-      .get();
-
-    if (snap.empty) {
+    const doc = await db.collection("usuarios").doc(uid).get();
+    if (!doc.exists) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    const data = snap.docs[0].data();
-    res.json(Usuario.fromJSON(data).toJSON());
+    res.json(Usuario.fromJSON(doc.data()).toJSON());
   } catch (err) {
-    console.error("obtenerUsuario:", err);
-    res.status(500).json({ error: "No se pudo obtener usuario" });
-  }
-}
-
-export async function crearUsuario(req, res) {
-  try {
-    const { nombre, email, rol, password } = req.body;
-
-    if (!nombre || !email || !rol || !password) {
-      return res.status(400).json({ error: "nombre, email, rol y password son obligatorios" });
-    }
-
-    const existing = await db
-      .collection("usuarios")
-      .where("email", "==", email.trim())
-      .limit(1)
-      .get();
-
-    if (!existing.empty) {
-      return res.status(400).json({ error: "El email ya está en uso" });
-    }
-
-    const hash = await bcrypt.hash(password, 10);
-    const nuevo = new Usuario(Date.now(), nombre.trim(), email.trim(), rol.trim().toLowerCase(), hash);
-
-    await db.collection("usuarios").add(nuevo.toJSON());
-
-    res.status(201).json(nuevo.toJSON());
-  } catch (err) {
-    console.error("crearUsuario:", err);
-    res.status(500).json({ error: "No se pudo crear usuario" });
+    res.status(500).json({ error: "Error obteniendo usuario" });
   }
 }
 
 export async function actualizarUsuario(req, res) {
   try {
-    const id = Number(req.params.id);
+    const { uid } = req.params;
+    const { nombre, rol } = req.body;
 
-    const result = await findUsuarioById(id);
-    if (!result) {
+    const ref = db.collection("usuarios").doc(uid);
+    const doc = await ref.get();
+
+    if (!doc.exists) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    const { ref, data: usuario } = result;
-    const { nombre, email, rol, password } = req.body;
+    const data = doc.data();
 
-    if (nombre !== undefined) usuario.nombre = nombre.trim();
-    if (email !== undefined) usuario.email = email.trim();
-    if (rol !== undefined) usuario.rol = rol.trim().toLowerCase();
-    if (password !== undefined) {
-      usuario.passwordHash = await bcrypt.hash(password, 10);
-    }
+    if (nombre !== undefined) data.nombre = nombre.trim();
+    if (rol !== undefined) data.rol = rol.trim().toLowerCase();
 
-    await ref.update(usuario.toJSON());
+    await ref.update(data);
 
-    res.json(usuario.toJSON());
+    res.json(data);
   } catch (err) {
-    console.error("actualizarUsuario:", err);
     res.status(500).json({ error: "No se pudo actualizar usuario" });
   }
 }
 
 export async function eliminarUsuario(req, res) {
   try {
-    const id = Number(req.params.id);
+    const { uid } = req.params;
 
-    const result = await findUsuarioById(id);
-    if (!result) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-
-    await result.ref.delete();
+    await db.collection("usuarios").doc(uid).delete();
 
     res.status(204).end();
   } catch (err) {
-    console.error("eliminarUsuario:", err);
     res.status(500).json({ error: "No se pudo eliminar usuario" });
   }
 }

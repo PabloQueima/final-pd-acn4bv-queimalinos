@@ -1,105 +1,78 @@
+import admin from "firebase-admin";
 import { db } from "../firebase.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "supersecreto123";
 
 export async function login(req, res) {
-  const { email, password } = req.body;
+  const { token } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ error: "Faltan credenciales" });
+  if (!token) {
+    return res.status(400).json({ error: "Token requerido" });
   }
 
   try {
-    const snap = await db
-      .collection("usuarios")
-      .where("email", "==", email.trim())
-      .limit(1)
-      .get();
+    const decoded = await admin.auth().verifyIdToken(token);
+    const uid = decoded.uid;
 
-    if (snap.empty) {
-      return res.status(401).json({ error: "Usuario no encontrado" });
+    const doc = await db.collection("usuarios").doc(uid).get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Perfil no encontrado" });
     }
 
-    const rawData = snap.docs[0].data();
-    const userId = snap.docs[0].id;
+    const data = doc.data();
 
-    const ok = await bcrypt.compare(password, rawData.passwordHash);
-    if (!ok) {
-      return res.status(401).json({ error: "Contraseña incorrecta" });
-    }
-
-    const token = jwt.sign(
-      { id: userId, email: rawData.email, rol: rawData.rol },
-      JWT_SECRET,
-      { expiresIn: "4h" }
-    );
-
-    return res.json({
+    res.json({
       user: {
-        id: userId,
-        nombre: rawData.nombre,
-        email: rawData.email,
-        rol: rawData.rol
-      },
-      token
+        uid,
+        nombre: data.nombre,
+        email: data.email,
+        rol: data.rol
+      }
     });
-
   } catch (err) {
-    console.error("Error en login:", err);
-    return res.status(500).json({ error: "Error interno en el servidor" });
+    console.error(err);
+    res.status(401).json({ error: "Token inválido" });
   }
 }
 
 export async function register(req, res) {
+  const { token, nombre } = req.body;
+
+  if (!token || !nombre) {
+    return res.status(400).json({ error: "Token y nombre requeridos" });
+  }
+
   try {
-    const { nombre, email, password } = req.body;
+    const decoded = await admin.auth().verifyIdToken(token);
+    const uid = decoded.uid;
+    const email = decoded.email;
 
-    if (!nombre || !email || !password) {
-      return res.status(400).json({ error: "nombre, email y password son obligatorios" });
+    const ref = db.collection("usuarios").doc(uid);
+    const existing = await ref.get();
+
+    if (existing.exists) {
+      return res.status(400).json({ error: "Usuario ya registrado" });
     }
-
-    const existing = await db
-      .collection("usuarios")
-      .where("email", "==", email.trim())
-      .limit(1)
-      .get();
-
-    if (!existing.empty) {
-      return res.status(400).json({ error: "El email ya está en uso" });
-    }
-
-    const hash = await bcrypt.hash(password, 10);
 
     const nuevo = {
-      id: Date.now(),
+      uid,
       nombre: nombre.trim(),
-      email: email.trim(),
+      email,
       rol: "cliente",
-      passwordHash: hash
+      createdAt: new Date().toISOString()
     };
 
-    const ref = await db.collection("usuarios").add(nuevo);
+    await ref.set(nuevo);
 
-    const token = jwt.sign(
-      { id: ref.id, email: nuevo.email, rol: nuevo.rol },
-      JWT_SECRET,
-      { expiresIn: "4h" }
-    );
-
-    return res.status(201).json({
+    res.status(201).json({
       user: {
-        id: ref.id,
+        uid,
         nombre: nuevo.nombre,
         email: nuevo.email,
         rol: nuevo.rol
-      },
-      token
+      }
     });
-
   } catch (err) {
-    console.error("Error en register:", err);
-    return res.status(500).json({ error: "Error interno del servidor" });
+    console.error(err);
+    res.status(401).json({ error: "Token inválido" });
   }
 }

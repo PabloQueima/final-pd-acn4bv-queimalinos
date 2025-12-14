@@ -18,8 +18,8 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.get("/cliente/:id", sesionesPorCliente);
-router.get("/entrenador/:id", sesionesPorEntrenador);
+router.get("/cliente/:uid", sesionesPorCliente);
+router.get("/entrenador/:uid", sesionesPorEntrenador);
 router.get("/", listarSesiones);
 router.get("/:id", obtenerSesion);
 router.post("/", validateSesion, crearSesion);
