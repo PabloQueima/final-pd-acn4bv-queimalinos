@@ -32,7 +32,7 @@ export default function Navbar() {
       <button
         onClick={() => {
           logout();
-          location.href = "/login";
+          location.href = "/";
         }}
         style={{
           background: "#05A3CB",
