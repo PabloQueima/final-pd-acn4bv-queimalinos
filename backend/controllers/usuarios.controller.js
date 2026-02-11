@@ -6,6 +6,37 @@ async function fetchUsuarios() {
   return snap.docs.map(d => Usuario.fromJSON(d.data()));
 }
 
+
+export async function crearUsuario(req, res) {
+  try {
+    const { uid, nombre, rol } = req.body;
+
+    if (!uid || !nombre || !rol) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    const ref = db.collection("usuarios").doc(uid);
+    const doc = await ref.get();
+
+    if (doc.exists) {
+      return res.status(400).json({ error: "El usuario ya existe" });
+    }
+
+    const usuario = new Usuario(
+      uid,
+      nombre.trim(),
+      rol.trim().toLowerCase()
+    );
+
+    await ref.set(usuario.toJSON());
+
+    res.status(201).json(usuario.toJSON());
+  } catch (err) {
+    res.status(500).json({ error: "No se pudo crear usuario" });
+  }
+}
+
+
 export async function listarUsuarios(req, res) {
   try {
     const { rol } = req.query;
