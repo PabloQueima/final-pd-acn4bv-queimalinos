@@ -1,6 +1,6 @@
 import UsuariosPage from "./UsuariosPage";
 import { useEffect, useState } from "react";
-import { getUsuarios, getSesionesAll, getEjercicios } from "../services/api";
+import { getUsuarios, getSesiones, getEjercicios } from "../services/api";
 import EjerciciosPage from "./EjerciciosPage";
 
 export default function DashboardAdmin() {
@@ -18,7 +18,7 @@ export default function DashboardAdmin() {
     try {
       const [u, s, e] = await Promise.all([
         getUsuarios(),
-        getSesionesAll(),
+        getSesiones(),
         getEjercicios(),
       ]);
 
