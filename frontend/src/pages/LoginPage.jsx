@@ -77,7 +77,19 @@ export default function LoginPage() {
             }}
           />
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && (
+            <p
+              style={{
+                color: "red",
+                marginTop: "0.5rem",
+                marginBottom: "0.8rem",
+                fontSize: "0.9rem"
+              }}
+            >
+              {error}
+            </p>
+          )}
+
 
           <button
             type="submit"
