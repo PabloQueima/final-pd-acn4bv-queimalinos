@@ -20,33 +20,48 @@ export default function LoginPage() {
   return (
     <div
       style={{
-        height: "90vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "url('/src/images/fondo.png') center/cover fixed"
+        background: "url('/src/images/fondo.png') center/cover fixed",
+        padding: "1rem"
       }}
     >
       <div
         style={{
-          background: "rgba(255,255,255,0.9)",
-          padding: "2rem 3rem",
-          borderRadius: "12px",
-          textAlign: "center",
-          width: "300px"
+          background: "rgba(255,255,255,0.95)",
+          padding: "2.5rem",
+          borderRadius: "14px",
+          width: "320px",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+          textAlign: "center"
         }}
       >
         <img
           src="/src/images/logo.png"
           alt="Logo"
-          style={{ width: "120px", marginBottom: "1rem" }}
+          style={{ width: "110px", marginBottom: "1.2rem" }}
         />
 
-        <h2 style={{ color: "#0C3264", marginBottom: "1.5rem" }}>
+        <h2
+          style={{
+            color: "#0C3264",
+            marginBottom: "1.8rem",
+            fontWeight: "600"
+          }}
+        >
           Login
         </h2>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.9rem"
+          }}
+        >
           <input
             type="email"
             placeholder="Email"
@@ -54,11 +69,10 @@ export default function LoginPage() {
             onChange={e => setEmail(e.target.value)}
             required
             style={{
-              width: "100%",
-              padding: "0.6rem",
-              marginBottom: "0.5rem",
-              borderRadius: "6px",
-              border: "1px solid #ccc"
+              padding: "0.7rem",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "0.95rem"
             }}
           />
 
@@ -69,38 +83,39 @@ export default function LoginPage() {
             onChange={e => setPassword(e.target.value)}
             required
             style={{
-              width: "100%",
-              padding: "0.6rem",
-              marginBottom: "0.5rem",
-              borderRadius: "6px",
-              border: "1px solid #ccc"
+              padding: "0.7rem",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "0.95rem"
             }}
           />
 
           {error && (
-            <p
+            <div
               style={{
-                color: "red",
-                marginTop: "0.5rem",
-                marginBottom: "0.8rem",
-                fontSize: "0.9rem"
+                backgroundColor: "#ffe6e6",
+                color: "#cc0000",
+                padding: "0.6rem",
+                borderRadius: "6px",
+                fontSize: "0.85rem"
               }}
             >
               {error}
-            </p>
+            </div>
           )}
-
 
           <button
             type="submit"
             style={{
-              width: "100%",
-              padding: "0.8rem",
+              marginTop: "0.5rem",
+              padding: "0.85rem",
               backgroundColor: "#05A3CB",
               color: "white",
               border: "none",
-              borderRadius: "6px",
-              cursor: "pointer"
+              borderRadius: "8px",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "0.2s"
             }}
           >
             Ingresar
