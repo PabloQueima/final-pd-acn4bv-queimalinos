@@ -14,6 +14,14 @@ export default function EjercicioSelector({ onAdd }) {
   const [series, setSeries] = useState(3);
   const [reps, setReps] = useState(10);
 
+  function abrirImagen(url) {
+    window.open(
+      url,
+      "_blank",
+      "width=600,height=600,resizable=yes,scrollbars=yes"
+    );
+  }
+
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -72,44 +80,90 @@ export default function EjercicioSelector({ onAdd }) {
         <>
           <ul style={{ padding: 0, listStyle: "none" }}>
             {pageData.map((e) => (
-              <li key={e.id} style={{ padding: "8px 0", borderBottom: "1px solid #eee" }}>
-                <strong>{e.nombre}</strong>
+              <li
+                key={e.id}
+                style={{
+                  padding: "8px 0",
+                  borderBottom: "1px solid #eee"
+                }}
+              >
+                <div>
+                  <strong>{e.nombre}</strong>
+
+                  {e.imageUrl && (
+                    <div style={{ marginTop: 2 }}>
+                      <button
+                        onClick={() => abrirImagen(e.imageUrl)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          color: "#0066cc",
+                          fontWeight: "bold",
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          padding: 0,
+                          fontSize: 14
+                        }}
+                      >
+                        Ver imagen
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <div><small>{e.descripcion}</small></div>
                 <div><small>Parte del cuerpo: {e.parteCuerpo}</small></div>
                 <div><small>Elemento: {e.elemento || "Ninguno"}</small></div>
 
-                {e.imageUrl && (
-                  <div>
-                    <a href={e.imageUrl} target="_blank" rel="noreferrer">
-                      Ver imagen
-                    </a>
-                  </div>
-                )}
-
-                <button onClick={() => handleAdd(e)} style={{ marginTop: 5 }}>
+                <button
+                  onClick={() => handleAdd(e)}
+                  style={{ marginTop: 5 }}
+                >
                   Agregar
                 </button>
               </li>
             ))}
-            {pageData.length === 0 && <p>No se encontraron ejercicios.</p>}
+            {pageData.length === 0 && (
+              <p>No se encontraron ejercicios.</p>
+            )}
           </ul>
 
           <div style={{ margin: "10px 0" }}>
-            <button disabled={page <= 1} onClick={() => setPage(page - 1)}>◀</button>
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage(page - 1)}
+            >
+              ◀
+            </button>
             <span style={{ margin: "0 10px" }}>
               Página {page} / {totalPages}
             </span>
-            <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>▶</button>
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              ▶
+            </button>
           </div>
 
           <div style={{ marginTop: 10 }}>
             <label>
               Series:
-              <input type="number" min="1" value={series} onChange={(e) => setSeries(e.target.value)} />
+              <input
+                type="number"
+                min="1"
+                value={series}
+                onChange={(e) => setSeries(e.target.value)}
+              />
             </label>
             <label style={{ marginLeft: 10 }}>
               Reps:
-              <input type="number" min="1" value={reps} onChange={(e) => setReps(e.target.value)} />
+              <input
+                type="number"
+                min="1"
+                value={reps}
+                onChange={(e) => setReps(e.target.value)}
+              />
             </label>
           </div>
         </>

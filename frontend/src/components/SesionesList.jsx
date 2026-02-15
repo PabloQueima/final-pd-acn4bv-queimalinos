@@ -11,11 +11,20 @@ export default function SesionesList({
     return <p>No hay sesiones registradas.</p>;
   }
 
+  function abrirImagen(url) {
+    window.open(
+      url,
+      "_blank",
+      "width=600,height=600,resizable=yes,scrollbars=yes"
+    );
+  }
+
   return (
     <div>
       <ul style={{ padding: 0, listStyle: "none" }}>
         {sesiones.map((s) => {
-          const cliente = usuariosMap[s.clienteId]?.nombre || `ID ${s.clienteId}`;
+          const cliente =
+            usuariosMap[s.clienteId]?.nombre || `ID ${s.clienteId}`;
           const entrenador =
             usuariosMap[s.entrenadorId]?.nombre || `ID ${s.entrenadorId}`;
 
@@ -39,7 +48,6 @@ export default function SesionesList({
                 </span>
               </div>
 
-
               {showAssignInfo &&
                 s.ejercicios &&
                 s.ejercicios.length > 0 && (
@@ -48,20 +56,53 @@ export default function SesionesList({
                     <ul style={{ marginTop: 6, paddingLeft: 16 }}>
                       {s.ejercicios.map((ej) => {
                         const data = ejerciciosMap[ej.id];
+
                         return (
-                          <li key={ej.id}>
-                            <div style={{ display: "inline-block", minWidth: "max-content", marginRight: 8 }}>
-                              <b>{data?.nombre || `Ejercicio ${ej.id}`}</b>
-                              {data?.descripcion ? ` — ${data.descripcion}` : ""}
+                          <li key={ej.id} style={{ marginBottom: 10 }}>
+                            <div>
+                              <b>
+                                {data?.nombre || `Ejercicio ${ej.id}`}
+                              </b>
+
+                              {data?.imageUrl && (
+                                <div style={{ marginTop: 2 }}>
+                                  <button
+                                    onClick={() =>
+                                      abrirImagen(data.imageUrl)
+                                    }
+                                    style={{
+                                      background: "transparent",
+                                      border: "none",
+                                      color: "#0066cc",
+                                      fontWeight: "bold",
+                                      textDecoration: "underline",
+                                      cursor: "pointer",
+                                      padding: 0,
+                                      fontSize: 14
+                                    }}
+                                  >
+                                    Ver imagen
+                                  </button>
+                                </div>
+                              )}
                             </div>
-                            <div style={{ display: "inline-block", minWidth: "max-content", marginRight: 8 }}>
-                              <small>Parte: {data?.parteCuerpo}</small>
+
+                            <div>
+                              <small>
+                                Parte: {data?.parteCuerpo}
+                              </small>
                             </div>
-                            <div style={{ display: "inline-block", minWidth: "max-content", marginRight: 8 }}>
-                              <small>Elemento: {data?.elemento || "Ninguno"}</small>
+
+                            <div>
+                              <small>
+                                Elemento: {data?.elemento || "Ninguno"}
+                              </small>
                             </div>
-                            <div style={{ display: "inline-block", minWidth: "max-content" }}>
-                              <strong>{ej.series}×{ej.reps}</strong>
+
+                            <div>
+                              <strong>
+                                {ej.series}×{ej.reps}
+                              </strong>
                             </div>
                           </li>
                         );
