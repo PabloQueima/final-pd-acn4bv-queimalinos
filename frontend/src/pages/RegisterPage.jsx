@@ -26,8 +26,7 @@ export default function RegisterPage() {
 
       await register(nombre, email, password);
 
-      // Redirigir directamente al panel cliente
-      navigate("/cliente", { replace: true });
+      navigate("/login", { replace: true });
 
     } catch (err) {
       setError("Error al registrarse");

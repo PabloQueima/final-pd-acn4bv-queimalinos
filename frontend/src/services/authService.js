@@ -20,15 +20,15 @@ export async function login(email, password) {
   const uid = cred.user.uid;
 
   const snap = await getDoc(doc(db, "usuarios", uid));
+  const userData = snap.exists() ? snap.data() : null;
 
-  if (!snap.exists()) {
+  if (!userData) {
     throw new Error("Usuario sin datos en Firestore");
   }
 
-  return {
-    uid,
-    ...snap.data()
-  };
+  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
+
+  return { uid, ...userData };
 }
 
 export async function register(nombre, email, password) {
@@ -38,22 +38,27 @@ export async function register(nombre, email, password) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
   const uid = cred.user.uid;
 
-  await setDoc(doc(db, "usuarios", uid), {
+  const userData = {
     nombre,
     email,
     rol: "cliente",
     createdAt: new Date().toISOString()
-  });
-
-  return {
-    uid,
-    nombre,
-    email,
-    rol: "cliente"
   };
+
+  await setDoc(doc(db, "usuarios", uid), userData);
+
+  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
+
+  return { uid, ...userData };
 }
 
 export async function logout() {
   const auth = getAuth();
   await signOut(auth);
+  localStorage.removeItem("user");
+}
+
+export function getCurrentUser() {
+  const raw = localStorage.getItem("user");
+  return raw ? JSON.parse(raw) : null;
 }

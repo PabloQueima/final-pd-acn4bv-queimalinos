@@ -16,8 +16,10 @@ import RegisterPage from "./pages/RegisterPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
+import { getCurrentUser } from "./services/authService";
+
 export default function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(getCurrentUser());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,36 +29,27 @@ export default function App() {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
+        localStorage.removeItem("user");
         setLoading(false);
         return;
       }
 
       try {
-        const userRef = doc(db, "usuarios", firebaseUser.uid);
+        const snap = await getDoc(doc(db, "usuarios", firebaseUser.uid));
 
-        let snap = null;
-        let attempts = 0;
-
-        while (attempts < 6) {
-          snap = await getDoc(userRef);
-          if (snap.exists()) break;
-
-          await new Promise(res => setTimeout(res, 300));
-          attempts++;
-        }
-
-        if (!snap || !snap.exists()) {
-          console.error("Documento de usuario no encontrado en Firestore");
+        if (!snap.exists()) {
           setUser(null);
           setLoading(false);
           return;
         }
 
-        setUser({
+        const userData = {
           uid: firebaseUser.uid,
           ...snap.data()
-        });
+        };
 
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
         setLoading(false);
 
       } catch (error) {
