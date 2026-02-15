@@ -8,7 +8,7 @@ async function fetchUsuarios() {
 }
 
 export async function crearUsuario(req, res) {
-    console.log("BODY RECIBIDO EN BACKEND:", req.body);
+  console.log("BODY RECIBIDO EN BACKEND:", req.body);
   try {
     const { nombre, email, password, rol } = req.body;
 
@@ -73,7 +73,12 @@ export async function listarUsuarios(req, res) {
       usuarios = usuarios.filter(u => u.rol === rol.toLowerCase());
     }
 
-    res.json(usuarios.map(u => u.toJSON()));
+    res.json(usuarios.map(u => ({
+      uid: u.uid,
+      nombre: u.nombre,
+      rol: u.rol,
+      email: u.email || ""
+    })));
   } catch (err) {
     res.status(500).json({ error: "No se pudieron leer usuarios" });
   }
@@ -128,6 +133,7 @@ export async function eliminarUsuario(req, res) {
 
     res.status(204).end();
   } catch (err) {
+    console.error("Error eliminando usuario:", err);
     res.status(500).json({ error: "No se pudo eliminar usuario" });
   }
 }

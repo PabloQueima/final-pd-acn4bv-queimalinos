@@ -129,7 +129,10 @@ export async function updateUsuario(id, data) {
 }
 
 export async function deleteUsuario(id) {
-  await fetchWithAuth(`${API_URL}/usuarios/${id}`, {
-    method: "DELETE"
-  });
+  const res = await fetchWithAuth(`${API_URL}/usuarios/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || "Error eliminando usuario");
+  }
+  return res;
 }

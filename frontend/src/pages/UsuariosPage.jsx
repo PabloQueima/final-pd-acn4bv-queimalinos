@@ -71,7 +71,7 @@ export default function UsuariosPage() {
 
     try {
       await deleteUsuario(uid);
-      window.location.reload();
+      setUsuarios(prev => prev.filter(u => u.uid !== uid));
     } catch (err) {
       console.error("Error eliminando usuario:", err);
     }
