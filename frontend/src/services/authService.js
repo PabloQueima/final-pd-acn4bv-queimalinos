@@ -1,5 +1,16 @@
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from "firebase/auth";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc
+} from "firebase/firestore";
 
 export async function login(email, password) {
   const auth = getAuth();
@@ -9,11 +20,15 @@ export async function login(email, password) {
   const uid = cred.user.uid;
 
   const snap = await getDoc(doc(db, "usuarios", uid));
-  const userData = snap.exists() ? snap.data() : null;
 
-  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
+  if (!snap.exists()) {
+    throw new Error("Usuario sin datos en Firestore");
+  }
 
-  return { uid, ...userData };
+  return {
+    uid,
+    ...snap.data()
+  };
 }
 
 export async function register(nombre, email, password) {
@@ -23,27 +38,22 @@ export async function register(nombre, email, password) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
   const uid = cred.user.uid;
 
-  const userData = {
+  await setDoc(doc(db, "usuarios", uid), {
     nombre,
     email,
     rol: "cliente",
     createdAt: new Date().toISOString()
+  });
+
+  return {
+    uid,
+    nombre,
+    email,
+    rol: "cliente"
   };
-
-  await setDoc(doc(db, "usuarios", uid), userData);
-
-  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
-
-  return { uid, ...userData };
 }
 
 export async function logout() {
   const auth = getAuth();
   await signOut(auth);
-  localStorage.removeItem("user");
-}
-
-export function getCurrentUser() {
-  const raw = localStorage.getItem("user");
-  return raw ? JSON.parse(raw) : null;
 }

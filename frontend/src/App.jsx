@@ -33,16 +33,20 @@ export default function App() {
 
       try {
         const userRef = doc(db, "usuarios", firebaseUser.uid);
-        let snap = await getDoc(userRef);
 
-        // Si el documento todavía no existe (caso register),
-        // esperamos y reintentamos una vez
-        if (!snap.exists()) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+        let snap = null;
+        let attempts = 0;
+
+        while (attempts < 6) {
           snap = await getDoc(userRef);
+          if (snap.exists()) break;
+
+          await new Promise(res => setTimeout(res, 300));
+          attempts++;
         }
 
-        if (!snap.exists()) {
+        if (!snap || !snap.exists()) {
+          console.error("Documento de usuario no encontrado en Firestore");
           setUser(null);
           setLoading(false);
           return;
