@@ -24,27 +24,42 @@ export default function App() {
     const auth = getAuth();
     const db = getFirestore();
 
-    const unsub = onAuthStateChanged(auth, async firebaseUser => {
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      const snap = await getDoc(doc(db, "usuarios", firebaseUser.uid));
+      try {
+        const userRef = doc(db, "usuarios", firebaseUser.uid);
+        let snap = await getDoc(userRef);
 
-      if (!snap.exists()) {
+        // Si el documento todavía no existe (caso register),
+        // esperamos y reintentamos una vez
+        if (!snap.exists()) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          snap = await getDoc(userRef);
+        }
+
+        if (!snap.exists()) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
+        setUser({
+          uid: firebaseUser.uid,
+          ...snap.data()
+        });
+
+        setLoading(false);
+
+      } catch (error) {
+        console.error("Error obteniendo usuario:", error);
         setUser(null);
         setLoading(false);
-        return;
       }
-
-      setUser({
-        uid: firebaseUser.uid,
-        ...snap.data()
-      });
-
-      setLoading(false);
     });
 
     return () => unsub();

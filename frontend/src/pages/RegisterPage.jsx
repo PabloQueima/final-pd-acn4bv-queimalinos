@@ -8,14 +8,13 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden");
@@ -23,14 +22,17 @@ export default function RegisterPage() {
     }
 
     try {
-      await register(nombre, email, password);
-      setSuccess("Usuario registrado correctamente");
+      setLoading(true);
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch {
+      await register(nombre, email, password);
+
+      // Redirigir directamente al panel cliente
+      navigate("/cliente", { replace: true });
+
+    } catch (err) {
       setError("Error al registrarse");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -85,12 +87,6 @@ export default function RegisterPage() {
             value={nombre}
             onChange={e => setNombre(e.target.value)}
             required
-            style={{
-              padding: "0.7rem",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "0.95rem"
-            }}
           />
 
           <input
@@ -99,12 +95,6 @@ export default function RegisterPage() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
-            style={{
-              padding: "0.7rem",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "0.95rem"
-            }}
           />
 
           <input
@@ -113,12 +103,6 @@ export default function RegisterPage() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            style={{
-              padding: "0.7rem",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "0.95rem"
-            }}
           />
 
           <input
@@ -127,12 +111,6 @@ export default function RegisterPage() {
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
             required
-            style={{
-              padding: "0.7rem",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "0.95rem"
-            }}
           />
 
           {error && (
@@ -149,22 +127,9 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {success && (
-            <div
-              style={{
-                backgroundColor: "#e6fff2",
-                color: "#006633",
-                padding: "0.6rem",
-                borderRadius: "6px",
-                fontSize: "0.85rem"
-              }}
-            >
-              {success}
-            </div>
-          )}
-
           <button
             type="submit"
+            disabled={loading}
             style={{
               marginTop: "0.5rem",
               padding: "0.85rem",
@@ -173,10 +138,11 @@ export default function RegisterPage() {
               border: "none",
               borderRadius: "8px",
               fontWeight: "600",
-              cursor: "pointer"
+              cursor: "pointer",
+              opacity: loading ? 0.7 : 1
             }}
           >
-            Crear cuenta
+            {loading ? "Creando..." : "Crear cuenta"}
           </button>
         </form>
       </div>
