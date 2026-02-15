@@ -13,6 +13,11 @@ export default function UsuarioForm({ onSubmit, initialData = null }) {
       setEmail(initialData.email || "");
       setRol(initialData.rol || "cliente");
       setPassword("");
+    } else {
+      setNombre("");
+      setEmail("");
+      setRol("cliente");
+      setPassword("");
     }
   }, [initialData]);
 
@@ -37,27 +42,29 @@ export default function UsuarioForm({ onSubmit, initialData = null }) {
 
     try {
       await onSubmit({
-        nombre,
-        email,
+        nombre: nombre.trim(),
+        email: email.trim(),
         rol,
-        ...(password.trim() ? { password } : {})
+        ...(password.trim() ? { password: password.trim() } : {})
       });
 
-      if (!initialData) {
-        setNombre("");
-        setEmail("");
-        setRol("cliente");
-        setPassword("");
-      }
+      // Recargar página para reflejar cambios inmediatamente
+      window.location.reload();
+
     } catch (err) {
-      setError(err.message || "Error al guardar usuario");
+      setError(err?.message || "Error al guardar usuario");
     }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      style={{ marginBottom: 20, display: "flex", flexDirection: "column", gap: 10 }}
+      style={{
+        marginBottom: 20,
+        display: "flex",
+        flexDirection: "column",
+        gap: 10
+      }}
     >
       <input
         placeholder="Nombre"
@@ -71,7 +78,10 @@ export default function UsuarioForm({ onSubmit, initialData = null }) {
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      <select value={rol} onChange={(e) => setRol(e.target.value)}>
+      <select
+        value={rol}
+        onChange={(e) => setRol(e.target.value)}
+      >
         <option value="admin">admin</option>
         <option value="entrenador">entrenador</option>
         <option value="cliente">cliente</option>
@@ -79,12 +89,20 @@ export default function UsuarioForm({ onSubmit, initialData = null }) {
 
       <input
         type="password"
-        placeholder={initialData ? "Nueva contraseña (opcional)" : "Contraseña"}
+        placeholder={
+          initialData
+            ? "Nueva contraseña (opcional)"
+            : "Contraseña"
+        }
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <p style={{ color: "red", margin: 0 }}>
+          {error}
+        </p>
+      )}
 
       <button type="submit">
         {initialData ? "Guardar Cambios" : "Crear Usuario"}

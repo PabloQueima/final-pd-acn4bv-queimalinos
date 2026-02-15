@@ -1,3 +1,4 @@
+import admin from "firebase-admin";
 import { db } from "../firebase.js";
 import Usuario from "../models/Usuario.js";
 
@@ -6,36 +7,62 @@ async function fetchUsuarios() {
   return snap.docs.map(d => Usuario.fromJSON(d.data()));
 }
 
-
 export async function crearUsuario(req, res) {
+    console.log("BODY RECIBIDO EN BACKEND:", req.body);
   try {
-    const { uid, nombre, rol } = req.body;
+    const { nombre, email, password, rol } = req.body;
 
-    if (!uid || !nombre || !rol) {
+    if (!nombre || !email || !password || !rol) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
-    const ref = db.collection("usuarios").doc(uid);
-    const doc = await ref.get();
+    const userRecord = await admin.auth().createUser({
+      email: email.trim(),
+      password: password.trim()
+    });
 
-    if (doc.exists) {
-      return res.status(400).json({ error: "El usuario ya existe" });
+    const uid = userRecord.uid;
+
+    try {
+      const usuario = new Usuario(
+        uid,
+        nombre.trim(),
+        rol.trim().toLowerCase()
+      );
+
+      await db.collection("usuarios").doc(uid).set({
+        ...usuario.toJSON(),
+        email: email.trim(),
+        createdAt: new Date().toISOString()
+      });
+
+      return res.status(201).json({
+        uid,
+        nombre: usuario.nombre,
+        email: email.trim(),
+        rol: usuario.rol
+      });
+
+    } catch (dbError) {
+      await admin.auth().deleteUser(uid);
+      console.error(dbError);
+      return res.status(500).json({ error: "Error guardando perfil" });
     }
 
-    const usuario = new Usuario(
-      uid,
-      nombre.trim(),
-      rol.trim().toLowerCase()
-    );
-
-    await ref.set(usuario.toJSON());
-
-    res.status(201).json(usuario.toJSON());
   } catch (err) {
-    res.status(500).json({ error: "No se pudo crear usuario" });
+    console.error(err);
+
+    if (err.code === "auth/email-already-exists") {
+      return res.status(400).json({ error: "El email ya está registrado" });
+    }
+
+    if (err.code === "auth/invalid-password") {
+      return res.status(400).json({ error: "La contraseña es inválida (mínimo 6 caracteres)" });
+    }
+
+    return res.status(500).json({ error: "No se pudo crear usuario" });
   }
 }
-
 
 export async function listarUsuarios(req, res) {
   try {
@@ -96,6 +123,7 @@ export async function eliminarUsuario(req, res) {
   try {
     const { uid } = req.params;
 
+    await admin.auth().deleteUser(uid);
     await db.collection("usuarios").doc(uid).delete();
 
     res.status(204).end();

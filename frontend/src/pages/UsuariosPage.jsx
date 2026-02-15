@@ -27,42 +27,63 @@ export default function UsuariosPage() {
   async function cargarUsuarios() {
     try {
       const data = await getUsuarios();
-      setUsuarios(data);
+      setUsuarios(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error cargando usuarios:", err);
+      setUsuarios([]);
     }
   }
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+
     debounceRef.current = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1);
     }, 300);
+
+    return () => clearTimeout(debounceRef.current);
   }, [search]);
 
   async function handleCrear(data) {
-    await createUsuario(data);
-    await cargarUsuarios();
+    try {
+      await createUsuario(data);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error creando usuario:", err);
+    }
   }
 
   async function handleEditar(data) {
-    await updateUsuario(editando.id, data);
-    setEditando(null);
-    await cargarUsuarios();
+    if (!editando?.uid) return;
+
+    try {
+      await updateUsuario(editando.uid, data);
+      setEditando(null);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error actualizando usuario:", err);
+    }
   }
 
-  async function handleEliminar(id) {
-    await deleteUsuario(id);
-    await cargarUsuarios();
+  async function handleEliminar(uid) {
+    if (!uid) return;
+
+    try {
+      await deleteUsuario(uid);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error eliminando usuario:", err);
+    }
   }
 
   function iniciarEdicion(usuario) {
     setEditando(usuario);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   const filtrados = usuarios.filter(u =>
-    u.nombre.toLowerCase().includes(debouncedSearch.toLowerCase())
+    u.nombre?.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
   const totalPages = Math.ceil(filtrados.length / pageSize) || 1;

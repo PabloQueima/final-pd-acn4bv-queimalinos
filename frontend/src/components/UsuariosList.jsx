@@ -3,11 +3,21 @@ export default function UsuariosList({ usuarios = [], onEdit, onDelete }) {
     return <p>No hay usuarios.</p>;
   }
 
+  function handleDelete(u) {
+    const confirmado = window.confirm(
+      `¿Estás seguro de eliminar al usuario "${u.nombre}"?`
+    );
+
+    if (!confirmado) return;
+
+    onDelete && onDelete(u.uid);
+  }
+
   return (
     <ul style={{ padding: 0, listStyle: "none" }}>
       {usuarios.map((u) => (
         <li
-          key={u.id}
+          key={u.uid}
           style={{
             padding: "10px",
             borderBottom: "1px solid #ddd",
@@ -25,8 +35,17 @@ export default function UsuariosList({ usuarios = [], onEdit, onDelete }) {
           </div>
 
           <div style={{ display: "flex", gap: "8px" }}>
-            {onEdit && <button onClick={() => onEdit(u)}>Editar</button>}
-            {onDelete && <button onClick={() => onDelete(u.id)}>Eliminar</button>}
+            {onEdit && (
+              <button onClick={() => onEdit(u)}>
+                Editar
+              </button>
+            )}
+
+            {onDelete && (
+              <button onClick={() => handleDelete(u)}>
+                Eliminar
+              </button>
+            )}
           </div>
         </li>
       ))}
