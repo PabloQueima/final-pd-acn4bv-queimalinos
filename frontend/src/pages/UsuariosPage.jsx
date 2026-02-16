@@ -9,7 +9,7 @@ import {
 import UsuarioForm from "../components/UsuarioForm";
 import UsuariosList from "../components/UsuariosList";
 
-export default function UsuariosPage() {
+export default function UsuariosPage({ onUsuariosChange }) {
   const [usuarios, setUsuarios] = useState([]);
   const [editando, setEditando] = useState(null);
 
@@ -47,8 +47,14 @@ export default function UsuariosPage() {
 
   async function handleCrear(data) {
     try {
-      await createUsuario(data);
-      window.location.reload();
+      const nuevo = await createUsuario(data);
+
+      setUsuarios(prev => [...prev, nuevo]);
+
+      if (onUsuariosChange) {
+        onUsuariosChange();
+      }
+
     } catch (err) {
       console.error("Error creando usuario:", err);
     }
@@ -58,9 +64,20 @@ export default function UsuariosPage() {
     if (!editando?.uid) return;
 
     try {
-      await updateUsuario(editando.uid, data);
+      const actualizado = await updateUsuario(editando.uid, data);
+
+      setUsuarios(prev =>
+        prev.map(u =>
+          u.uid === editando.uid ? actualizado : u
+        )
+      );
+
       setEditando(null);
-      window.location.reload();
+
+      if (onUsuariosChange) {
+        onUsuariosChange();
+      }
+
     } catch (err) {
       console.error("Error actualizando usuario:", err);
     }
@@ -71,7 +88,15 @@ export default function UsuariosPage() {
 
     try {
       await deleteUsuario(uid);
-      setUsuarios(prev => prev.filter(u => u.uid !== uid));
+
+      setUsuarios(prev =>
+        prev.filter(u => u.uid !== uid)
+      );
+
+      if (onUsuariosChange) {
+        onUsuariosChange();
+      }
+
     } catch (err) {
       console.error("Error eliminando usuario:", err);
     }

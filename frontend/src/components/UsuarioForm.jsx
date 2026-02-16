@@ -48,9 +48,6 @@ export default function UsuarioForm({ onSubmit, initialData = null }) {
         ...(password.trim() ? { password: password.trim() } : {})
       });
 
-      // Recargar página para reflejar cambios inmediatamente
-      window.location.reload();
-
     } catch (err) {
       setError(err?.message || "Error al guardar usuario");
     }

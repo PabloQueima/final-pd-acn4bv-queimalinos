@@ -91,7 +91,7 @@ export default function DashboardAdmin() {
           }}
         >
           <h2 style={{ marginBottom: 15 }}>Gestión de Usuarios</h2>
-          <UsuariosPage />
+          <UsuariosPage onUsuariosChange={cargarTotales} />
         </div>
       </div>
     </div>
