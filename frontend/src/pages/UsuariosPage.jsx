@@ -12,6 +12,7 @@ import UsuariosList from "../components/UsuariosList";
 export default function UsuariosPage({ onUsuariosChange }) {
   const [usuarios, setUsuarios] = useState([]);
   const [editando, setEditando] = useState(null);
+  const [formKey, setFormKey] = useState(0);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -46,10 +47,19 @@ export default function UsuariosPage({ onUsuariosChange }) {
   }, [search]);
 
   async function handleCrear(data) {
+    const confirmado = window.confirm(
+      `¿Confirmás la creación del usuario "${data.nombre}"?`
+    );
+
+    if (!confirmado) return;
+
     try {
       const nuevo = await createUsuario(data);
 
       setUsuarios(prev => [...prev, nuevo]);
+
+      // Resetear formulario
+      setFormKey(prev => prev + 1);
 
       if (onUsuariosChange) {
         onUsuariosChange();
@@ -62,6 +72,12 @@ export default function UsuariosPage({ onUsuariosChange }) {
 
   async function handleEditar(data) {
     if (!editando?.uid) return;
+
+    const confirmado = window.confirm(
+      `¿Confirmás los cambios para el usuario "${editando.nombre}"?`
+    );
+
+    if (!confirmado) return;
 
     try {
       const actualizado = await updateUsuario(editando.uid, data);
@@ -125,6 +141,7 @@ export default function UsuariosPage({ onUsuariosChange }) {
       />
 
       <UsuarioForm
+        key={formKey}
         onSubmit={editando ? handleEditar : handleCrear}
         initialData={editando}
       />
