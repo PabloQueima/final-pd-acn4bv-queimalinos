@@ -12,7 +12,6 @@ import EjerciciosList from "../components/EjerciciosList";
 export default function EjerciciosPage({ onEjerciciosChange }) {
   const [ejercicios, setEjercicios] = useState([]);
   const [editando, setEditando] = useState(null);
-  const [formKey, setFormKey] = useState(0);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -28,105 +27,54 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
   async function cargarEjercicios() {
     try {
       const data = await getEjercicios();
-      setEjercicios(Array.isArray(data) ? data : []);
+      setEjercicios(data);
     } catch (err) {
       console.error("Error cargando ejercicios:", err);
-      setEjercicios([]);
     }
   }
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-
     debounceRef.current = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1);
     }, 300);
-
-    return () => clearTimeout(debounceRef.current);
   }, [search]);
 
   async function handleCrear(data) {
-    const confirmado = window.confirm(
-      `¿Confirmás la creación del ejercicio "${data.nombre}"?`
-    );
+    const nuevo = await createEjercicio(data);
 
-    if (!confirmado) return;
+    setEjercicios(prev => [...prev, nuevo]);
 
-    try {
-      const nuevo = await createEjercicio(data);
-
-      setEjercicios(prev => [...prev, nuevo]);
-
-      // limpiar formulario
-      setFormKey(prev => prev + 1);
-
-      if (onEjerciciosChange) {
-        onEjerciciosChange();
-      }
-
-    } catch (err) {
-      console.error("Error creando ejercicio:", err);
+    if (onEjerciciosChange) {
+      onEjerciciosChange();
     }
   }
 
   async function handleEditar(data) {
-    if (!editando?.id) return;
+    const actualizado = await updateEjercicio(editando.id, data);
 
-    const confirmado = window.confirm(
-      `¿Confirmás los cambios para el ejercicio "${editando.nombre}"?`
+    setEjercicios(prev =>
+      prev.map(e => (e.id === editando.id ? actualizado : e))
     );
 
-    if (!confirmado) return;
-
-    try {
-      const actualizado = await updateEjercicio(editando.id, data);
-
-      setEjercicios(prev =>
-        prev.map(e =>
-          e.id === editando.id ? actualizado : e
-        )
-      );
-
-      setEditando(null);
-
-      if (onEjerciciosChange) {
-        onEjerciciosChange();
-      }
-
-    } catch (err) {
-      console.error("Error actualizando ejercicio:", err);
-    }
+    setEditando(null);
   }
 
   async function handleEliminar(id) {
-    const ejercicio = ejercicios.find(e => e.id === id);
+    if (!window.confirm("¿Confirmar eliminación del ejercicio?")) return;
 
-    const confirmado = window.confirm(
-      `¿Confirmás eliminar el ejercicio "${ejercicio?.nombre}"?`
-    );
+    await deleteEjercicio(id);
 
-    if (!confirmado) return;
+    setEjercicios(prev => prev.filter(e => e.id !== id));
 
-    try {
-      await deleteEjercicio(id);
-
-      setEjercicios(prev =>
-        prev.filter(e => e.id !== id)
-      );
-
-      if (onEjerciciosChange) {
-        onEjerciciosChange();
-      }
-
-    } catch (err) {
-      console.error("Error eliminando ejercicio:", err);
+    if (onEjerciciosChange) {
+      onEjerciciosChange();
     }
   }
 
   function iniciarEdicion(ejercicio) {
     setEditando(ejercicio);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   const filtrados = ejercicios.filter(e =>
@@ -147,7 +95,6 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
       />
 
       <EjercicioForm
-        key={formKey}
         onSubmit={editando ? handleEditar : handleCrear}
         initialData={editando}
       />
@@ -162,10 +109,7 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
         Página {page} de {totalPages}
         <br />
 
-        <button
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
           Anterior
         </button>
 
