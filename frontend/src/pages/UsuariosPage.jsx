@@ -57,8 +57,6 @@ export default function UsuariosPage({ onUsuariosChange }) {
       const nuevo = await createUsuario(data);
 
       setUsuarios(prev => [...prev, nuevo]);
-
-      // Resetear formulario
       setFormKey(prev => prev + 1);
 
       if (onUsuariosChange) {

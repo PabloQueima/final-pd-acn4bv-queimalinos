@@ -14,13 +14,29 @@ export default function EjercicioForm({ onSubmit, initialData }) {
       setParteCuerpo(initialData.parteCuerpo || "");
       setElemento(initialData.elemento || "");
       setImageUrl(initialData.imageUrl || "");
+    } else {
+      limpiarFormulario();
     }
   }, [initialData]);
 
-  function handleSubmit(e) {
+  function limpiarFormulario() {
+    setNombre("");
+    setDescripcion("");
+    setParteCuerpo("");
+    setElemento("");
+    setImageUrl("");
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    onSubmit({
+    const mensaje = initialData
+      ? "¿Confirmar modificación del ejercicio?"
+      : "¿Confirmar creación del ejercicio?";
+
+    if (!window.confirm(mensaje)) return;
+
+    await onSubmit({
       nombre,
       descripcion,
       parteCuerpo,
@@ -28,13 +44,7 @@ export default function EjercicioForm({ onSubmit, initialData }) {
       imageUrl
     });
 
-    if (!initialData) {
-      setNombre("");
-      setDescripcion("");
-      setParteCuerpo("");
-      setElemento("");
-      setImageUrl("");
-    }
+    limpiarFormulario();
   }
 
   return (

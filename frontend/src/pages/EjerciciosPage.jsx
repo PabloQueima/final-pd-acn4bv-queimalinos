@@ -9,9 +9,10 @@ import {
 import EjercicioForm from "../components/EjercicioForm";
 import EjerciciosList from "../components/EjerciciosList";
 
-export default function EjerciciosPage() {
+export default function EjerciciosPage({ onEjerciciosChange }) {
   const [ejercicios, setEjercicios] = useState([]);
   const [editando, setEditando] = useState(null);
+  const [formKey, setFormKey] = useState(0);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -27,38 +28,105 @@ export default function EjerciciosPage() {
   async function cargarEjercicios() {
     try {
       const data = await getEjercicios();
-      setEjercicios(data);
+      setEjercicios(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error cargando ejercicios:", err);
+      setEjercicios([]);
     }
   }
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+
     debounceRef.current = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1);
     }, 300);
+
+    return () => clearTimeout(debounceRef.current);
   }, [search]);
 
   async function handleCrear(data) {
-    await createEjercicio(data);
-    await cargarEjercicios();
+    const confirmado = window.confirm(
+      `¿Confirmás la creación del ejercicio "${data.nombre}"?`
+    );
+
+    if (!confirmado) return;
+
+    try {
+      const nuevo = await createEjercicio(data);
+
+      setEjercicios(prev => [...prev, nuevo]);
+
+      // limpiar formulario
+      setFormKey(prev => prev + 1);
+
+      if (onEjerciciosChange) {
+        onEjerciciosChange();
+      }
+
+    } catch (err) {
+      console.error("Error creando ejercicio:", err);
+    }
   }
 
   async function handleEditar(data) {
-    await updateEjercicio(editando.id, data);
-    setEditando(null);
-    await cargarEjercicios();
+    if (!editando?.id) return;
+
+    const confirmado = window.confirm(
+      `¿Confirmás los cambios para el ejercicio "${editando.nombre}"?`
+    );
+
+    if (!confirmado) return;
+
+    try {
+      const actualizado = await updateEjercicio(editando.id, data);
+
+      setEjercicios(prev =>
+        prev.map(e =>
+          e.id === editando.id ? actualizado : e
+        )
+      );
+
+      setEditando(null);
+
+      if (onEjerciciosChange) {
+        onEjerciciosChange();
+      }
+
+    } catch (err) {
+      console.error("Error actualizando ejercicio:", err);
+    }
   }
 
   async function handleEliminar(id) {
-    await deleteEjercicio(id);
-    await cargarEjercicios();
+    const ejercicio = ejercicios.find(e => e.id === id);
+
+    const confirmado = window.confirm(
+      `¿Confirmás eliminar el ejercicio "${ejercicio?.nombre}"?`
+    );
+
+    if (!confirmado) return;
+
+    try {
+      await deleteEjercicio(id);
+
+      setEjercicios(prev =>
+        prev.filter(e => e.id !== id)
+      );
+
+      if (onEjerciciosChange) {
+        onEjerciciosChange();
+      }
+
+    } catch (err) {
+      console.error("Error eliminando ejercicio:", err);
+    }
   }
 
   function iniciarEdicion(ejercicio) {
     setEditando(ejercicio);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   const filtrados = ejercicios.filter(e =>
@@ -79,6 +147,7 @@ export default function EjerciciosPage() {
       />
 
       <EjercicioForm
+        key={formKey}
         onSubmit={editando ? handleEditar : handleCrear}
         initialData={editando}
       />
@@ -93,7 +162,10 @@ export default function EjerciciosPage() {
         Página {page} de {totalPages}
         <br />
 
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+        <button
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
           Anterior
         </button>
 

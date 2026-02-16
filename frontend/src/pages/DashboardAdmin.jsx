@@ -79,7 +79,7 @@ export default function DashboardAdmin() {
           }}
         >
           <h2 style={{ marginBottom: 15 }}>Gestión de Ejercicios</h2>
-          <EjerciciosPage />
+          <EjerciciosPage onEjerciciosChange={cargarTotales} />
         </div>
 
         <div
