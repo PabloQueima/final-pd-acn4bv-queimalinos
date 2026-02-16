@@ -8,7 +8,7 @@ export default class Sesion {
     createdAt = null,
     updatedAt = null
   ) {
-    this.id = Number(id);
+    this.id = id;
     this.titulo = String(titulo || "").trim();
     this.ejercicios = Array.isArray(ejercicios) ? ejercicios : [];
     this.clienteUid = String(clienteUid);
@@ -17,27 +17,8 @@ export default class Sesion {
     this.updatedAt = updatedAt || null;
   }
 
-  agregarEjercicio(id, series = 3, reps = 10) {
-    const existente = this.ejercicios.find(e => e.id === id);
-
-    if (existente) {
-      existente.series = series;
-      existente.reps = reps;
-    } else {
-      this.ejercicios.push({ id, series, reps });
-    }
-
-    this.updatedAt = new Date().toISOString();
-  }
-
-  eliminarEjercicio(id) {
-    this.ejercicios = this.ejercicios.filter(e => e.id !== id);
-    this.updatedAt = new Date().toISOString();
-  }
-
   toJSON() {
     return {
-      id: this.id,
       titulo: this.titulo,
       clienteUid: this.clienteUid,
       entrenadorUid: this.entrenadorUid,
@@ -47,17 +28,16 @@ export default class Sesion {
     };
   }
 
-  static fromJSON(obj) {
-    if (!obj) return null;
-
+  static fromFirestore(doc) {
+    const data = doc.data();
     return new Sesion(
-      obj.id,
-      obj.titulo,
-      Array.isArray(obj.ejercicios) ? obj.ejercicios : [],
-      obj.clienteUid,
-      obj.entrenadorUid,
-      obj.createdAt,
-      obj.updatedAt
+      doc.id,
+      data.titulo,
+      data.ejercicios || [],
+      data.clienteUid,
+      data.entrenadorUid,
+      data.createdAt,
+      data.updatedAt
     );
   }
 }

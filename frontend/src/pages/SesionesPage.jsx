@@ -29,7 +29,7 @@ export default function SesionesPage() {
 
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentRol = storedUser?.rol || "cliente";
-  const currentId = storedUser?.id || null;
+  const currentUid = storedUser?.uid || null;
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -50,10 +50,14 @@ export default function SesionesPage() {
       ]);
 
       const uMap = {};
-      (usuarios || []).forEach(u => (uMap[u.id] = u));
+      (usuarios || []).forEach(u => {
+        if (u.uid) uMap[u.uid] = u;
+      });
 
       const eMap = {};
-      (ejercicios || []).forEach(e => (eMap[e.id] = e));
+      (ejercicios || []).forEach(e => {
+        eMap[e.id] = e;
+      });
 
       setUsuariosMap(uMap);
       setEjerciciosMap(eMap);
@@ -71,10 +75,11 @@ export default function SesionesPage() {
     setLoading(true);
     try {
       let data;
+
       if (currentRol === "entrenador") {
-        data = await getSesiones({ entrenadorId: currentId });
+        data = await getSesiones({ entrenadorUid: currentUid });
       } else if (currentRol === "cliente") {
-        data = await getSesiones({ clienteId: currentId });
+        data = await getSesiones({ clienteUid: currentUid });
       } else {
         data = await getSesiones();
       }
@@ -83,7 +88,7 @@ export default function SesionesPage() {
 
       if (debouncedSearch.trim() !== "") {
         result = result.filter((s) =>
-          s.titulo.toLowerCase().includes(debouncedSearch.toLowerCase())
+          s.titulo?.toLowerCase().includes(debouncedSearch.toLowerCase())
         );
       }
 
@@ -98,9 +103,10 @@ export default function SesionesPage() {
   async function handleCrear(payload) {
     setSaving(true);
     try {
-      if (currentRol === "entrenador" && !payload.entrenadorId) {
-        payload.entrenadorId = currentId;
+      if (currentRol === "entrenador") {
+        payload.entrenadorUid = currentUid;
       }
+
       await createSesion(payload);
       await cargarSesiones();
       setEditando(null);
@@ -112,8 +118,13 @@ export default function SesionesPage() {
 
   async function handleEditar(payload) {
     if (!editando) return;
+
     setSaving(true);
     try {
+      if (currentRol === "entrenador") {
+        payload.entrenadorUid = currentUid;
+      }
+
       await updateSesion(editando.id, payload);
       setEditando(null);
       await cargarSesiones();
@@ -124,11 +135,14 @@ export default function SesionesPage() {
 
   async function handleEliminar(id) {
     if (!confirm("Eliminar sesión?")) return;
+
     try {
       await deleteSesion(id);
+
       const remaining = sesiones.length - 1;
       const totalPagesAfter = Math.max(1, Math.ceil(remaining / pageSize));
       if (page > totalPagesAfter) setPage(totalPagesAfter);
+
       await cargarSesiones();
     } catch {}
   }
@@ -136,10 +150,11 @@ export default function SesionesPage() {
   function iniciarEdicion(sesion) {
     setEditando({
       ...sesion,
-      clienteId: sesion.clienteId ?? "",
-      entrenadorId: sesion.entrenadorId ?? "",
+      clienteUid: sesion.clienteUid ?? "",
+      entrenadorUid: sesion.entrenadorUid ?? "",
       ejercicios: Array.isArray(sesion.ejercicios) ? sesion.ejercicios : []
     });
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -154,16 +169,20 @@ export default function SesionesPage() {
     <div style={{ padding: 20 }}>
       <h2>Crear/Editar Sesiones</h2>
 
-      <div style={{
-        background: "#fff",
-        padding: 16,
-        borderRadius: 8,
-        boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
-        marginBottom: 18
-      }}>
+      <div
+        style={{
+          background: "#fff",
+          padding: 16,
+          borderRadius: 8,
+          boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+          marginBottom: 18
+        }}
+      >
         <SesionForm
           onSubmit={editando ? handleEditar : handleCrear}
           initialData={editando}
+          currentRol={currentRol}
+          currentUid={currentUid}
         />
 
         {editando && (
@@ -201,20 +220,13 @@ export default function SesionesPage() {
 
       <hr />
 
-      <h3>Sesiones existentes para este Entrenador</h3>
+      <h3>Sesiones existentes</h3>
 
       {loading ? (
         <p>Cargando...</p>
       ) : (
         <>
-          <div
-            style={{
-              minHeight: "420px",
-              transition: "min-height 0.2s ease",
-              display: "flex",
-              flexDirection: "column"
-            }}
-          >
+          <div style={{ minHeight: "420px", display: "flex", flexDirection: "column" }}>
             <SesionesList
               sesiones={pageData}
               onEdit={currentRol !== "cliente" ? iniciarEdicion : null}

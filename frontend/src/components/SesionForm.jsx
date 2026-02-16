@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { getUsuarios, getEjercicios } from "../services/api";
 import EjercicioSelector from "./EjercicioSelector";
 
-export default function SesionForm({ onSubmit, initialData = null }) {
+export default function SesionForm({
+  onSubmit,
+  initialData = null,
+  currentRol,
+  currentUid
+}) {
   const [titulo, setTitulo] = useState("");
-  const [clienteId, setClienteId] = useState("");
-  const [entrenadorId, setEntrenadorId] = useState("");
+  const [clienteUid, setClienteUid] = useState("");
   const [ejercicios, setEjercicios] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [todosEjercicios, setTodosEjercicios] = useState([]);
@@ -19,27 +23,26 @@ export default function SesionForm({ onSubmit, initialData = null }) {
   useEffect(() => {
     if (initialData) {
       setTitulo(initialData.titulo || "");
-      setClienteId(initialData.clienteId || "");
-      setEntrenadorId(initialData.entrenadorId || "");
+      setClienteUid(initialData.clienteUid || "");
       setEjercicios(initialData.ejercicios || []);
     }
   }, [initialData]);
 
   async function cargarUsuarios() {
     const data = await getUsuarios();
-    setUsuarios(data);
+    setUsuarios(data || []);
   }
 
   async function cargarEjerciciosBase() {
     const data = await getEjercicios();
-    setTodosEjercicios(data);
+    setTodosEjercicios(data || []);
   }
 
   const clientes = usuarios.filter((u) => u.rol === "cliente");
-  const entrenadores = usuarios.filter((u) => u.rol === "entrenador");
 
   function handleAddEjercicio(item) {
     const exists = ejercicios.find((e) => e.id === item.id);
+
     if (exists) {
       setEjercicios(ejercicios.map((e) => (e.id === item.id ? item : e)));
     } else {
@@ -49,11 +52,6 @@ export default function SesionForm({ onSubmit, initialData = null }) {
 
   function removeEjercicio(id) {
     setEjercicios(ejercicios.filter((e) => e.id !== id));
-  }
-
-  function getNombreEjercicio(id) {
-    const ej = todosEjercicios.find((e) => e.id === id);
-    return ej ? ej.nombre : `Ejercicio ${id}`;
   }
 
   function handleSubmit(e) {
@@ -66,24 +64,24 @@ export default function SesionForm({ onSubmit, initialData = null }) {
       setError("El título es obligatorio.");
       return;
     }
-    if (!clienteId) {
+
+    if (!clienteUid) {
       setError("Debe seleccionar un cliente.");
       return;
     }
 
     const payload = {
       titulo,
-      clienteId,
-      entrenadorId: entrenadorId || null,
-      ejercicios: ejercicios,
+      clienteUid,
+      entrenadorUid: currentRol === "entrenador" ? currentUid : null,
+      ejercicios
     };
 
     onSubmit(payload)
       .then(() => {
         if (!initialData) {
           setTitulo("");
-          setClienteId("");
-          setEntrenadorId("");
+          setClienteUid("");
           setEjercicios([]);
         }
       })
@@ -116,26 +114,13 @@ export default function SesionForm({ onSubmit, initialData = null }) {
         />
 
         <select
-          value={entrenadorId}
-          onChange={(e) => setEntrenadorId(e.target.value)}
-          style={{ padding: 6, width: "250px" }}
-        >
-          <option value="">Entrenador (opcional)</option>
-          {entrenadores.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.nombre}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={clienteId}
-          onChange={(e) => setClienteId(e.target.value)}
+          value={clienteUid}
+          onChange={(e) => setClienteUid(e.target.value)}
           style={{ padding: 6, width: "250px" }}
         >
           <option value="">Seleccionar Cliente</option>
           {clientes.map((u) => (
-            <option key={u.id} value={u.id}>
+            <option key={u.uid} value={u.uid}>
               {u.nombre}
             </option>
           ))}
@@ -152,18 +137,19 @@ export default function SesionForm({ onSubmit, initialData = null }) {
         <ul style={{ paddingLeft: 15 }}>
           {ejercicios.map((e) => {
             const ejData = todosEjercicios.find((x) => x.id === e.id);
+
             return (
               <li key={e.id} style={{ marginBottom: 8 }}>
-                <div style={{ display: "block" }}>
+                <div>
                   <strong>{ejData?.nombre || `Ejercicio ${e.id}`}</strong>
                 </div>
-                <div style={{ display: "block" }}>
+                <div>
                   <small>Parte del cuerpo: {ejData?.parteCuerpo || "Ninguna"}</small>
                 </div>
-                <div style={{ display: "block" }}>
+                <div>
                   <small>Elemento: {ejData?.elemento || "Ninguno"}</small>
                 </div>
-                <div style={{ display: "block" }}>
+                <div>
                   <small>Series × Reps: {e.series}×{e.reps}</small>
                 </div>
                 <button
@@ -179,23 +165,13 @@ export default function SesionForm({ onSubmit, initialData = null }) {
         </ul>
       </div>
 
-
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: 10,
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
         <button
           type="submit"
           name="submit-btn"
-          style={{
-            padding: "8px 16px",
-            fontSize: 16,
-          }}
+          style={{ padding: "8px 16px", fontSize: 16 }}
         >
           {initialData ? "Guardar Cambios" : "Crear Sesión"}
         </button>

@@ -24,9 +24,10 @@ export default function SesionesList({
       <ul style={{ padding: 0, listStyle: "none" }}>
         {sesiones.map((s) => {
           const cliente =
-            usuariosMap[s.clienteId]?.nombre || `ID ${s.clienteId}`;
+            usuariosMap[s.clienteUid]?.nombre || `UID ${s.clienteUid}`;
+
           const entrenador =
-            usuariosMap[s.entrenadorId]?.nombre || `ID ${s.entrenadorId}`;
+            usuariosMap[s.entrenadorUid]?.nombre || `UID ${s.entrenadorUid}`;
 
           return (
             <li
@@ -60,16 +61,12 @@ export default function SesionesList({
                         return (
                           <li key={ej.id} style={{ marginBottom: 10 }}>
                             <div>
-                              <b>
-                                {data?.nombre || `Ejercicio ${ej.id}`}
-                              </b>
+                              <b>{data?.nombre || `Ejercicio ${ej.id}`}</b>
 
                               {data?.imageUrl && (
                                 <div style={{ marginTop: 2 }}>
                                   <button
-                                    onClick={() =>
-                                      abrirImagen(data.imageUrl)
-                                    }
+                                    onClick={() => abrirImagen(data.imageUrl)}
                                     style={{
                                       background: "transparent",
                                       border: "none",
@@ -88,21 +85,15 @@ export default function SesionesList({
                             </div>
 
                             <div>
-                              <small>
-                                Parte: {data?.parteCuerpo}
-                              </small>
+                              <small>Parte: {data?.parteCuerpo || "Ninguna"}</small>
                             </div>
 
                             <div>
-                              <small>
-                                Elemento: {data?.elemento || "Ninguno"}
-                              </small>
+                              <small>Elemento: {data?.elemento || "Ninguno"}</small>
                             </div>
 
                             <div>
-                              <strong>
-                                {ej.series}×{ej.reps}
-                              </strong>
+                              <strong>{ej.series}×{ej.reps}</strong>
                             </div>
                           </li>
                         );
