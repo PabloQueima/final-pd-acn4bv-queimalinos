@@ -5,6 +5,7 @@ import { getCurrentUser } from "../services/authService";
 
 export default function MisSesionesPage() {
   const user = getCurrentUser();
+
   const [sesiones, setSesiones] = useState([]);
   const [ejerciciosMap, setEjerciciosMap] = useState({});
   const [usuariosMap, setUsuariosMap] = useState({});
@@ -20,16 +21,20 @@ export default function MisSesionesPage() {
 
     try {
       const [sesionesData, ejerciciosData, usuariosData] = await Promise.all([
-        getSesiones({ clienteId: user.id }),
+        getSesiones({ clienteUid: user.uid }),
         getEjercicios(),
         getUsuarios()
       ]);
 
       const ejMap = {};
-      ejerciciosData.forEach((e) => (ejMap[e.id] = e));
+      ejerciciosData.forEach((e) => {
+        ejMap[e.id] = e;
+      });
 
       const usMap = {};
-      usuariosData.forEach((u) => (usMap[u.id] = u));
+      usuariosData.forEach((u) => {
+        usMap[u.uid] = u;
+      });
 
       setEjerciciosMap(ejMap);
       setUsuariosMap(usMap);
@@ -75,7 +80,7 @@ export default function MisSesionesPage() {
               }}
             >
               <div style={{ fontWeight: "bold", fontSize: 16 }}>
-                {s.nombre}
+                {s.titulo}
               </div>
 
               <SesionesList
