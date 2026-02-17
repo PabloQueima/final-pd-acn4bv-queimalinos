@@ -3,7 +3,8 @@ README — Plataformas de Desarrollo (Final)
 Alumno: Pablo Queimaliños — pablo.queimalinos@davinci.edu.ar  
 Comisión: ACN2CV — 2º cuatrimestre 2025 — Escuela Da Vinci  
 Docente: Sergio Medina — sergiod.medina@davinci.edu.ar  
-Proyecto: Plataforma de Entrenamiento  
+Proyecto: Plataforma de Entrenamiento
+17/02/2026  
 
 ---
 
@@ -102,10 +103,10 @@ POST /api/register
 
 Usuarios
 GET /api/usuarios
-GET /api/usuarios/:id
+GET /api/usuarios/:uid
 POST /api/usuarios
-PUT /api/usuarios/:id
-DELETE /api/usuarios/:id
+PUT /api/usuarios/:uid
+DELETE /api/usuarios/:uid
 
 Ejercicios
 GET /api/ejercicios
@@ -123,8 +124,8 @@ PUT /api/sesiones/:id
 DELETE /api/sesiones/:id
 
 Filtros por rol
-GET /api/sesiones/cliente/:id
-GET /api/sesiones/entrenador/:id
+GET /api/sesiones/cliente/:uid
+GET /api/sesiones/entrenador/:uid
 
 Ejercicios dentro de la sesión
 POST /api/sesiones/:id/ejercicios
@@ -134,11 +135,11 @@ DELETE /api/sesiones/:id/ejercicios/:ejercicioId
 Admin
 CRUD de usuarios
 CRUD de ejercicios
-Ve totalizadores globales
+Ve estadisticas globales
 
 Entrenador
-Crea, edita y elimina sesiones
-Asigna ejercicios
+Crea, edita y elimina sesiones propias
+Asigna ejercicios a clientes
 Trabaja con cualquier cliente
 
 Cliente
