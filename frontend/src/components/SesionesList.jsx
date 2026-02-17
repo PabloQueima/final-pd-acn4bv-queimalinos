@@ -23,6 +23,7 @@ export default function SesionesList({
     <div>
       <ul style={{ padding: 0, listStyle: "none" }}>
         {sesiones.map((s) => {
+          console.log("Sesion recibida en lista:", s);
           const cliente =
             usuariosMap[s.clienteUid]?.nombre || `UID ${s.clienteUid}`;
 
