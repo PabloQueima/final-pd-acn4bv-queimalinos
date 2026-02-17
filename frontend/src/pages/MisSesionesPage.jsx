@@ -48,21 +48,27 @@ export default function MisSesionesPage() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Mis Sesiones</h2>
+    <div
+      style={{
+        padding: "10px 16px",
+        maxWidth: 1800,
+        margin: "0 auto"
+      }}
+    >
+      <h2 style={{ marginBottom: 10 }}>Mis Sesiones</h2>
 
       {loading ? (
         <p>Cargando...</p>
       ) : sesiones.length === 0 ? (
-        <p style={{ marginTop: 20, fontSize: 16, color: "#333" }}>
+        <p style={{ marginTop: 10, fontSize: 16, color: "#333" }}>
           Para obtener tus sesiones de entrenamiento ponete en contacto con un entrenador.
         </p>
       ) : (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: 20,
             paddingTop: 10
           }}
         >
@@ -70,16 +76,23 @@ export default function MisSesionesPage() {
             <div
               key={s.id}
               style={{
-                padding: 15,
+                padding: 12,
                 border: "1px solid #ccc",
                 borderRadius: 8,
                 background: "#fafafa",
                 display: "flex",
                 flexDirection: "column",
-                gap: 8
+                gap: 8,
+                minWidth: 0
               }}
             >
-              <div style={{ fontWeight: "bold", fontSize: 16 }}>
+              <div
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  wordBreak: "break-word"
+                }}
+              >
                 {s.titulo}
               </div>
 

@@ -21,9 +21,8 @@ export default function SesionesList({
 
   return (
     <div>
-      <ul style={{ padding: 0, listStyle: "none" }}>
+      <ul style={{ padding: 0, listStyle: "none", margin: 0 }}>
         {sesiones.map((s) => {
-          console.log("Sesion recibida en lista:", s);
           const cliente =
             usuariosMap[s.clienteUid]?.nombre || `UID ${s.clienteUid}`;
 
@@ -34,72 +33,100 @@ export default function SesionesList({
             <li
               key={s.id}
               style={{
-                marginBottom: 14,
+                marginBottom: 16,
                 borderBottom: "1px solid #ddd",
-                paddingBottom: 8
+                paddingBottom: 12
               }}
             >
-            <div>
-              <div style={{ marginBottom: 6 }}>
-                <strong style={{ fontSize: 16 }}>{s.titulo}</strong>
+              {/* Header sesión */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6
+                }}
+              >
+                <strong
+                  style={{
+                    fontSize: 16,
+                    wordBreak: "break-word"
+                  }}
+                >
+                  {s.titulo}
+                </strong>
+
+                <div style={{ fontSize: 14 }}>
+                  <div>
+                    Cliente: <b>{cliente}</b>
+                  </div>
+                  <div>
+                    Entrenador: <b>{entrenador}</b>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <span style={{ display: "block" }}>
-                  Cliente: <b>{cliente}</b>
-                </span>
-                <span style={{ display: "block" }}>
-                  Entrenador: <b>{entrenador}</b>
-                </span>
-              </div>
-            </div>
-
-
+              {/* Ejercicios */}
               {showAssignInfo &&
                 s.ejercicios &&
                 s.ejercicios.length > 0 && (
-                  <div style={{ marginTop: 8 }}>
+                  <div style={{ marginTop: 10 }}>
                     <em>Ejercicios:</em>
-                    <ul style={{ marginTop: 6, paddingLeft: 16 }}>
+
+                    <ul
+                      style={{
+                        marginTop: 8,
+                        padding: 0,
+                        listStyle: "none",
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                        gap: 12
+                      }}
+                    >
                       {s.ejercicios.map((ej) => {
                         const data = ejerciciosMap[ej.id];
 
                         return (
-                          <li key={ej.id} style={{ marginBottom: 10 }}>
-                            <div>
+                          <li
+                            key={ej.id}
+                            style={{
+                              border: "1px solid #e0e0e0",
+                              borderRadius: 6,
+                              padding: 10,
+                              background: "#fff"
+                            }}
+                          >
+                            <div style={{ marginBottom: 4 }}>
                               <b>{data?.nombre || `Ejercicio ${ej.id}`}</b>
-
-                              {data?.imageUrl && (
-                                <div style={{ marginTop: 2 }}>
-                                  <button
-                                    onClick={() => abrirImagen(data.imageUrl)}
-                                    style={{
-                                      background: "transparent",
-                                      border: "none",
-                                      color: "#0066cc",
-                                      fontWeight: "bold",
-                                      textDecoration: "underline",
-                                      cursor: "pointer",
-                                      padding: 0,
-                                      fontSize: 14
-                                    }}
-                                  >
-                                    Ver imagen
-                                  </button>
-                                </div>
-                              )}
                             </div>
 
-                            <div>
-                              <small>Parte: {data?.parteCuerpo || "Ninguna"}</small>
+                            {data?.imageUrl && (
+                              <button
+                                onClick={() => abrirImagen(data.imageUrl)}
+                                style={{
+                                  background: "transparent",
+                                  border: "none",
+                                  color: "#0066cc",
+                                  fontWeight: "bold",
+                                  textDecoration: "underline",
+                                  cursor: "pointer",
+                                  padding: 0,
+                                  fontSize: 14,
+                                  marginBottom: 4
+                                }}
+                              >
+                                Ver imagen
+                              </button>
+                            )}
+
+                            <div style={{ fontSize: 13 }}>
+                              <div>Parte: {data?.parteCuerpo || "Ninguna"}</div>
+                              <div>Elemento: {data?.elemento || "Ninguno"}</div>
                             </div>
 
-                            <div>
-                              <small>Elemento: {data?.elemento || "Ninguno"}</small>
-                            </div>
-
-                            <div>
-                              <strong>{ej.series}×{ej.reps}</strong>
+                            <div style={{ marginTop: 6 }}>
+                              <strong>
+                                {ej.series}×{ej.reps}
+                              </strong>
                             </div>
                           </li>
                         );
@@ -108,22 +135,24 @@ export default function SesionesList({
                   </div>
                 )}
 
+              {/* Botones */}
               {showButtons && (
-                <div style={{ marginTop: 8 }}>
+                <div
+                  style={{
+                    marginTop: 10,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 8
+                  }}
+                >
                   {onEdit && (
-                    <button
-                      onClick={() => onEdit(s)}
-                      style={{ marginRight: 8 }}
-                    >
+                    <button onClick={() => onEdit(s)}>
                       Editar
                     </button>
                   )}
 
                   {onDelete && (
-                    <button
-                      onClick={() => onDelete(s.id)}
-                      style={{ marginRight: 8 }}
-                    >
+                    <button onClick={() => onDelete(s.id)}>
                       Eliminar
                     </button>
                   )}
