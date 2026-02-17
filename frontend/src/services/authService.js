@@ -31,26 +31,28 @@ export async function login(email, password) {
   return { uid, ...userData };
 }
 
-export async function register(nombre, email, password) {
-  const auth = getAuth();
-  const db = getFirestore();
+  export async function register(nombre, email, password) {
+    const auth = getAuth();
+    const db = getFirestore();
 
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  const uid = cred.user.uid;
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const uid = cred.user.uid;
 
-  const userData = {
-    nombre,
-    email,
-    rol: "cliente",
-    createdAt: new Date().toISOString()
-  };
+    const userData = {
+      uid,
+      nombre: nombre.trim(),
+      email: email.trim(),
+      rol: "cliente",
+      createdAt: new Date().toISOString()
+    };
 
-  await setDoc(doc(db, "usuarios", uid), userData);
+    await setDoc(doc(db, "usuarios", uid), userData);
 
-  localStorage.setItem("user", JSON.stringify({ uid, ...userData }));
+    localStorage.setItem("user", JSON.stringify(userData));
 
-  return { uid, ...userData };
-}
+    return userData;
+  }
+
 
 export async function logout() {
   const auth = getAuth();
