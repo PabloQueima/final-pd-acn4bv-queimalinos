@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function EjercicioForm({ onSubmit, initialData }) {
+export default function EjercicioForm({ onSubmit, initialData, onCancel }) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [parteCuerpo, setParteCuerpo] = useState("");
@@ -89,9 +89,20 @@ export default function EjercicioForm({ onSubmit, initialData }) {
         onChange={(e) => setImageUrl(e.target.value)}
       />
 
-      <button type="submit">
-        {initialData ? "Guardar Cambios" : "Crear Ejercicio"}
-      </button>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button type="submit">
+          {initialData ? "Guardar Cambios" : "Crear Ejercicio"}
+        </button>
+
+        {initialData && (
+          <button
+            type="button"
+            onClick={onCancel}
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
     </form>
   );
 }

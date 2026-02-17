@@ -12,6 +12,7 @@ import EjerciciosList from "../components/EjerciciosList";
 export default function EjerciciosPage({ onEjerciciosChange }) {
   const [ejercicios, setEjercicios] = useState([]);
   const [editando, setEditando] = useState(null);
+  const [formKey, setFormKey] = useState(0);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -27,24 +28,29 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
   async function cargarEjercicios() {
     try {
       const data = await getEjercicios();
-      setEjercicios(data);
+      setEjercicios(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error cargando ejercicios:", err);
+      setEjercicios([]);
     }
   }
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+
     debounceRef.current = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1);
     }, 300);
+
+    return () => clearTimeout(debounceRef.current);
   }, [search]);
 
   async function handleCrear(data) {
     const nuevo = await createEjercicio(data);
 
     setEjercicios(prev => [...prev, nuevo]);
+    setFormKey(prev => prev + 1);
 
     if (onEjerciciosChange) {
       onEjerciciosChange();
@@ -52,6 +58,8 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
   }
 
   async function handleEditar(data) {
+    if (!editando?.id) return;
+
     const actualizado = await updateEjercicio(editando.id, data);
 
     setEjercicios(prev =>
@@ -59,6 +67,11 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
     );
 
     setEditando(null);
+    setFormKey(prev => prev + 1);
+
+    if (onEjerciciosChange) {
+      onEjerciciosChange();
+    }
   }
 
   async function handleEliminar(id) {
@@ -75,10 +88,16 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
 
   function iniciarEdicion(ejercicio) {
     setEditando(ejercicio);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function cancelarEdicion() {
+    setEditando(null);
+    setFormKey(prev => prev + 1);
   }
 
   const filtrados = ejercicios.filter(e =>
-    e.nombre.toLowerCase().includes(debouncedSearch.toLowerCase())
+    e.nombre?.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
   const totalPages = Math.ceil(filtrados.length / pageSize) || 1;
@@ -95,8 +114,10 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
       />
 
       <EjercicioForm
+        key={formKey}
         onSubmit={editando ? handleEditar : handleCrear}
         initialData={editando}
+        onCancel={editando ? cancelarEdicion : null}
       />
 
       <EjerciciosList

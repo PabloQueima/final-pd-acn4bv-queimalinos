@@ -87,6 +87,7 @@ export default function UsuariosPage({ onUsuariosChange }) {
       );
 
       setEditando(null);
+      setFormKey(prev => prev + 1);
 
       if (onUsuariosChange) {
         onUsuariosChange();
@@ -121,6 +122,11 @@ export default function UsuariosPage({ onUsuariosChange }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function cancelarEdicion() {
+    setEditando(null);
+    setFormKey(prev => prev + 1);
+  }
+
   const filtrados = usuarios.filter(u =>
     u.nombre?.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
@@ -142,6 +148,7 @@ export default function UsuariosPage({ onUsuariosChange }) {
         key={formKey}
         onSubmit={editando ? handleEditar : handleCrear}
         initialData={editando}
+        onCancel={editando ? cancelarEdicion : null}
       />
 
       <UsuariosList
