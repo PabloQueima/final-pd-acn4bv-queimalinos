@@ -72,7 +72,7 @@ export default function DashboardAdmin() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "6.5fr 3.5fr",
             gap: "25px",
             alignItems: "flex-start",
           }}

@@ -19,7 +19,7 @@ export default function EjerciciosPage({ onEjerciciosChange }) {
   const debounceRef = useRef(null);
 
   const [page, setPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 10;
 
   useEffect(() => {
     cargarEjercicios();
