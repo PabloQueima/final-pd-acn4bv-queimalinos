@@ -107,9 +107,8 @@ export default function SesionesPage() {
         payload.entrenadorUid = currentUid;
       }
 
-      const nuevaSesion = await createSesion(payload);
+      await createSesion(payload);
       await cargarSesiones();
-      setEditando(null);
       setPage(1);
     } finally {
       setSaving(false);
@@ -180,18 +179,11 @@ export default function SesionesPage() {
       >
         <SesionForm
           onSubmit={editando ? handleEditar : handleCrear}
+          onCancel={cancelarEdicion}
           initialData={editando}
           currentRol={currentRol}
           currentUid={currentUid}
         />
-
-        {editando && (
-          <div style={{ marginTop: 8 }}>
-            <button type="button" onClick={cancelarEdicion} style={{ marginRight: 8 }}>
-              Cancelar edición
-            </button>
-          </div>
-        )}
 
         {saving && <p style={{ marginTop: 8 }}>Guardando...</p>}
       </div>
@@ -241,9 +233,7 @@ export default function SesionesPage() {
           <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
             <button disabled={page <= 1} onClick={() => setPage(1)} type="button">Primera</button>
             <button disabled={page <= 1} onClick={() => setPage(page - 1)} type="button">◀</button>
-
             <span> Página {page} de {totalPages} </span>
-
             <button disabled={page >= totalPages} onClick={() => setPage(page + 1)} type="button">▶</button>
             <button disabled={page >= totalPages} onClick={() => setPage(totalPages)} type="button">Última</button>
           </div>

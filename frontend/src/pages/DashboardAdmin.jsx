@@ -2,6 +2,7 @@ import UsuariosPage from "./UsuariosPage";
 import { useEffect, useState } from "react";
 import { getUsuarios, getSesiones, getEjercicios } from "../services/api";
 import EjerciciosPage from "./EjerciciosPage";
+import fondo from "../images/fondo.png";
 
 export default function DashboardAdmin() {
   const [totales, setTotales] = useState({
@@ -40,58 +41,69 @@ export default function DashboardAdmin() {
   return (
     <div
       style={{
-        maxWidth: "2400px",
-        margin: "0 auto",
-        padding: "20px"
+        minHeight: "100vh",
+        backgroundImage: `url(${fondo})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        padding: "20px",
       }}
     >
-      <h1 style={{ marginBottom: 10 }}>Panel Administrador</h1>
+      <div style={{ maxWidth: "2400px", margin: "0 auto" }}>
+        <h1 style={{ marginBottom: 10, color: "#fff" }}>
+          Panel Administrador
+        </h1>
 
-      <div
-        style={{
-          marginBottom: 30,
-          background: "#fff",
-          padding: "15px 20px",
-          borderRadius: 8,
-          boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
-        }}
-      >
-        <h3 style={{ marginBottom: 10 }}>Métricas generales</h3>
-        <p>Total usuarios: {totales.usuarios}</p>
-        <p>Total sesiones: {totales.sesiones}</p>
-        <p>Total ejercicios: {totales.ejercicios}</p>
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "25px",
-          alignItems: "flex-start"
-        }}
-      >
         <div
           style={{
-            background: "#fff",
-            padding: 10,
+            marginBottom: 30,
+            background: "rgba(255,255,255,0.95)",
+            padding: "15px 20px",
             borderRadius: 8,
-            boxShadow: "0 2px 6px rgba(0,0,0,0.06)"
+            boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
           }}
         >
-          <h2 style={{ marginBottom: 15 }}>Gestión de Ejercicios</h2>
-          <EjerciciosPage onEjerciciosChange={cargarTotales} />
+          <h3 style={{ marginBottom: 10 }}>Métricas generales</h3>
+          <p>Total usuarios: {totales.usuarios}</p>
+          <p>Total sesiones: {totales.sesiones}</p>
+          <p>Total ejercicios: {totales.ejercicios}</p>
         </div>
 
         <div
           style={{
-            background: "#fff",
-            padding: 20,
-            borderRadius: 8,
-            boxShadow: "0 2px 6px rgba(0,0,0,0.06)"
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "25px",
+            alignItems: "flex-start",
           }}
         >
-          <h2 style={{ marginBottom: 15 }}>Gestión de Usuarios</h2>
-          <UsuariosPage onUsuariosChange={cargarTotales} />
+          <div
+            style={{
+              background: "rgba(255,255,255,0.95)",
+              padding: 10,
+              borderRadius: 8,
+              boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h2 style={{ marginBottom: 15 }}>
+              Gestión de Ejercicios
+            </h2>
+            <EjerciciosPage onEjerciciosChange={cargarTotales} />
+          </div>
+
+          <div
+            style={{
+              background: "rgba(255,255,255,0.95)",
+              padding: 20,
+              borderRadius: 8,
+              boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h2 style={{ marginBottom: 15 }}>
+              Gestión de Usuarios
+            </h2>
+            <UsuariosPage onUsuariosChange={cargarTotales} />
+          </div>
         </div>
       </div>
     </div>

@@ -39,9 +39,12 @@ export default function SesionesList({
                 paddingBottom: 8
               }}
             >
-              <strong>{s.titulo}</strong>
+            <div>
+              <div style={{ marginBottom: 6 }}>
+                <strong style={{ fontSize: 16 }}>{s.titulo}</strong>
+              </div>
 
-              <div style={{ marginTop: 4 }}>
+              <div>
                 <span style={{ display: "block" }}>
                   Cliente: <b>{cliente}</b>
                 </span>
@@ -49,6 +52,8 @@ export default function SesionesList({
                   Entrenador: <b>{entrenador}</b>
                 </span>
               </div>
+            </div>
+
 
               {showAssignInfo &&
                 s.ejercicios &&

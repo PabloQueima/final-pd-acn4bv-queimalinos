@@ -4,6 +4,7 @@ import EjercicioSelector from "./EjercicioSelector";
 
 export default function SesionForm({
   onSubmit,
+  onCancel,
   initialData = null,
   currentRol,
   currentUid
@@ -25,6 +26,8 @@ export default function SesionForm({
       setTitulo(initialData.titulo || "");
       setClienteUid(initialData.clienteUid || "");
       setEjercicios(initialData.ejercicios || []);
+    } else {
+      limpiarFormulario();
     }
   }, [initialData]);
 
@@ -53,6 +56,18 @@ export default function SesionForm({
     setEjercicios(ejercicios.filter((e) => e.id !== id));
   }
 
+  function limpiarFormulario() {
+    setTitulo("");
+    setClienteUid("");
+    setEjercicios([]);
+    setError("");
+  }
+
+  function handleCancel() {
+    limpiarFormulario();
+    if (onCancel) onCancel();
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     if (e.nativeEvent.submitter?.name !== "submit-btn") return;
@@ -79,11 +94,7 @@ export default function SesionForm({
 
     onSubmit(payload)
       .then(() => {
-        if (!initialData) {
-          setTitulo("");
-          setClienteUid("");
-          setEjercicios([]);
-        }
+        limpiarFormulario();
       })
       .catch((err) => setError(err.message));
   }
@@ -137,18 +148,8 @@ export default function SesionForm({
             const ejData = todosEjercicios.find((x) => x.id === e.id);
             return (
               <li key={e.id} style={{ marginBottom: 8 }}>
-                <div>
-                  <strong>{ejData?.nombre || `Ejercicio ${e.id}`}</strong>
-                </div>
-                <div>
-                  <small>Parte del cuerpo: {ejData?.parteCuerpo || "Ninguna"}</small>
-                </div>
-                <div>
-                  <small>Elemento: {ejData?.elemento || "Ninguno"}</small>
-                </div>
-                <div>
-                  <small>Series × Reps: {e.series}×{e.reps}</small>
-                </div>
+                <strong>{ejData?.nombre || `Ejercicio ${e.id}`}</strong>
+                <div><small>Series × Reps: {e.series}×{e.reps}</small></div>
                 <button
                   style={{ marginTop: 4 }}
                   onClick={() => removeEjercicio(e.id)}
@@ -164,7 +165,24 @@ export default function SesionForm({
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 10,
+          marginTop: 10
+        }}
+      >
+        {initialData && (
+          <button
+            type="button"
+            onClick={handleCancel}
+            style={{ padding: "8px 16px", fontSize: 16 }}
+          >
+            Cancelar edición
+          </button>
+        )}
+
         <button
           type="submit"
           name="submit-btn"
