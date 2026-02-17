@@ -35,6 +35,7 @@ async function fetchWithAuth(url, options = {}) {
   });
 }
 
+// ---------------- EJERCICIOS ----------------
 export async function getEjercicios(params = {}) {
   const query = buildQuery(params);
   const res = await fetchWithAuth(`${API_URL}/ejercicios${query}`);
@@ -65,14 +66,16 @@ export async function deleteEjercicio(id) {
   });
 }
 
+// ---------------- SESIONES ----------------
 export async function getSesiones(params = {}) {
-  if (params.clienteId) {
-    const res = await fetchWithAuth(`${API_URL}/sesiones/cliente/${params.clienteId}`);
+  // siempre usamos uid para filtrar
+  if (params.clienteUid) {
+    const res = await fetchWithAuth(`${API_URL}/sesiones/cliente/${params.clienteUid}`);
     return res.json();
   }
 
-  if (params.entrenadorId) {
-    const res = await fetchWithAuth(`${API_URL}/sesiones/entrenador/${params.entrenadorId}`);
+  if (params.entrenadorUid) {
+    const res = await fetchWithAuth(`${API_URL}/sesiones/entrenador/${params.entrenadorUid}`);
     return res.json();
   }
 
@@ -104,6 +107,7 @@ export async function deleteSesion(id) {
   });
 }
 
+// ---------------- USUARIOS ----------------
 export async function getUsuarios(params = {}) {
   const query = buildQuery(params);
   const res = await fetchWithAuth(`${API_URL}/usuarios${query}`);
@@ -119,8 +123,8 @@ export async function createUsuario(data) {
   return res.json();
 }
 
-export async function updateUsuario(id, data) {
-  const res = await fetchWithAuth(`${API_URL}/usuarios/${id}`, {
+export async function updateUsuario(uid, data) {
+  const res = await fetchWithAuth(`${API_URL}/usuarios/${uid}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
@@ -128,8 +132,8 @@ export async function updateUsuario(id, data) {
   return res.json();
 }
 
-export async function deleteUsuario(id) {
-  const res = await fetchWithAuth(`${API_URL}/usuarios/${id}`, { method: "DELETE" });
+export async function deleteUsuario(uid) {
+  const res = await fetchWithAuth(`${API_URL}/usuarios/${uid}`, { method: "DELETE" });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.error || "Error eliminando usuario");

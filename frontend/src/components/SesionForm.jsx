@@ -42,7 +42,6 @@ export default function SesionForm({
 
   function handleAddEjercicio(item) {
     const exists = ejercicios.find((e) => e.id === item.id);
-
     if (exists) {
       setEjercicios(ejercicios.map((e) => (e.id === item.id ? item : e)));
     } else {
@@ -71,6 +70,7 @@ export default function SesionForm({
     }
 
     const payload = {
+      id: initialData?.id || null,
       titulo,
       clienteUid,
       entrenadorUid: currentRol === "entrenador" ? currentUid : null,
@@ -131,13 +131,10 @@ export default function SesionForm({
 
       <div>
         <h4>Ejercicios en la sesión</h4>
-
         {ejercicios.length === 0 && <p>No hay ejercicios agregados.</p>}
-
         <ul style={{ paddingLeft: 15 }}>
           {ejercicios.map((e) => {
             const ejData = todosEjercicios.find((x) => x.id === e.id);
-
             return (
               <li key={e.id} style={{ marginBottom: 8 }}>
                 <div>

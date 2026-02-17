@@ -107,7 +107,7 @@ export default function SesionesPage() {
         payload.entrenadorUid = currentUid;
       }
 
-      await createSesion(payload);
+      const nuevaSesion = await createSesion(payload);
       await cargarSesiones();
       setEditando(null);
       setPage(1);

@@ -16,53 +16,12 @@ export async function crearSesion(req, res) {
     const ref = await db.collection("sesiones").add(nueva.toJSON());
     const doc = await ref.get();
 
+    // siempre devolvemos el id del documento recién creado
     res.status(201).json(Sesion.fromFirestore(doc));
   } catch (err) {
     res.status(500).json({ error: "No se pudo crear sesión" });
   }
 }
-
-export async function agregarEjercicioASesion(req, res) {
-  try {
-    const { id } = req.params;
-    const ejercicio = req.body;
-
-    const ref = db.collection("sesiones").doc(id);
-    const doc = await ref.get();
-
-    if (!doc.exists) {
-      return res.status(404).json({ error: "Sesión no encontrada" });
-    }
-
-    const sesion = Sesion.fromFirestore(doc);
-
-    // Si ya existe el ejercicio, lo reemplaza
-    const existe = sesion.ejercicios.find(
-      e => String(e.id) === String(ejercicio.id)
-    );
-
-    let ejerciciosActualizados;
-
-    if (existe) {
-      ejerciciosActualizados = sesion.ejercicios.map(e =>
-        String(e.id) === String(ejercicio.id) ? ejercicio : e
-      );
-    } else {
-      ejerciciosActualizados = [...sesion.ejercicios, ejercicio];
-    }
-
-    await ref.update({
-      ejercicios: ejerciciosActualizados,
-      updatedAt: new Date().toISOString()
-    });
-
-    const updatedDoc = await ref.get();
-    res.json(Sesion.fromFirestore(updatedDoc));
-  } catch (err) {
-    res.status(500).json({ error: "No se pudo agregar ejercicio a la sesión" });
-  }
-}
-
 
 export async function listarSesiones(req, res) {
   try {
@@ -77,12 +36,10 @@ export async function listarSesiones(req, res) {
 export async function sesionesPorCliente(req, res) {
   try {
     const { uid } = req.params;
-
     const snap = await db
       .collection("sesiones")
       .where("clienteUid", "==", uid)
       .get();
-
     const sesiones = snap.docs.map(doc => Sesion.fromFirestore(doc));
     res.json(sesiones);
   } catch (err) {
@@ -93,12 +50,10 @@ export async function sesionesPorCliente(req, res) {
 export async function sesionesPorEntrenador(req, res) {
   try {
     const { uid } = req.params;
-
     const snap = await db
       .collection("sesiones")
       .where("entrenadorUid", "==", uid)
       .get();
-
     const sesiones = snap.docs.map(doc => Sesion.fromFirestore(doc));
     res.json(sesiones);
   } catch (err) {
@@ -109,7 +64,6 @@ export async function sesionesPorEntrenador(req, res) {
 export async function obtenerSesion(req, res) {
   try {
     const { id } = req.params;
-
     const doc = await db.collection("sesiones").doc(id).get();
 
     if (!doc.exists) {
@@ -134,17 +88,13 @@ export async function actualizarSesion(req, res) {
       return res.status(404).json({ error: "Sesión no encontrada" });
     }
 
-    const updates = {
-      updatedAt: new Date().toISOString()
-    };
-
+    const updates = { updatedAt: new Date().toISOString() };
     if (titulo !== undefined) updates.titulo = titulo;
     if (ejercicios !== undefined) updates.ejercicios = ejercicios;
     if (clienteUid !== undefined) updates.clienteUid = clienteUid;
     if (entrenadorUid !== undefined) updates.entrenadorUid = entrenadorUid;
 
     await ref.update(updates);
-
     const updatedDoc = await ref.get();
     res.json(Sesion.fromFirestore(updatedDoc));
   } catch (err) {
@@ -155,7 +105,6 @@ export async function actualizarSesion(req, res) {
 export async function eliminarSesion(req, res) {
   try {
     const { id } = req.params;
-
     const ref = db.collection("sesiones").doc(id);
     const doc = await ref.get();
 
@@ -170,9 +119,10 @@ export async function eliminarSesion(req, res) {
   }
 }
 
-export async function eliminarEjercicioDeSesion(req, res) {
+export async function agregarEjercicioASesion(req, res) {
   try {
-    const { id, ejercicioId } = req.params;
+    const { id } = req.params;
+    const ejercicio = req.body;
 
     const ref = db.collection("sesiones").doc(id);
     const doc = await ref.get();
@@ -182,10 +132,35 @@ export async function eliminarEjercicioDeSesion(req, res) {
     }
 
     const sesion = Sesion.fromFirestore(doc);
+    const existe = sesion.ejercicios.find(e => String(e.id) === String(ejercicio.id));
+    const ejerciciosActualizados = existe
+      ? sesion.ejercicios.map(e => (String(e.id) === String(ejercicio.id) ? ejercicio : e))
+      : [...sesion.ejercicios, ejercicio];
 
-    const ejerciciosActualizados = sesion.ejercicios.filter(
-      e => String(e.id) !== String(ejercicioId)
-    );
+    await ref.update({
+      ejercicios: ejerciciosActualizados,
+      updatedAt: new Date().toISOString()
+    });
+
+    const updatedDoc = await ref.get();
+    res.json(Sesion.fromFirestore(updatedDoc));
+  } catch (err) {
+    res.status(500).json({ error: "No se pudo agregar ejercicio a la sesión" });
+  }
+}
+
+export async function eliminarEjercicioDeSesion(req, res) {
+  try {
+    const { id, ejercicioId } = req.params;
+    const ref = db.collection("sesiones").doc(id);
+    const doc = await ref.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Sesión no encontrada" });
+    }
+
+    const sesion = Sesion.fromFirestore(doc);
+    const ejerciciosActualizados = sesion.ejercicios.filter(e => String(e.id) !== String(ejercicioId));
 
     await ref.update({
       ejercicios: ejerciciosActualizados,
