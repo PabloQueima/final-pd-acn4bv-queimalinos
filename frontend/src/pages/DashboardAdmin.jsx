@@ -72,7 +72,7 @@ export default function DashboardAdmin() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "6.5fr 3.5fr",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             gap: "25px",
             alignItems: "flex-start",
           }}

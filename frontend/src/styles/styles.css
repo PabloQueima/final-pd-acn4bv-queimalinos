@@ -9,7 +9,6 @@
   --blanco: #FFFFFF;
   --gris-fondo: #f4f7fb;
   --gris-suave: #eef3f8;
-
   --texto: var(--azul-oscuro);
   --borde: #d5dbe3;
   --hover-suave: #eaf3fb;
@@ -69,7 +68,7 @@ header h1 {
    Paneles reutilizables
 --------------------------------*/
 .panel {
-  background: var(--blanco);
+  background: var(--gris-fondo);
   flex: 1;
   min-width: 320px;
   padding: 25px;
@@ -135,7 +134,7 @@ form button:hover {
 }
 
 /* -------------------------------
-   Listas (usuarios, ejercicios, etc.)
+   Listas y botones generales
 --------------------------------*/
 ul {
   padding: 0;
@@ -185,65 +184,113 @@ li button:hover {
 }
 
 /* -------------------------------
-   Tarjetas para sesiones
+   Tarjetas de Sesiones
 --------------------------------*/
-#lista-sesiones .card {
+.sesion-card {
   background: var(--blanco);
   border: 1px solid var(--borde);
-  padding: 20px;
   border-radius: 12px;
-  margin-bottom: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.07);
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#lista-sesiones .card:hover {
+.sesion-card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
 }
 
-#lista-sesiones .card h3 {
+.sesion-card h3 {
   margin: 0;
   color: var(--azul-intermedio);
 }
 
-#lista-sesiones .ejercicios-lista {
-  margin: 14px 0;
-  padding-left: 18px;
+.ejercicios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
 }
 
-#lista-sesiones .acciones {
-  margin-top: 12px;
+.ejercicio-item {
+  background: var(--gris-suave);
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-#lista-sesiones button {
-  margin-right: 10px;
+.ejercicio-item button {
+  background: transparent;
+  border: none;
+  color: #0066cc;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+/* Botones de acción dentro de tarjeta */
+.sesion-card .acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.sesion-card .acciones button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+}
+
+.sesion-card .acciones button.editar {
+  background: var(--lila);
+  color: var(--blanco);
+}
+
+.sesion-card .acciones button.eliminar {
+  background: var(--danger);
+  color: var(--blanco);
+}
+
+.sesion-card .acciones button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 /* -------------------------------
-   Checkboxes de ejercicios
+   Ejercicios dentro de las sesiones
 --------------------------------*/
-.ejercicios-checkboxes {
-  display: flex;
-  flex-wrap: wrap;
+.ejercicios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
-  margin-top: 12px;
 }
 
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  gap: 6px;
-  background: #eef5fb;
-  border: 1px solid #d0e3f0;
-  border-radius: 6px;
-  transition: 0.2s ease;
+.ejercicio-item {
+  background: var(--gris-suave);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.checkbox-item:hover {
-  background: #d6ecfa;
-  transform: scale(1.02);
+.ejercicio-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
 }
+
 
 /* -------------------------------
    Responsive
@@ -263,5 +310,15 @@ li button:hover {
   header h1 {
     margin-left: 0;
     font-size: 1.6rem;
+  }
+
+  .ejercicios-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .ejercicios-grid {
+    grid-template-columns: 1fr;
   }
 }

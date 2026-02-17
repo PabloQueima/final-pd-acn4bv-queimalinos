@@ -50,12 +50,12 @@ export default function SesionesPage() {
       ]);
 
       const uMap = {};
-      (usuarios || []).forEach(u => {
+      (usuarios || []).forEach((u) => {
         if (u.uid) uMap[u.uid] = u;
       });
 
       const eMap = {};
-      (ejercicios || []).forEach(e => {
+      (ejercicios || []).forEach((e) => {
         eMap[e.id] = e;
       });
 
@@ -139,7 +139,10 @@ export default function SesionesPage() {
       await deleteSesion(id);
 
       const remaining = sesiones.length - 1;
-      const totalPagesAfter = Math.max(1, Math.ceil(remaining / pageSize));
+      const totalPagesAfter = Math.max(
+        1,
+        Math.ceil(remaining / pageSize)
+      );
       if (page > totalPagesAfter) setPage(totalPagesAfter);
 
       await cargarSesiones();
@@ -151,7 +154,9 @@ export default function SesionesPage() {
       ...sesion,
       clienteUid: sesion.clienteUid ?? "",
       entrenadorUid: sesion.entrenadorUid ?? "",
-      ejercicios: Array.isArray(sesion.ejercicios) ? sesion.ejercicios : []
+      ejercicios: Array.isArray(sesion.ejercicios)
+        ? sesion.ejercicios
+        : []
     });
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -162,12 +167,22 @@ export default function SesionesPage() {
   }
 
   const totalPages = Math.max(1, Math.ceil(sesiones.length / pageSize));
-  const pageData = sesiones.slice((page - 1) * pageSize, page * pageSize);
+  const pageData = sesiones.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Crear/Editar Sesiones</h2>
+    <div
+      style={{
+        padding: "12px 16px",
+        maxWidth: 1800,
+        margin: "0 auto"
+      }}
+    >
+      <h2 style={{ marginBottom: 12 }}>Crear / Editar Sesiones</h2>
 
+      {/* Formulario */}
       <div
         style={{
           background: "#fff",
@@ -188,7 +203,16 @@ export default function SesionesPage() {
         {saving && <p style={{ marginTop: 8 }}>Guardando...</p>}
       </div>
 
-      <div style={{ marginBottom: 12, display: "flex", gap: 8, alignItems: "center" }}>
+      {/* Buscador */}
+      <div
+        style={{
+          marginBottom: 12,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          alignItems: "center"
+        }}
+      >
         <input
           placeholder="Buscar sesión por título..."
           value={search}
@@ -197,12 +221,16 @@ export default function SesionesPage() {
             padding: 8,
             borderRadius: 6,
             border: "1px solid #ccc",
-            width: "300px",
-            maxWidth: "100%"
+            flex: "1 1 240px",
+            minWidth: 200
           }}
         />
+
         <button
-          onClick={() => { setSearch(""); setPage(1); }}
+          onClick={() => {
+            setSearch("");
+            setPage(1);
+          }}
           type="button"
           style={{ padding: "8px 12px", borderRadius: 6 }}
         >
@@ -218,11 +246,25 @@ export default function SesionesPage() {
         <p>Cargando...</p>
       ) : (
         <>
-          <div style={{ minHeight: "420px", display: "flex", flexDirection: "column" }}>
+          {/* GRID DE SESIONES */}
+          <div
+            style={{
+              minHeight: 420,
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(380px, 1fr))",
+              gap: 20,
+              alignItems: "start"
+            }}
+          >
             <SesionesList
               sesiones={pageData}
-              onEdit={currentRol !== "cliente" ? iniciarEdicion : null}
-              onDelete={currentRol !== "cliente" ? handleEliminar : null}
+              onEdit={
+                currentRol !== "cliente" ? iniciarEdicion : null
+              }
+              onDelete={
+                currentRol !== "cliente" ? handleEliminar : null
+              }
               showAssignInfo={true}
               showButtons={currentRol !== "cliente"}
               ejerciciosMap={ejerciciosMap}
@@ -230,12 +272,49 @@ export default function SesionesPage() {
             />
           </div>
 
-          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
-            <button disabled={page <= 1} onClick={() => setPage(1)} type="button">Primera</button>
-            <button disabled={page <= 1} onClick={() => setPage(page - 1)} type="button">◀</button>
-            <span> Página {page} de {totalPages} </span>
-            <button disabled={page >= totalPages} onClick={() => setPage(page + 1)} type="button">▶</button>
-            <button disabled={page >= totalPages} onClick={() => setPage(totalPages)} type="button">Última</button>
+          {/* Paginación */}
+          <div
+            style={{
+              marginTop: 14,
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 8
+            }}
+          >
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage(1)}
+              type="button"
+            >
+              Primera
+            </button>
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage(page - 1)}
+              type="button"
+            >
+              ◀
+            </button>
+
+            <span>
+              Página {page} de {totalPages}
+            </span>
+
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+              type="button"
+            >
+              ▶
+            </button>
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage(totalPages)}
+              type="button"
+            >
+              Última
+            </button>
           </div>
         </>
       )}
