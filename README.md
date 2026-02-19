@@ -75,6 +75,7 @@ npm run dev
 Frontend disponible en:
 http://localhost:5173
 
+---
 4. Estructura del proyecto
 Backend
 backend/
@@ -96,6 +97,7 @@ frontend/src/
   main.jsx
   App.jsx
 
+---
 5. Endpoints principales
 Autenticación
 POST /api/login
@@ -131,6 +133,8 @@ Ejercicios dentro de la sesión
 POST /api/sesiones/:id/ejercicios
 DELETE /api/sesiones/:id/ejercicios/:ejercicioId
 
+---
+
 6. Roles y permisos
 Admin
 CRUD de usuarios
@@ -146,6 +150,7 @@ Cliente
 Ve únicamente sus sesiones asignadas
 No puede editar información
 
+---
 7. Funcionalidad del sistema
 7.1 Autenticación (Firestore + bcrypt + JWT)
 Búsqueda de usuario por email en Firestore
@@ -184,6 +189,8 @@ Listados por cliente o entrenador
 Mensaje especial cuando el cliente no tiene sesiones:
 “Para obtener tus sesiones de entrenamiento ponete en contacto con un entrenador.”
 
+---
+
 8. Persistencia en Firestore
 Colecciones utilizadas:
 usuarios
@@ -191,6 +198,8 @@ ejercicios
 sesiones
 Los antiguos archivos .json fueron reemplazados.
 fileService.js fue adaptado para Firestore.
+
+---
 
 9. Validaciones backend
 validateUsuario
@@ -210,6 +219,8 @@ clienteId existente en Firestore
 entrenadorId existente (opcional)
 ejercicios válidos
 series / reps numéricos
+
+---
 
 10. Ejecutar el proyecto
 Backend
