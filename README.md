@@ -76,7 +76,8 @@ Frontend disponible en:
 http://localhost:5173
 
 ---
-4. Estructura del proyecto
+4. Estructura del proyecto:
+   
 Backend
 backend/
   controllers/
@@ -86,6 +87,7 @@ backend/
   utils/
   firebase.js
   index.js
+
 
 Frontend
 frontend/src/
