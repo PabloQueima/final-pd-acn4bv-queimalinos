@@ -1,8 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-
 import "./styles/styles.css";
 
 import DashboardAdmin from "./pages/DashboardAdmin";
@@ -15,58 +11,19 @@ import RegisterPage from "./pages/RegisterPage";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Notification from "./components/Notification";
 
-import { getCurrentUser } from "./services/authService";
+import { useApp } from "./context/AppContext";
 
 export default function App() {
-  const [user, setUser] = useState(getCurrentUser());
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const auth = getAuth();
-    const db = getFirestore();
-
-    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        setUser(null);
-        localStorage.removeItem("user");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const snap = await getDoc(doc(db, "usuarios", firebaseUser.uid));
-
-        if (!snap.exists()) {
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-
-        const userData = {
-          uid: firebaseUser.uid,
-          ...snap.data()
-        };
-
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        setLoading(false);
-
-      } catch (error) {
-        console.error("Error obteniendo usuario:", error);
-        setUser(null);
-        setLoading(false);
-      }
-    });
-
-    return () => unsub();
-  }, []);
+  const { user, loading } = useApp();
 
   if (loading) return null;
 
   return (
     <>
       {user && <Navbar />}
+      <Notification />
 
       <Routes>
         <Route path="/" element={<LandingPage />} />

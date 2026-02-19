@@ -291,6 +291,44 @@ li button:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
 }
 
+/* -------------------------------
+   Notificaciones
+--------------------------------*/
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  color: white;
+  z-index: 9999;
+  min-width: 220px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+.notification-success {
+  background-color: #2e7d32;
+}
+
+.notification-error {
+  background-color: #c62828;
+}
+
+.notification-warning {
+  background-color: #ed6c02;
+}
+
+.notification button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 
 /* -------------------------------
    Responsive
