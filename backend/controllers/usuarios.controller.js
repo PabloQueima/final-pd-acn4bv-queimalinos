@@ -24,10 +24,6 @@ export async function crearUsuario(req, res) {
   try {
     const { nombre, email, password, rol } = req.body;
 
-    if (!nombre || !email || !password || !rol) {
-      return res.status(400).json({ error: "Faltan datos obligatorios" });
-    }
-
     const userRecord = await admin.auth().createUser({
       email: email.trim(),
       password: password.trim()
@@ -124,9 +120,10 @@ export async function obtenerUsuario(req, res) {
 }
 
 export async function actualizarUsuario(req, res) {
+  console.log("BODY UPDATE:", req.body);
   try {
     const { uid } = req.params;
-    const { nombre, rol } = req.body;
+    const { nombre, rol, email, password } = req.body;
 
     const ref = db.collection("usuarios").doc(uid);
     const doc = await ref.get();
@@ -135,17 +132,33 @@ export async function actualizarUsuario(req, res) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    const updates = {};
+    const updatesFirestore = {};
+    const updatesAuth = {};
 
     if (nombre !== undefined) {
-      updates.nombre = nombre.trim();
+      updatesFirestore.nombre = nombre.trim();
     }
 
     if (rol !== undefined) {
-      updates.rol = rol.trim().toLowerCase();
+      updatesFirestore.rol = rol.trim().toLowerCase();
     }
 
-    await ref.update(updates);
+    if (email !== undefined) {
+      updatesFirestore.email = email.trim();
+      updatesAuth.email = email.trim();
+    }
+
+    if (password !== undefined) {
+      updatesAuth.password = password.trim();
+    }
+
+    if (Object.keys(updatesAuth).length > 0) {
+      await admin.auth().updateUser(uid, updatesAuth);
+    }
+
+    if (Object.keys(updatesFirestore).length > 0) {
+      await ref.update(updatesFirestore);
+    }
 
     const updatedDoc = await ref.get();
     const data = updatedDoc.data();
@@ -161,9 +174,23 @@ export async function actualizarUsuario(req, res) {
     res.json(usuario.toJSON());
 
   } catch (err) {
-    res.status(500).json({ error: "No se pudo actualizar usuario" });
+    console.error("Error actualizando usuario:", err);
+    console.log("ERROR UPDATE:", err);
+
+    if (err.code === "auth/email-already-exists") {
+      return res.status(400).json({ error: "El email ya está registrado" });
+    }
+
+    if (err.code === "auth/invalid-password") {
+      return res.status(400).json({
+        error: "La contraseña es inválida (mínimo 6 caracteres)"
+      });
+    }
+
+    return res.status(500).json({ error: "No se pudo actualizar usuario" });
   }
 }
+
 
 export async function eliminarUsuario(req, res) {
   try {

@@ -1,103 +1,112 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function EjercicioForm({ onSubmit, initialData, onCancel }) {
+export default function UsuarioForm({
+  initialData = {},
+  onSubmit,
+  isEdit = false,
+  onCancel
+}) {
   const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [parteCuerpo, setParteCuerpo] = useState("");
-  const [elemento, setElemento] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rol, setRol] = useState("cliente");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (initialData) {
-      setNombre(initialData.nombre || "");
-      setDescripcion(initialData.descripcion || "");
-      setParteCuerpo(initialData.parteCuerpo || "");
-      setElemento(initialData.elemento || "");
-      setImageUrl(initialData.imageUrl || "");
-    } else {
-      limpiarFormulario();
-    }
+    setNombre(initialData?.nombre || "");
+    setEmail(initialData?.email || "");
+    setRol(initialData?.rol || "cliente");
+    setPassword("");
   }, [initialData]);
-
-  function limpiarFormulario() {
-    setNombre("");
-    setDescripcion("");
-    setParteCuerpo("");
-    setElemento("");
-    setImageUrl("");
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError(null);
 
-    const mensaje = initialData
-      ? "¿Confirmar modificación del ejercicio?"
-      : "¿Confirmar creación del ejercicio?";
+    try {
+      const data = {
+        nombre,
+        email,
+        rol
+      };
 
-    if (!window.confirm(mensaje)) return;
+      if (password.trim() !== "") {
+        data.password = password;
+      }
 
-    await onSubmit({
-      nombre,
-      descripcion,
-      parteCuerpo,
-      elemento,
-      imageUrl
-    });
-
-    limpiarFormulario();
+      await onSubmit(data);
+      setPassword("");
+    } catch (err) {
+      setError(err.message || "Error enviando formulario");
+    }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        padding: 15,
-        border: "1px solid #ccc",
-        marginBottom: 20,
-        display: "flex",
-        flexDirection: "column",
-        gap: 10
-      }}
-    >
-      <input
-        placeholder="Nombre"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
-      />
+    <form onSubmit={handleSubmit} style={styles.form}>
+      <h2 style={styles.title}>
+        {isEdit ? "Editar Usuario" : "Crear Usuario"}
+      </h2>
 
-      <textarea
-        placeholder="Descripción"
-        value={descripcion}
-        onChange={(e) => setDescripcion(e.target.value)}
-      />
+      {error && <p style={styles.error}>{error}</p>}
 
-      <input
-        placeholder="Parte del cuerpo"
-        value={parteCuerpo}
-        onChange={(e) => setParteCuerpo(e.target.value)}
-      />
+      <div style={styles.grid}>
+        <div style={styles.field}>
+          <label>Nombre</label>
+          <input
+            type="text"
+            value={nombre}
+            onChange={e => setNombre(e.target.value)}
+            required
+          />
+        </div>
 
-      <input
-        placeholder="Elemento usado (opcional)"
-        value={elemento}
-        onChange={(e) => setElemento(e.target.value)}
-      />
+        <div style={styles.field}>
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-      <input
-        placeholder="URL de imagen (opcional)"
-        value={imageUrl}
-        onChange={(e) => setImageUrl(e.target.value)}
-      />
+        <div style={styles.field}>
+          <label>
+            {isEdit ? "Nueva contraseña (opcional)" : "Contraseña"}
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required={!isEdit}
+            minLength={6}
+          />
+        </div>
 
-      <div style={{ display: "flex", gap: 10 }}>
+        <div style={styles.field}>
+          <label>Rol</label>
+          <select
+            value={rol}
+            onChange={e => setRol(e.target.value)}
+            required
+          >
+            <option value="admin">Admin</option>
+            <option value="entrenador">Entrenador</option>
+            <option value="cliente">Cliente</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={styles.actions}>
         <button type="submit">
-          {initialData ? "Guardar Cambios" : "Crear Ejercicio"}
+          {isEdit ? "Actualizar" : "Crear"}
         </button>
 
-        {initialData && (
+        {isEdit && (
           <button
             type="button"
             onClick={onCancel}
+            style={{ marginLeft: 10 }}
           >
             Cancelar
           </button>
@@ -106,3 +115,32 @@ export default function EjercicioForm({ onSubmit, initialData, onCancel }) {
     </form>
   );
 }
+
+const styles = {
+  form: {
+    background: "#f4f6f8",
+    padding: 20,
+    borderRadius: 8,
+    marginBottom: 20,
+    maxWidth: 700
+  },
+  title: {
+    marginBottom: 15
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 15
+  },
+  field: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  actions: {
+    marginTop: 20
+  },
+  error: {
+    color: "red",
+    marginBottom: 10
+  }
+};

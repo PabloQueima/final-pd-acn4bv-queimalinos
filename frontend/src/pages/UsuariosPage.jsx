@@ -147,9 +147,11 @@ export default function UsuariosPage({ onUsuariosChange }) {
       <UsuarioForm
         key={formKey}
         onSubmit={editando ? handleEditar : handleCrear}
-        initialData={editando}
+        initialData={editando || {}}
+        isEdit={!!editando}
         onCancel={editando ? cancelarEdicion : null}
       />
+
 
       <UsuariosList
         usuarios={visibles}
