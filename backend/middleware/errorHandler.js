@@ -5,10 +5,9 @@ export default function errorHandler(err, req, res, next) {
     return next(err);
   }
 
-  const status = err.statusCode || 500;
+  const status = err.status || err.statusCode || 500;
 
   res.status(status).json({
-    error: err.publicMessage || "Error interno del servidor",
-    detalle: err.message || "Error desconocido"
+    error: err.message || "Error interno del servidor"
   });
 }
