@@ -7,7 +7,7 @@ import {
   eliminarUsuario
 } from "../controllers/usuarios.controller.js";
 import { validateUsuario } from "../middleware/validateUsuario.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = Router();
 

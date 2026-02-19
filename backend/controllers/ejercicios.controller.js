@@ -1,15 +1,33 @@
 import { db } from "../firebase.js";
 import Ejercicio from "../models/Ejercicio.js";
 
+
 async function fetchEjercicios() {
   const snap = await db.collection("ejercicios").get();
   return snap.docs.map(d => Ejercicio.fromJSON(d.data()));
 }
 
 async function findEjercicioById(id) {
-  const snap = await db.collection("ejercicios").where("id", "==", id).limit(1).get();
-  return snap.empty ? null : { ref: snap.docs[0].ref, data: Ejercicio.fromJSON(snap.docs[0].data()) };
+  const snap = await db
+    .collection("ejercicios")
+    .where("id", "==", id)
+    .limit(1)
+    .get();
+
+  if (snap.empty) return null;
+
+  return {
+    ref: snap.docs[0].ref,
+    data: Ejercicio.fromJSON(snap.docs[0].data())
+  };
 }
+
+function validateId(idParam) {
+  const id = Number(idParam);
+  if (Number.isNaN(id)) return null;
+  return id;
+}
+
 
 export async function listarEjercicios(req, res) {
   try {
@@ -28,9 +46,9 @@ export async function crearEjercicio(req, res) {
     const nuevo = new Ejercicio(
       Date.now(),
       nombre,
-      descripcion,
-      parteCuerpo,
-      elemento,
+      descripcion || "",
+      parteCuerpo ? parteCuerpo.toLowerCase() : "",
+      elemento ? elemento.toLowerCase() : "",
       imageUrl || ""
     );
 
@@ -45,19 +63,30 @@ export async function crearEjercicio(req, res) {
 
 export async function actualizarEjercicio(req, res) {
   try {
-    const id = Number(req.params.id);
+    const id = validateId(req.params.id);
+    if (!id) return res.status(400).json({ error: "ID inválido" });
 
     const result = await findEjercicioById(id);
-    if (!result) return res.status(404).json({ error: "Ejercicio no encontrado" });
+    if (!result)
+      return res.status(404).json({ error: "Ejercicio no encontrado" });
 
     const { ref, data: ejercicio } = result;
-    const { nombre, descripcion, parteCuerpo, elemento, imageUrl } = req.body;
+    const updates = req.body;
 
-    if (nombre !== undefined) ejercicio.nombre = nombre.trim();
-    if (descripcion !== undefined) ejercicio.descripcion = descripcion.trim();
-    if (parteCuerpo !== undefined) ejercicio.parteCuerpo = parteCuerpo.trim().toLowerCase();
-    if (elemento !== undefined) ejercicio.elemento = elemento.trim().toLowerCase();
-    if (imageUrl !== undefined) ejercicio.imageUrl = imageUrl.trim();
+    if (updates.nombre !== undefined)
+      ejercicio.nombre = updates.nombre;
+
+    if (updates.descripcion !== undefined)
+      ejercicio.descripcion = updates.descripcion;
+
+    if (updates.parteCuerpo !== undefined)
+      ejercicio.parteCuerpo = updates.parteCuerpo.toLowerCase();
+
+    if (updates.elemento !== undefined)
+      ejercicio.elemento = updates.elemento.toLowerCase();
+
+    if (updates.imageUrl !== undefined)
+      ejercicio.imageUrl = updates.imageUrl;
 
     await ref.update(ejercicio.toJSON());
 
@@ -70,13 +99,14 @@ export async function actualizarEjercicio(req, res) {
 
 export async function eliminarEjercicio(req, res) {
   try {
-    const id = Number(req.params.id);
+    const id = validateId(req.params.id);
+    if (!id) return res.status(400).json({ error: "ID inválido" });
 
     const result = await findEjercicioById(id);
-    if (!result) return res.status(404).json({ error: "Ejercicio no encontrado" });
+    if (!result)
+      return res.status(404).json({ error: "Ejercicio no encontrado" });
 
     await result.ref.delete();
-
     res.status(204).end();
   } catch (err) {
     console.error("eliminarEjercicio:", err);
@@ -86,20 +116,14 @@ export async function eliminarEjercicio(req, res) {
 
 export async function obtenerEjercicio(req, res) {
   try {
-    const id = Number(req.params.id);
+    const id = validateId(req.params.id);
+    if (!id) return res.status(400).json({ error: "ID inválido" });
 
-    const snap = await db
-      .collection("ejercicios")
-      .where("id", "==", id)
-      .limit(1)
-      .get();
-
-    if (snap.empty) {
+    const result = await findEjercicioById(id);
+    if (!result)
       return res.status(404).json({ error: "Ejercicio no encontrado" });
-    }
 
-    const data = snap.docs[0].data();
-    res.json(Ejercicio.fromJSON(data).toJSON());
+    res.json(result.data.toJSON());
   } catch (err) {
     console.error("obtenerEjercicio:", err);
     res.status(500).json({ error: "No se pudo obtener ejercicio" });
@@ -114,15 +138,17 @@ export async function buscarEjercicios(req, res) {
 
     if (parte) {
       const p = parte.toLowerCase();
-      ejercicios = ejercicios.filter(e => e.parteCuerpo.includes(p));
+      ejercicios = ejercicios.filter(
+        e => (e.parteCuerpo || "").includes(p)
+      );
     }
 
     if (search) {
       const s = search.toLowerCase();
       ejercicios = ejercicios.filter(
         e =>
-          e.nombre.toLowerCase().includes(s) ||
-          e.descripcion.toLowerCase().includes(s)
+          (e.nombre || "").toLowerCase().includes(s) ||
+          (e.descripcion || "").toLowerCase().includes(s)
       );
     }
 

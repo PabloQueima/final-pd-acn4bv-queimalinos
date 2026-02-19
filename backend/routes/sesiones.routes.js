@@ -12,7 +12,7 @@ import {
 } from "../controllers/sesiones.controller.js";
 
 import { validateSesion } from "../middleware/validateSesion.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = Router();
 

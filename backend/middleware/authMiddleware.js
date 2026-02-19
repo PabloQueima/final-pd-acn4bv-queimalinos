@@ -1,26 +1,37 @@
 import admin from "firebase-admin";
 
-export async function authMiddleware(req, res, next) {
-  const header = req.headers.authorization;
-
-  if (!header) {
-    return res.status(401).json({ error: "Falta token" });
-  }
-
-  const [type, token] = header.split(" ");
-
-  if (type !== "Bearer" || !token) {
-    return res.status(401).json({ error: "Formato de autorización inválido" });
-  }
-
+const authMiddleware = async (req, res, next) => {
   try {
-    const decoded = await admin.auth().verifyIdToken(token);
+    const header = req.headers.authorization;
+
+    if (!header) {
+      const error = new Error("Falta token de autorización");
+      error.status = 401;
+      throw error;
+    }
+
+    const [type, token] = header.split(" ");
+
+    if (type !== "Bearer" || !token) {
+      const error = new Error("Formato de autorización inválido");
+      error.status = 401;
+      throw error;
+    }
+
+    const decodedToken = await admin.auth().verifyIdToken(token);
+
     req.user = {
-      uid: decoded.uid,
-      email: decoded.email
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      role: decodedToken.role || null
     };
+
     next();
+
   } catch (err) {
-    return res.status(401).json({ error: "Token Firebase inválido" });
+    err.status = 401;
+    next(err);
   }
-}
+};
+
+export default authMiddleware;
