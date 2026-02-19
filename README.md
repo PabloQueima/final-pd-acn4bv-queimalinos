@@ -75,141 +75,156 @@ npm run dev
 Frontend disponible en:
 http://localhost:5173
 
-4. Estructura del proyecto
+---
+4. Estructura del proyecto:
+   
 Backend
-backend/
-  controllers/
-  middleware/
-  models/
-  routes/
-  utils/
-  firebase.js
-  index.js
+- backend/
+  - controllers/
+  - middleware/
+  - models/
+  - routes/
+  - utils/
+  - firebase.js
+  - index.js
+
 
 Frontend
-frontend/src/
-  components/
-  images/
-  pages/
-  services/
-  styles/
-  main.jsx
-  App.jsx
+- frontend/src/
+  - components/
+  - images/
+  - pages/
+  - services/
+  - styles/
+  - main.jsx
+  - App.jsx
 
+---
 5. Endpoints principales
 Autenticación
-POST /api/login
-POST /api/register
+- POST /api/login
+- POST /api/register
 
 Usuarios
-GET /api/usuarios
-GET /api/usuarios/:uid
-POST /api/usuarios
-PUT /api/usuarios/:uid
-DELETE /api/usuarios/:uid
+- GET /api/usuarios
+- GET /api/usuarios/:uid
+- POST /api/usuarios
+- PUT /api/usuarios/:uid
+- DELETE /api/usuarios/:uid
 
 Ejercicios
-GET /api/ejercicios
-GET /api/ejercicios/:id
-POST /api/ejercicios
-PUT /api/ejercicios/:id
-DELETE /api/ejercicios/:id
-GET /api/ejercicios/buscar
+- GET /api/ejercicios
+- GET /api/ejercicios/:id
+- POST /api/ejercicios
+- PUT /api/ejercicios/:id
+- DELETE /api/ejercicios/:id
+- GET /api/ejercicios/buscar
 
 Sesiones
-GET /api/sesiones
-GET /api/sesiones/:id
-POST /api/sesiones
-PUT /api/sesiones/:id
-DELETE /api/sesiones/:id
+- GET /api/sesiones
+- GET /api/sesiones/:id
+- POST /api/sesiones
+- PUT /api/sesiones/:id
+- DELETE /api/sesiones/:id
 
 Filtros por rol
-GET /api/sesiones/cliente/:uid
-GET /api/sesiones/entrenador/:uid
+- GET /api/sesiones/cliente/:uid
+- GET /api/sesiones/entrenador/:uid
 
 Ejercicios dentro de la sesión
-POST /api/sesiones/:id/ejercicios
-DELETE /api/sesiones/:id/ejercicios/:ejercicioId
+- POST /api/sesiones/:id/ejercicios
+- DELETE /api/sesiones/:id/ejercicios/:ejercicioId
+
+---
 
 6. Roles y permisos
 Admin
-CRUD de usuarios
-CRUD de ejercicios
-Ve estadisticas globales
+- CRUD de usuarios
+- CRUD de ejercicios
+- Ve estadisticas globales
 
 Entrenador
-Crea, edita y elimina sesiones propias
-Asigna ejercicios a clientes
-Trabaja con cualquier cliente
+- Crea, edita y elimina sesiones propias
+- Asigna ejercicios a clientes
+- Trabaja con cualquier cliente
 
 Cliente
-Ve únicamente sus sesiones asignadas
-No puede editar información
+- Ve únicamente sus sesiones asignadas
+- No puede editar información
 
+---
 7. Funcionalidad del sistema
-7.1 Autenticación (Firestore + bcrypt + JWT)
+- 7.1 Autenticación (Firestore + bcrypt + JWT)
 Búsqueda de usuario por email en Firestore
 Contraseña validada con hash bcrypt
 Generación de token JWT (4 horas)
 Token + user guardados en localStorage
 Rutas protegidas mediante middleware en el backend
 
-7.2 Navegación según rol
-Dashboards separados:
-/admin
-/entrenador
-/cliente
+- 7.2 Navegación según rol
+   Dashboards separados:
+- /admin
+- /entrenador
+- /cliente
 
-7.3 Gestión de usuarios
-Creación con nombre, email, rol y contraseña
-Password encriptado
-Edición y eliminación
-Validaciones del backend
+   7.3 Gestión de usuarios:
+- Creación con nombre, email, rol y contraseña
+- Password encriptado
+- Edición y eliminación
+- Validaciones del backend
 
-7.4 Gestión de ejercicios
-Crear / editar / eliminar
-Campo adicional imageUrl
-Filtros y búsquedas
-Validación completa de campos
+   7.4 Gestión de ejercicios:
+- Crear / editar / eliminar
+- Campo adicional imageUrl
+- Filtros y búsquedas
+- Validación completa de campos
 
-7.5 Gestión de sesiones
-Crear sesiones con:
-título
-cliente
-entrenador
-ejercicios detallados (series / reps)
-Editar y eliminar sesiones
-Asignar y quitar ejercicios
-Listados por cliente o entrenador
-Mensaje especial cuando el cliente no tiene sesiones:
+   7.5 Gestión de sesiones:
+- Crear sesiones con:
+- título
+- cliente
+- entrenador
+
+- ejercicios detallados (series / reps)
+- Editar y eliminar sesiones
+- Asignar y quitar ejercicios
+- Listados por cliente o entrenador
+- Mensaje especial cuando el cliente no tiene sesiones:
 “Para obtener tus sesiones de entrenamiento ponete en contacto con un entrenador.”
+
+---
 
 8. Persistencia en Firestore
 Colecciones utilizadas:
-usuarios
-ejercicios
-sesiones
+- usuarios
+- ejercicios
+- sesiones
+
 Los antiguos archivos .json fueron reemplazados.
 fileService.js fue adaptado para Firestore.
 
+---
+
 9. Validaciones backend
-validateUsuario
-nombre obligatorio
-email obligatorio y válido
-password obligatorio (al crear)
-rol válido: admin / entrenador / cliente
+- validateUsuario
+- nombre obligatorio
+- email obligatorio y válido
+- password obligatorio (al crear)
+- rol válido: admin / entrenador / cliente
 
 validateEjercicio
-nombre obligatorio
-imageUrl opcional (string)
-parteCuerpo y elemento como strings válidos
+- nombre obligatorio
+- imageUrl opcional (string)
+- parteCuerpo y elemento como strings válidos
 
 validateSesion
-título obligatorio
-clienteId existente en Firestore
-entrenadorId existente (opcional)
-ejercicios válidos
-series / reps numéricos
+- título obligatorio
+- clienteId existente en Firestore
+- entrenadorId existente (opcional)
+- ejercicios válidos
+- series / reps numéricos
+
+---
 
 10. Ejecutar el proyecto
 Backend
