@@ -13,12 +13,26 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Notification from "./components/Notification";
 
-import { useApp } from "./context/AppContext";
+import { useAuth } from "./context/AuthContext";
 
 export default function App() {
-  const { user, loading } = useApp();
+  const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "1.2rem"
+        }}
+      >
+        Cargando...
+      </div>
+    );
+  }
 
   return (
     <>

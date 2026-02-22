@@ -18,17 +18,17 @@ El proyecto implementa una plataforma completa para gestionar:
 - Asignación de ejercicios a sesiones
 - Visualización de sesiones asignadas (rol cliente)
 - Registro de nuevos usuarios (rol automático cliente)
-- Autenticación con JWT (login por email)
+- Autenticación con Firebase Authentication
 - Validaciones en backend
 - Paneles dinámicos según rol
 
 Arquitectura general
-
 - Backend Express con persistencia en Firestore
 - Frontend React desacoplado con dashboards según rol
+- Las validaciones se ejecutan en middleware antes de llegar al controller
+- Se validan relaciones contra Firestore (existencia de cliente, entrenador, ejercicios)
+- Se devuelven códigos HTTP correctos (400, 401, 404, 500)
 - Roles: admin, entrenador, cliente
-
-El objetivo es simular un entorno real de trabajo con un backend REST moderno y un frontend separado.
 
 ---
 
@@ -36,11 +36,9 @@ El objetivo es simular un entorno real de trabajo con un backend REST moderno y 
 
 Backend
 - Node.js + Express
-- Firebase Admin SDK (Firestore)
-- bcrypt (hashing de contraseñas)
-- JSON Web Tokens (JWT)
-- Middlewares custom
-- Validadores contra Firestore
+- Autenticación con Firebase Authentication
+- Verificación de ID Token mediante Firebase Admin SDK
+- Rutas protegidas con middleware authMiddleware
 - Rutas RESTful
 - CORS + Morgan
 - Arquitectura por capas (controllers, routes, middleware, models, utils)
@@ -48,29 +46,32 @@ Backend
 Frontend
 - React
 - React Router DOM
-- Fetch API / Axios
-- Componentes reutilizables
+- Firebase Authentication
+- Context API (AuthContext)
+- Custom Hook global (useAuth)
+- Sincronización con onAuthStateChanged
+- Manejo global de loading
+- Sistema de notificaciones dinámicas
+- Rutas protegidas por rol
 - CSS propio
-- Dashboards por rol
-- Manejo de token con localStorage
+- Dashboards diferenciados por rol
 
 ---
 
 3. Instalación
 
 Backend
-cd backend
-npm install
-npm start
+- cd backend
+- npm install
+- npm start
 
 Backend disponible en:
 http://localhost:3000
 
 Frontend
-cd frontend
-npm install
-npm run dev
-
+- cd frontend
+- npm install
+- npm run dev
 
 Frontend disponible en:
 http://localhost:5173
@@ -92,6 +93,7 @@ Backend
 Frontend
 - frontend/src/
   - components/
+  - context/
   - images/
   - pages/
   - services/
@@ -101,10 +103,6 @@ Frontend
 
 ---
 5. Endpoints principales
-Autenticación
-- POST /api/login
-- POST /api/register
-
 Usuarios
 - GET /api/usuarios
 - GET /api/usuarios/:uid
@@ -146,7 +144,7 @@ Admin
 Entrenador
 - Crea, edita y elimina sesiones propias
 - Asigna ejercicios a clientes
-- Trabaja con cualquier cliente
+- Puede crear y gestionar sesiones asociadas a clientes.
 
 Cliente
 - Ve únicamente sus sesiones asignadas
@@ -154,12 +152,11 @@ Cliente
 
 ---
 7. Funcionalidad del sistema
-- 7.1 Autenticación (Firestore + bcrypt + JWT)
-Búsqueda de usuario por email en Firestore
-Contraseña validada con hash bcrypt
-Generación de token JWT (4 horas)
-Token + user guardados en localStorage
-Rutas protegidas mediante middleware en el backend
+- 7.1 Autenticación
+- Autenticación gestionada mediante Firebase Authentication.
+- El frontend realiza login y registro utilizando los métodos oficiales de Firebase.
+- El backend valida cada request protegida mediante verifyIdToken del Firebase Admin SDK.
+- Las rutas sensibles están protegidas con authMiddleware.
 
 - 7.2 Navegación según rol
    Dashboards separados:
@@ -169,7 +166,7 @@ Rutas protegidas mediante middleware en el backend
 
    7.3 Gestión de usuarios:
 - Creación con nombre, email, rol y contraseña
-- Password encriptado
+- La gestión y encriptación de contraseñas es manejada por Firebase Authentication.
 - Edición y eliminación
 - Validaciones del backend
 
@@ -200,9 +197,6 @@ Colecciones utilizadas:
 - ejercicios
 - sesiones
 
-Los antiguos archivos .json fueron reemplazados.
-fileService.js fue adaptado para Firestore.
-
 ---
 
 9. Validaciones backend
@@ -219,8 +213,8 @@ validateEjercicio
 
 validateSesion
 - título obligatorio
-- clienteId existente en Firestore
-- entrenadorId existente (opcional)
+- clienteUid existente en Firestore
+- entrenadorUid existente
 - ejercicios válidos
 - series / reps numéricos
 

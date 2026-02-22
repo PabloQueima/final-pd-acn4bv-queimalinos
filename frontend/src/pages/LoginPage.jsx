@@ -1,20 +1,58 @@
 import { useState } from "react";
 import { login } from "../services/authService";
+import fondo from "../images/fondo.png";
+import logo from "../images/logo.png";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    password: ""
+  });
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  function validate() {
+    const newErrors = {};
+
+    if (!form.email) {
+      newErrors.email = "El email es obligatorio";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Formato de email inválido";
+    }
+
+    if (!form.password) {
+      newErrors.password = "La contraseña es obligatoria";
+    } else if (form.password.length < 6) {
+      newErrors.password = "Mínimo 6 caracteres";
+    }
+
+    return newErrors;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError("");
+
+    const validationErrors = validate();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) return;
 
     try {
-      await login(email, password);
+      setLoading(true);
+      await login(form.email, form.password);
     } catch {
-      setError("Credenciales inválidas");
+      setErrors({ general: "Credenciales inválidas" });
+    } finally {
+      setLoading(false);
     }
+  }
+
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   }
 
   return (
@@ -24,7 +62,7 @@ export default function LoginPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "url('/src/images/fondo.png') center/cover fixed",
+        background: `url(${fondo}) center/cover fixed`,
         padding: "1rem"
       }}
     >
@@ -39,86 +77,57 @@ export default function LoginPage() {
         }}
       >
         <img
-          src="/src/images/logo.png"
+          src={logo}
           alt="Logo"
           style={{ width: "110px", marginBottom: "1.2rem" }}
         />
 
-        <h2
-          style={{
-            color: "#0C3264",
-            marginBottom: "1.8rem",
-            fontWeight: "600"
-          }}
-        >
+        <h2 style={{ color: "#0C3264", marginBottom: "1.8rem" }}>
           Login
         </h2>
 
         <form
           onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.9rem"
-          }}
+          style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}
         >
           <input
             type="email"
+            name="email"
             placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            style={{
-              padding: "0.7rem",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "0.95rem"
-            }}
+            value={form.email}
+            onChange={handleChange}
           />
+          {errors.email && <small style={{ color: "red" }}>{errors.email}</small>}
 
           <input
             type="password"
+            name="password"
             placeholder="Contraseña"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            style={{
-              padding: "0.7rem",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "0.95rem"
-            }}
+            value={form.password}
+            onChange={handleChange}
           />
+          {errors.password && <small style={{ color: "red" }}>{errors.password}</small>}
 
-          {error && (
-            <div
-              style={{
-                backgroundColor: "#ffe6e6",
-                color: "#cc0000",
-                padding: "0.6rem",
-                borderRadius: "6px",
-                fontSize: "0.85rem"
-              }}
-            >
-              {error}
+          {errors.general && (
+            <div style={{ color: "red", fontSize: "0.9rem" }}>
+              {errors.general}
             </div>
           )}
 
           <button
             type="submit"
+            disabled={loading}
             style={{
-              marginTop: "0.5rem",
               padding: "0.85rem",
               backgroundColor: "#05A3CB",
               color: "white",
               border: "none",
               borderRadius: "8px",
               fontWeight: "600",
-              cursor: "pointer",
-              transition: "0.2s"
+              opacity: loading ? 0.7 : 1
             }}
           >
-            Ingresar
+            {loading ? "Ingresando..." : "Ingresar"}
           </button>
         </form>
       </div>
