@@ -62,6 +62,7 @@ Frontend
 3. Instalación
 
 3.1 Configuración de variables de entorno
+
 Antes de iniciar el proyecto, se deben configurar las variables de entorno para el backend y el frontend.
 
 Backend (/backend)
@@ -82,7 +83,9 @@ Crear un archivo .env en la raíz del directorio frontend con el siguiente conte
 - VITE_FIREBASE_STORAGE_BUCKET=
 - VITE_FIREBASE_MESSAGING_SENDER_ID=
 - VITE_FIREBASE_APP_ID=
+
 Estas variables corresponden a la configuración pública de Firebase para la app web.
+
 Por seguridad, las credenciales reales no se incluyen en el repositorio y deben configurarse manualmente en cada entorno.
 
 3.2 Instalación y ejecución
@@ -202,9 +205,9 @@ Cliente
 
 7.5 Gestión de sesiones:
 - Crear sesiones con:
-- título
-- cliente
-- entrenador
+  - título
+  - cliente
+  - entrenador
 
 - ejercicios detallados (series / reps)
 - Editar y eliminar sesiones
