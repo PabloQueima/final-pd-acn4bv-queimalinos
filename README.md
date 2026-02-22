@@ -4,7 +4,7 @@ Alumno: Pablo Queimaliños — pablo.queimalinos@davinci.edu.ar
 Comisión: ACN2CV — 2º cuatrimestre 2025 — Escuela Da Vinci  
 Docente: Sergio Medina — sergiod.medina@davinci.edu.ar  
 Proyecto: Plataforma de Entrenamiento
-17/02/2026  
+22/02/2026  
 
 ---
 
@@ -60,10 +60,12 @@ Frontend
 ---
 
 3. Instalación
+
 3.1 Configuración de variables de entorno
 Antes de iniciar el proyecto, se deben configurar las variables de entorno para el backend y el frontend.
 
 Backend (/backend)
+
 Crear un archivo .env en la raíz del directorio backend con el siguiente contenido:
 - FIREBASE_PROJECT_ID=
 - FIREBASE_CLIENT_EMAIL=
@@ -72,6 +74,7 @@ Crear un archivo .env en la raíz del directorio backend con el siguiente conten
 Estas variables corresponden a las credenciales privadas de Firebase Admin SDK necesarias para acceder a Firestore.
 
 Frontend (/frontend)
+
 Crear un archivo .env en la raíz del directorio frontend con el siguiente contenido:
 - VITE_FIREBASE_API_KEY=
 - VITE_FIREBASE_AUTH_DOMAIN=
@@ -221,6 +224,7 @@ Colecciones utilizadas:
 ---
 
 9. Validaciones backend
+
 validateUsuario
 - nombre obligatorio
 - email obligatorio y válido
@@ -242,13 +246,14 @@ validateSesion
 ---
 
 10. Ejecutar el proyecto
+
 Backend
-cd backend
-npm start
+- cd backend
+- npm start
 
 Frontend
-cd frontend
-npm run dev
+- cd frontend
+- npm run dev
 
 Abrir en navegador:
 http://localhost:5173
