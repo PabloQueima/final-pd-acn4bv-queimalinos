@@ -66,8 +66,8 @@ export default function RegisterPage() {
       setLoading(true);
       await register(form.nombre, form.email, form.password);
       navigate("/login", { replace: true });
-    } catch {
-      setGeneralError("Error al registrarse");
+    } catch (error) {
+      setGeneralError(error.message || "Error al registrarse");
     } finally {
       setLoading(false);
     }

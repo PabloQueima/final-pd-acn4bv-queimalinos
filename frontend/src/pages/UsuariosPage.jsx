@@ -64,7 +64,8 @@ export default function UsuariosPage({ onUsuariosChange }) {
       }
 
     } catch (err) {
-      console.error("Error creando usuario:", err);
+        console.error("Error creando usuario:", err);
+        throw err; 
     }
   }
 
