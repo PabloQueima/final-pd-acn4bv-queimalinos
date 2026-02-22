@@ -60,7 +60,30 @@ Frontend
 ---
 
 3. Instalación
+3.1 Configuración de variables de entorno
+Antes de iniciar el proyecto, se deben configurar las variables de entorno tanto para el backend como para el frontend.
 
+Backend (/backend)
+- Crear un archivo .env en la raíz del directorio backend con el siguiente contenido:
+   - FIREBASE_PROJECT_ID=
+   - FIREBASE_CLIENT_EMAIL=
+   - FIREBASE_PRIVATE_KEY=
+
+Estas variables corresponden a las credenciales de Firebase Admin SDK.
+
+Frontend (/frontend)
+- Crear un archivo .env en la raíz del directorio frontend con el siguiente contenido:
+   - VITE_FIREBASE_API_KEY=
+   - VITE_FIREBASE_AUTH_DOMAIN=
+   - VITE_FIREBASE_PROJECT_ID=
+   - VITE_FIREBASE_STORAGE_BUCKET=
+   - VITE_FIREBASE_MESSAGING_SENDER_ID=
+   - VITE_FIREBASE_APP_ID=
+
+Estas variables corresponden a la configuración del proyecto en Firebase.
+Las credenciales reales no están incluidas en el repositorio por motivos de seguridad y deben ser configuradas manualmente en cada entorno.
+
+3.2 Instalación y ejecución
 Backend
 - cd backend
 - npm install
@@ -153,31 +176,32 @@ Cliente
 
 ---
 7. Funcionalidad del sistema
-- 7.1 Autenticación
+
+7.1 Autenticación
 - Autenticación gestionada mediante Firebase Authentication.
 - El frontend realiza login y registro utilizando los métodos oficiales de Firebase.
 - El backend valida cada request protegida mediante verifyIdToken del Firebase Admin SDK.
 - Las rutas sensibles están protegidas con authMiddleware.
 
-- 7.2 Navegación según rol
+7.2 Navegación según rol
    Dashboards separados:
 - /admin
 - /entrenador
 - /cliente
 
-   7.3 Gestión de usuarios:
+7.3 Gestión de usuarios:
 - Creación con nombre, email, rol y contraseña
 - La gestión y encriptación de contraseñas es manejada por Firebase Authentication.
 - Edición y eliminación
 - Validaciones del backend
 
-   7.4 Gestión de ejercicios:
+7.4 Gestión de ejercicios:
 - Crear / editar / eliminar
 - Campo adicional imageUrl
 - Filtros y búsquedas
 - Validación completa de campos
 
-   7.5 Gestión de sesiones:
+7.5 Gestión de sesiones:
 - Crear sesiones con:
 - título
 - cliente
@@ -201,7 +225,7 @@ Colecciones utilizadas:
 ---
 
 9. Validaciones backend
-- validateUsuario
+validateUsuario
 - nombre obligatorio
 - email obligatorio y válido
 - password obligatorio (al crear)
