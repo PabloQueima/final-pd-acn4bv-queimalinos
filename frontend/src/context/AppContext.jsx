@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
@@ -6,33 +6,37 @@ const AppContext = createContext();
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   });
 
   const [loading, setLoading] = useState(true);
-
   const [notification, setNotification] = useState(null);
   const [globalLoading, setGlobalLoading] = useState(false);
+
+  const notificationTimeoutRef = useRef(null);
 
   useEffect(() => {
     const auth = getAuth();
     const db = getFirestore();
 
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        setUser(null);
-        localStorage.removeItem("user");
-        setLoading(false);
-        return;
-      }
-
       try {
+        if (!firebaseUser) {
+          setUser(null);
+          localStorage.removeItem("user");
+          return;
+        }
+
         const snap = await getDoc(doc(db, "usuarios", firebaseUser.uid));
 
         if (!snap.exists()) {
           setUser(null);
-          setLoading(false);
+          localStorage.removeItem("user");
           return;
         }
 
@@ -43,10 +47,11 @@ export function AppProvider({ children }) {
 
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
-        setLoading(false);
 
-      } catch (err) {
+      } catch (error) {
         setUser(null);
+        localStorage.removeItem("user");
+      } finally {
         setLoading(false);
       }
     });
@@ -55,16 +60,23 @@ export function AppProvider({ children }) {
   }, []);
 
   const showNotification = (type, message, timeout = 3000) => {
+    if (notificationTimeoutRef.current) {
+      clearTimeout(notificationTimeoutRef.current);
+    }
+
     setNotification({ type, message });
 
     if (timeout) {
-      setTimeout(() => {
+      notificationTimeoutRef.current = setTimeout(() => {
         setNotification(null);
       }, timeout);
     }
   };
 
   const clearNotification = () => {
+    if (notificationTimeoutRef.current) {
+      clearTimeout(notificationTimeoutRef.current);
+    }
     setNotification(null);
   };
 

@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AppProvider } from "./context/AppContext";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AppContext";
 
 import "./firebase";
 

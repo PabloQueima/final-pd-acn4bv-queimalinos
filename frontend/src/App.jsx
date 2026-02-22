@@ -13,7 +13,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Notification from "./components/Notification";
 
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./context/AppContext";
 
 export default function App() {
   const { user, loading } = useAuth();

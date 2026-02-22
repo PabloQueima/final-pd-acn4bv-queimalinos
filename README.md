@@ -21,6 +21,7 @@ El proyecto implementa una plataforma completa para gestionar:
 - Autenticación con Firebase Authentication
 - Validaciones en backend
 - Paneles dinámicos según rol
+- Persistencia manual de usuario en localStorage
 
 Arquitectura general
 - Backend Express con persistencia en Firestore
@@ -47,7 +48,7 @@ Frontend
 - React
 - React Router DOM
 - Firebase Authentication
-- Context API (AuthContext)
+- Context API (AppContext)
 - Custom Hook global (useAuth)
 - Sincronización con onAuthStateChanged
 - Manejo global de loading
