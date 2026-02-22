@@ -68,7 +68,6 @@ export async function deleteEjercicio(id) {
 
 // ---------------- SESIONES ----------------
 export async function getSesiones(params = {}) {
-  // siempre usamos uid para filtrar
   if (params.clienteUid) {
     const res = await fetchWithAuth(`${API_URL}/sesiones/cliente/${params.clienteUid}`);
     return res.json();
@@ -120,8 +119,16 @@ export async function createUsuario(data) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
-  return res.json();
+
+  const responseData = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(responseData.error || "Error creando usuario");
+  }
+
+  return responseData;
 }
+
 
 export async function updateUsuario(uid, data) {
   const res = await fetchWithAuth(`${API_URL}/usuarios/${uid}`, {
