@@ -2,14 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDzVTgYkUqF4lXsSWvpXzUor8le_hQNBfk",
-  authDomain: "plataformas-de-entrenamiento.firebaseapp.com",
-  projectId: "plataformas-de-entrenamiento",
-  storageBucket: "plataformas-de-entrenamiento.firebasestorage.app",
-  messagingSenderId: "678781356844",
-  appId: "1:678781356844:web:f581ebb1973abc14d2ba89"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+export default app;

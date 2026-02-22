@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import dotenv from "dotenv";
+dotenv.config();
 
 import ejerciciosRouter from "./routes/ejercicios.routes.js";
 import usuariosRouter from "./routes/usuarios.routes.js";
@@ -13,11 +15,13 @@ import authMiddleware from "./middleware/authMiddleware.js";
 
 import { ensureDataFiles } from "./utils/fileService.js";
 
+
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 /* Inicialización */
 await ensureDataFiles();
+console.log(process.env.FIREBASE_PROJECT_ID);
 
 /* Middlewares globales */
 app.use(cors({

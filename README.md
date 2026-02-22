@@ -61,44 +61,40 @@ Frontend
 
 3. Instalación
 3.1 Configuración de variables de entorno
-Antes de iniciar el proyecto, se deben configurar las variables de entorno tanto para el backend como para el frontend.
+Antes de iniciar el proyecto, se deben configurar las variables de entorno para el backend y el frontend.
 
 Backend (/backend)
-- Crear un archivo .env en la raíz del directorio backend con el siguiente contenido:
-   - FIREBASE_PROJECT_ID=
-   - FIREBASE_CLIENT_EMAIL=
-   - FIREBASE_PRIVATE_KEY=
+Crear un archivo .env en la raíz del directorio backend con el siguiente contenido:
+- FIREBASE_PROJECT_ID=
+- FIREBASE_CLIENT_EMAIL=
+- FIREBASE_PRIVATE_KEY=
 
-Estas variables corresponden a las credenciales de Firebase Admin SDK.
+Estas variables corresponden a las credenciales privadas de Firebase Admin SDK necesarias para acceder a Firestore.
 
 Frontend (/frontend)
-- Crear un archivo .env en la raíz del directorio frontend con el siguiente contenido:
-   - VITE_FIREBASE_API_KEY=
-   - VITE_FIREBASE_AUTH_DOMAIN=
-   - VITE_FIREBASE_PROJECT_ID=
-   - VITE_FIREBASE_STORAGE_BUCKET=
-   - VITE_FIREBASE_MESSAGING_SENDER_ID=
-   - VITE_FIREBASE_APP_ID=
-
-Estas variables corresponden a la configuración del proyecto en Firebase.
-Las credenciales reales no están incluidas en el repositorio por motivos de seguridad y deben ser configuradas manualmente en cada entorno.
+Crear un archivo .env en la raíz del directorio frontend con el siguiente contenido:
+- VITE_FIREBASE_API_KEY=
+- VITE_FIREBASE_AUTH_DOMAIN=
+- VITE_FIREBASE_PROJECT_ID=
+- VITE_FIREBASE_STORAGE_BUCKET=
+- VITE_FIREBASE_MESSAGING_SENDER_ID=
+- VITE_FIREBASE_APP_ID=
+Estas variables corresponden a la configuración pública de Firebase para la app web.
+Por seguridad, las credenciales reales no se incluyen en el repositorio y deben configurarse manualmente en cada entorno.
 
 3.2 Instalación y ejecución
+
 Backend
 - cd backend
 - npm install
 - npm start
-
-Backend disponible en:
-http://localhost:3000
+API disponible en: http://localhost:3000
 
 Frontend
 - cd frontend
 - npm install
 - npm run dev
-
-Frontend disponible en:
-http://localhost:5173
+App web disponible en: http://localhost:5173
 
 ---
 4. Estructura del proyecto:
