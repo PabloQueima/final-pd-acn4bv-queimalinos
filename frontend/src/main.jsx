@@ -4,18 +4,15 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AppProvider } from "./context/AppContext";
-import { AuthProvider } from "./context/AppContext";
 
 import "./firebase";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ErrorBoundary>
     <AppProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </AppProvider>
   </ErrorBoundary>
 );

@@ -49,7 +49,7 @@ Frontend
 - React Router DOM
 - Firebase Authentication
 - Context API (AppContext)
-- Custom Hook global (useAuth)
+- Custom Hook global (useApp)
 - Sincronización con onAuthStateChanged
 - Manejo global de loading
 - Sistema de notificaciones dinámicas
