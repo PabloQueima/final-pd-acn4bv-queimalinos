@@ -193,16 +193,24 @@ export async function actualizarUsuario(req, res) {
 
 
 export async function eliminarUsuario(req, res) {
-  try {
-    const { uid } = req.params;
+  const { uid } = req.params;
 
-    await admin.auth().deleteUser(uid);
+  try {
+    try {
+      await admin.auth().deleteUser(uid);
+    } catch (authErr) {
+      if (authErr.code !== "auth/user-not-found") {
+        throw authErr;
+      }
+    }
+
     await db.collection("usuarios").doc(uid).delete();
 
-    res.status(204).end();
+    return res.status(204).end();
 
   } catch (err) {
     console.error("Error eliminando usuario:", err);
-    res.status(500).json({ error: "No se pudo eliminar usuario" });
+    return res.status(500).json({ error: "No se pudo eliminar usuario" });
   }
 }
+
